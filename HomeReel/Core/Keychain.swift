@@ -12,11 +12,14 @@ enum Keychain {
             kSecAttrService as String: service,
             kSecAttrAccount as String: key,
         ]
-        SecItemDelete(base as CFDictionary)
-        var add = base
-        add[kSecValueData as String] = Data(value.utf8)
-        add[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock
-        return SecItemAdd(add as CFDictionary, nil) == errSecSuccess
+        // Update in place. Deleting first would lose the old value if the add then failed.
+        let values: [String: Any] = [
+            kSecValueData as String: Data(value.utf8),
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
+        ]
+        let updated = SecItemUpdate(base as CFDictionary, values as CFDictionary)
+        guard updated == errSecItemNotFound else { return updated == errSecSuccess }
+        return SecItemAdd(base.merging(values) { $1 } as CFDictionary, nil) == errSecSuccess
     }
 
     static func get(_ key: String) -> String? {

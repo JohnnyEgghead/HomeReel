@@ -66,6 +66,16 @@ struct CreditGroup: Decodable, Identifiable, Hashable {
     var type: String?
     var Credit: [Credit]
     var id: String { title }
+
+    private enum CodingKeys: String, CodingKey { case title, type, Credit }
+
+    /// One odd credit should cost that credit, not the whole group.
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        title = try c.decode(String.self, forKey: .title)
+        type = try c.decodeIfPresent(String.self, forKey: .type)
+        Credit = try c.decode([Lossy<HomeReel.Credit>].self, forKey: .Credit).compactMap(\.value)
+    }
 }
 
 struct PlexDiscover: Sendable {
@@ -84,29 +94,39 @@ struct PlexDiscover: Sendable {
     private func fetch<T: Decodable>(_ path: String, as: T.Type) async throws -> T {
         let data: Data, resp: URLResponse
         do { (data, resp) = try await session.data(for: request(path)) }
-        catch { throw PlexError.unreachable((error as? URLError)?.localizedDescription ?? "\(error)") }
+        catch {
+            if error.isCancellation { throw CancellationError() }
+            throw PlexError.unreachable((error as? URLError)?.localizedDescription ?? "\(error)")
+        }
         guard let http = resp as? HTTPURLResponse else { throw PlexError.badResponse(0) }
         guard (200..<300).contains(http.statusCode) else { throw PlexError.badResponse(http.statusCode) }
         do { return try JSONDecoder().decode(T.self, from: data) }
         catch { throw PlexError.decoding("\(error)") }
     }
 
-    private struct Meta<T: Decodable>: Decodable { struct MC: Decodable { var Metadata: [T]? }; var MediaContainer: MC }
-    private struct Groups: Decodable { struct MC: Decodable { var CreditGroup: [CreditGroup]? }; var MediaContainer: MC }
+    private struct Meta<T: Decodable>: Decodable {
+        struct MC: Decodable { var Metadata: [Lossy<T>]? }
+        var MediaContainer: MC
+        var items: [T] { MediaContainer.Metadata?.compactMap(\.value) ?? [] }
+    }
+    private struct Groups: Decodable {
+        struct MC: Decodable { var CreditGroup: [Lossy<HomeReel.CreditGroup>]? }
+        var MediaContainer: MC
+    }
 
     func profile(tagKey: String) async throws -> PersonProfile {
         let r = try await fetch("library/people/\(tagKey)", as: Meta<PersonProfile>.self)
-        guard let p = r.MediaContainer.Metadata?.first else { throw PlexError.decoding("no such person") }
+        guard let p = r.items.first else { throw PlexError.decoding("no such person") }
         return p
     }
 
     func knownFor(tagKey: String) async throws -> [DiscoverTitle] {
-        try await fetch("library/people/\(tagKey)/person_known_for", as: Meta<DiscoverTitle>.self).MediaContainer.Metadata ?? []
+        try await fetch("library/people/\(tagKey)/person_known_for", as: Meta<DiscoverTitle>.self).items
     }
 
     /// Credit groups: Actor, Writer, Producer, Director, and so on.
     func credits(tagKey: String) async throws -> [CreditGroup] {
-        try await fetch("library/people/\(tagKey)/credits", as: Groups.self).MediaContainer.CreditGroup ?? []
+        try await fetch("library/people/\(tagKey)/credits", as: Groups.self).MediaContainer.CreditGroup?.compactMap(\.value) ?? []
     }
 }
 

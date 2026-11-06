@@ -5,14 +5,20 @@ Reads the token from ~/.config/homereel/plex-token (never from the repo).
 Writes the raw per-file table to ~/.config/homereel/inventory.json (private)
 and prints count-only summaries (safe to commit).
 """
-import json, sys, os, time, urllib.request, collections
+import collections
+import json
+import os
+import sys
+import time
+import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 
 if len(sys.argv) < 2:
     sys.exit("Usage: plex_inventory.py http://<server address>:32400")
 BASE = sys.argv[1]
 CFG = os.path.expanduser("~/.config/homereel")
-TOKEN = open(f"{CFG}/plex-token").read().strip()
+with open(f"{CFG}/plex-token") as f:
+    TOKEN = f.read().strip()
 
 def get(path):
     sep = "&" if "?" in path else "?"
@@ -23,7 +29,8 @@ def get(path):
             with urllib.request.urlopen(req, timeout=60) as r:
                 return json.load(r)["MediaContainer"]
         except Exception:
-            if attempt == 4: raise
+            if attempt == 4:
+                raise
             time.sleep(2 * (attempt + 1))
 
 def listing(section, typ):
@@ -59,28 +66,46 @@ def detail(item):
             })
     return rows
 
+def library_keys():
+    """The ids of every Movie and TV library. They differ from server to server."""
+    sections = get("/library/sections").get("Directory", [])
+    def keys(kind):
+        return [s["key"] for s in sections if s.get("type") == kind]
+    return keys("movie"), keys("show")
+
 def main():
-    items = listing(1, 1) + listing(2, 4)
+    movies, shows = library_keys()
+    items = [i for k in movies for i in listing(k, 1)] + [i for k in shows for i in listing(k, 4)]
     print(f"items: {len(items)}", file=sys.stderr)
     with ThreadPoolExecutor(3) as ex:
         rows = [r for rs in ex.map(detail, items) for r in rs]
-    json.dump(rows, open(f"{CFG}/inventory.json", "w"))
+    with open(f"{CFG}/inventory.json", "w") as f:
+        json.dump(rows, f)
     for kind in ("movie", "episode"):
         R = [r for r in rows if r["kind"] == kind]
         print(f"\n## {kind}s: {len(R)} files")
         def tally(name, key):
             c = collections.Counter(key(r) for r in R)
             print(f"\n{name}")
-            for k, n in c.most_common(): print(f"  {n:6d}  {k}")
+            for k, n in c.most_common():
+                print(f"  {n:6d}  {k}")
         tally("container", lambda r: r["container"])
         tally("video codec / profile / bit depth", lambda r: f'{r["video"]} {r["vprofile"]} {r["bitdepth"]}bit')
         tally("resolution", lambda r: r["res"])
         tally("HDR / Dolby Vision", lambda r: ("DV P%s (BL=%s EL=%s compat=%s)" % (r["dv_profile"], r["dv_bl"], r["dv_el"], r["dv_compat"])) if r["dv"] else ("HDR10/PQ" if r["color_trc"] == "smpte2084" else ("HLG" if r["color_trc"] == "arib-std-b67" else "SDR")))
-        c = collections.Counter(); c2 = collections.Counter()
+        c = collections.Counter()
+        c2 = collections.Counter()
         for r in R:
-            for a in {x[0] for x in r["audio"]}: c[a] += 1
-            for s in {x for x in r["subs"]}: c2[s] += 1
-        print("\naudio codecs (files containing)"); [print(f"  {n:6d}  {k}") for k, n in c.most_common()]
-        print("\nsubtitle formats (files containing)"); [print(f"  {n:6d}  {k}") for k, n in c2.most_common()]
+            for a in {x[0] for x in r["audio"]}:
+                c[a] += 1
+            for s in r["subs"]:
+                c2[s] += 1
+        print("\naudio codecs (files containing)")
+        for k, n in c.most_common():
+            print(f"  {n:6d}  {k}")
+        print("\nsubtitle formats (files containing)")
+        for k, n in c2.most_common():
+            print(f"  {n:6d}  {k}")
 
-main()
+if __name__ == "__main__":
+    main()

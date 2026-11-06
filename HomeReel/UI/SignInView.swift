@@ -9,6 +9,7 @@ struct SignInView: View {
     var body: some View {
         VStack(spacing: 40) {
             Text("HomeReel").font(.largeTitle.bold())
+            if let notice = app.signInNotice { Text(notice).font(.title3).foregroundStyle(.orange) }
             if case .linking(let code) = app.phase {
                 VStack(spacing: 20) {
                     Text("On your phone or computer, go to").font(.title3)

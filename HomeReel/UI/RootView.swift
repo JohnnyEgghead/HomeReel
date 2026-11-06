@@ -16,6 +16,13 @@ struct RootView: View {
                 MainTabView()
             }
         }
+        .overlay(alignment: .bottom) {
+            if let banner = app.banner {
+                Text(banner).font(.callout).padding(.horizontal, 30).padding(.vertical, 16)
+                    .background(.black.opacity(0.8), in: Capsule())
+                    .padding(.bottom, 60)
+            }
+        }
         .preferredColorScheme(.dark)
         .task { await app.start() }
     }
@@ -35,7 +42,7 @@ struct FailedView: View {
     }
 }
 
-/// Launch arguments for screenshots and tests: `-tab home|movies|shows|search|settings`, `-open <ratingKey>`, `-query text`.
+/// Launch arguments for screenshots and tests. docs/DESIGN.md lists them.
 enum LaunchOptions {
     static func value(_ name: String) -> String? {
         let a = ProcessInfo.processInfo.arguments

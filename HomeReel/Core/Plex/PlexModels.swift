@@ -23,8 +23,9 @@ struct PlexContainer: Decodable {
         size = try c.decodeIfPresent(Int.self, forKey: .size)
         totalSize = try c.decodeIfPresent(Int.self, forKey: .totalSize)
         offset = try c.decodeIfPresent(Int.self, forKey: .offset)
-        Metadata = try c.decodeIfPresent([PlexItem].self, forKey: .Metadata)
-        Hub = try c.decodeIfPresent([PlexHub].self, forKey: .Hub)
+        // One odd item should cost that item, not the whole page.
+        Metadata = try c.decodeIfPresent([Lossy<PlexItem>].self, forKey: .Metadata)?.compactMap(\.value)
+        Hub = try c.decodeIfPresent([Lossy<PlexHub>].self, forKey: .Hub)?.compactMap(\.value)
         // "Directory" means library sections on /library/sections, but a show's children list also uses
         // it for an "All episodes" entry that is not a section. Keep only what decodes as a section.
         Directory = try c.decodeIfPresent([Lossy<PlexSection>].self, forKey: .Directory)?.compactMap(\.value)
@@ -248,4 +249,14 @@ struct PlexHub: Decodable, Identifiable, Hashable {
 
     static func == (a: PlexHub, b: PlexHub) -> Bool { a.id == b.id }
     func hash(into h: inout Hasher) { h.combine(id) }
+
+    private enum CodingKeys: String, CodingKey { case hubIdentifier, title, type, Metadata }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        hubIdentifier = try c.decodeIfPresent(String.self, forKey: .hubIdentifier)
+        title = try c.decode(String.self, forKey: .title)
+        type = try c.decodeIfPresent(String.self, forKey: .type)
+        Metadata = try c.decodeIfPresent([Lossy<PlexItem>].self, forKey: .Metadata)?.compactMap(\.value)
+    }
 }

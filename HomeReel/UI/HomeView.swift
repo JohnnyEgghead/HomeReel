@@ -49,6 +49,8 @@ final class HomeModel: ObservableObject {
             recentMovies = app.movieLibraries.isEmpty ? [] : try await movies
             recentShows = app.showLibraries.isEmpty ? [] : try await shows
             loaded = true
+        } catch is CancellationError {
+            return
         } catch {
             self.error = error.localizedDescription
             loaded = true
@@ -129,15 +131,12 @@ struct HomeView: View {
             if let c = app.client {
                 PlayerView(item: p.item, client: c, startAt: p.startAt) { exit in
                     playing = nil
-                    Task {
-                        await app.loadDetailAndParents(p.item)
-                        await model.load(app: app)
-                    }
                     if case .episodeList(let last) = exit { openEpisodeList(last) }
                 }
             }
         }
         .task { await model.load(app: app) }
         .onAppear { if model.loaded { Task { await model.load(app: app) } } }   // coming back from a detail page
+        .onChange(of: app.playbackSaves) { _, _ in Task { await model.load(app: app) } }  // the player saved in the background
     }
 }

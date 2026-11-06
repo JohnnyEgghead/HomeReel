@@ -27,6 +27,17 @@ final class BraviaTests: XCTestCase {
         }
     }
 
+    func testVerifyingTheKeyWritesTheModeTheTVIsAlreadyOn() async throws {
+        answer(current: "dvDark")
+        var c = client()
+        c.settleDelay = .zero
+        let modes = try await c.pictureModes()
+        try await c.verifyKey(modes)
+        let write = StubURLProtocol.seen.first { Self.body($0)["method"] as? String == "setPictureQualitySettings" }
+        let settings = ((Self.body(try XCTUnwrap(write))["params"] as? [[String: Any]])?.first?["settings"] as? [[String: Any]])
+        XCTAssertEqual(settings?.first?["value"] as? String, "dvDark")
+    }
+
     private func client(psk: String? = "KEY") -> BraviaClient {
         var c = BraviaClient(host: "10.0.0.9", psk: psk, session: StubURLProtocol.session())
         c.settleDelay = .milliseconds(1)

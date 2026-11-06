@@ -58,6 +58,8 @@ final class PlayerModel: ObservableObject {
     /// The episode that follows this one, found in the background so it is ready when playback ends.
     @Published private(set) var nextEpisode: PlexItem?
     @Published private(set) var nextChecked = false
+    /// The look-up failed, so nobody knows whether there is a next episode.
+    @Published private(set) var nextLookupFailed = false
     @Published var panelOpen = false
     @Published var panelTab: PanelTab = .info
     let feed = SubtitleFeed()
@@ -70,6 +72,9 @@ final class PlayerModel: ObservableObject {
     private var reportTask: Task<Void, Never>?
     private var hideTask: Task<Void, Never>?
     private var finished = false
+    private var started = false
+    /// The wait between tries at saving a watched mark. Zero in tests.
+    var watchedRetryDelay: Duration = .seconds(2)
 
     /// Subtitle choices are remembered per show (episodes) or per movie.
     private var prefKey: String { item.grandparentRatingKey ?? item.ratingKey }
@@ -84,22 +89,53 @@ final class PlayerModel: ObservableObject {
 
     func loadNextEpisode() async {
         guard item.type == .episode else { nextChecked = true; return }
-        nextEpisode = try? await client.nextEpisode(after: item)
+        #if DEBUG
+        if simulatedLookupFailures > 0 {
+            simulatedLookupFailures -= 1
+            nextLookupFailed = true
+            nextChecked = true
+            return
+        }
+        #endif
+        do {
+            nextEpisode = try await client.nextEpisode(after: item)
+            nextLookupFailed = false
+        } catch {
+            nextLookupFailed = true
+        }
         nextChecked = true
     }
 
     #if DEBUG
+    private var simulatedLookupFailures = 0
+
     /// Developer check (`-showend 1`): jump straight to the end-of-episode screen without playing anything.
     func showEndForTesting() async {
+        // `-nextfail 1` fails the look-up and the automatic second try, so Try Again is the first to reach the server.
+        if LaunchOptions.value("-nextfail") != nil { simulatedLookupFailures = 2 }
         phase = .ended
         await loadNextEpisode()
     }
     #endif
 
     func start(from startAt: Double?) async {
-        guard let part = item.primaryPart else {
-            phase = .failed("This item has no playable file.")
-            return
+        guard !started else { return }
+        started = true
+        let part: PlexPart
+        if let known = item.primaryPart {
+            part = known
+        } else {
+            // Season lists carry no file details, so ask the server. A failure here is about the network, not the file.
+            do {
+                guard let fetched = try await client.metadata(item.ratingKey).primaryPart else {
+                    phase = .failed("This item has no playable file.")
+                    return
+                }
+                part = fetched
+            } catch {
+                phase = .failed(error.localizedDescription)
+                return
+            }
         }
         do {
             let engine = try AetherEngine()
@@ -130,18 +166,29 @@ final class PlayerModel: ObservableObject {
     }
 
     /// Call when the player screen goes away. Saves the position and marks watched when due.
-    func finish() async {
-        guard !finished else { return }
+    /// Returns a message for the viewer if the watched mark could not be saved.
+    @discardableResult
+    func finish() async -> String? {
+        guard !finished else { return nil }
         finished = true
         reportTask?.cancel()
         hideTask?.cancel()
         let t = time, d = duration > 0 ? duration : (item.durationSeconds ?? 0)
         engine?.stop()
-        if PlaybackPolicy.countsAsWatched(time: t, duration: d) || phase == .ended {
-            try? await client.setWatched(true, ratingKey: item.ratingKey)
-        } else {
-            await client.reportTimeline(item, state: .stopped, time: t, duration: d)
+        guard PlaybackPolicy.countsAsWatched(time: t, duration: d) || phase == .ended else {
+            if t > 0 { await client.reportTimeline(item, state: .stopped, time: t, duration: d) }   // nothing played: nothing to save
+            return nil
         }
+        for attempt in 1...PlaybackPolicy.watchedAttempts {
+            do {
+                try await client.setWatched(true, ratingKey: item.ratingKey)
+                return nil
+            } catch {
+                if attempt < PlaybackPolicy.watchedAttempts { try? await Task.sleep(for: watchedRetryDelay) }
+            }
+        }
+        await client.reportTimeline(item, state: .stopped, time: t, duration: d)
+        return "Could not mark \"\(item.title)\" as watched. Check the server, then mark it on its page."
     }
 
     // MARK: Remote actions
@@ -255,7 +302,7 @@ final class PlayerModel: ObservableObject {
         }
     }
 
-    /// Launch arguments for screenshots and checks: `-sub N`, `-panel info|subtitles|audio`.
+    /// Launch arguments for screenshots and checks: `-sub N`, `-panel info|subtitles|audio|picture`.
     private func applyDeveloperLaunchOptions() {
         guard let engine else { return }
         if let n = LaunchOptions.value("-sub").flatMap(Int.init), engine.subtitleTracks.indices.contains(n) {
@@ -293,7 +340,7 @@ final class PlayerModel: ObservableObject {
         engine.$videoRoute.receive(on: DispatchQueue.main).sink { [weak self] r in self?.routeText = "\(r)" }.store(in: &bag)
         engine.$videoFormat.receive(on: DispatchQueue.main).sink { [weak self] f in self?.formatText = "\(f)" }.store(in: &bag)
         engine.$errorInfo.receive(on: DispatchQueue.main).sink { [weak self] e in
-            if let e { self?.phase = .failed("\(e)"); debugLog("engine error \(e)") }
+            if let e { self?.phase = .failed(e.message); debugLog("engine error \(e)") }
         }.store(in: &bag)
         engine.$subtitleTracks.receive(on: DispatchQueue.main).sink { [weak self] t in
             self?.subtitleTracks = t.map(TrackDescriptor.init)
@@ -317,8 +364,10 @@ final class PlayerModel: ObservableObject {
         reportTask = Task { [weak self] in
             while !Task.isCancelled {
                 guard let self else { return }
-                let state: PlexClient.TimelineState = self.phase == .paused ? .paused : .playing
-                await self.client.reportTimeline(self.item, state: state, time: self.time, duration: self.duration)
+                // Only while something is on screen, so Plex never shows a session that is not really playing.
+                if self.phase == .playing || self.phase == .paused {
+                    await self.client.reportTimeline(self.item, state: self.phase == .paused ? .paused : .playing, time: self.time, duration: self.duration)
+                }
                 try? await Task.sleep(for: .seconds(PlaybackPolicy.reportInterval))
             }
         }

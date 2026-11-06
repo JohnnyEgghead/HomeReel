@@ -106,6 +106,11 @@ struct BraviaClient: Sendable {
                             choices: candidates.map { PictureChoice(value: $0) })
     }
 
+    /// Proves the key works. Reading needs no key, so this writes the mode the TV is already on, which changes nothing.
+    func verifyKey(_ modes: PictureModes) async throws {
+        _ = try await setPictureMode(modes.current)
+    }
+
     /// Sets the mode, then asks the TV what it is on. Throws if the TV did not change.
     func setPictureMode(_ value: String) async throws -> PictureModes {
         guard psk != nil else { throw BraviaError.needsKey }

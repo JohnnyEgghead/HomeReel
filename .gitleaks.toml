@@ -3,8 +3,8 @@
 useDefault = true
 
 [[allowlists]]
-description = "Plex's public database ids (24 hex characters) inside saved server responses used as test data"
-paths = [
-  '''HomeReel/Fixtures/.*\.json''',
-  '''HomeReelTests/.*''',
+description = "Made-up Plex database ids (24 hex characters) in test data. Allows that exact shape, not whole folders, so a real token there is still found."
+regexTarget = "secret"
+regexes = [
+  '''^[0-9a-f]{24}$''',
 ]

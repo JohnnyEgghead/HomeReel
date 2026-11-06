@@ -69,7 +69,15 @@ struct SettingsView: View {
         tvStatus = "Asking the TV..."
         do {
             let modes = try await app.tv.pictureModes()
-            tvStatus = "Connected. Picture mode: \(modes.currentLabel)." + (tvKey.isEmpty ? " No key yet, so it can be read but not changed." : "")
+            let current = "Connected. Picture mode: \(modes.currentLabel)."
+            if tvKey.isEmpty {
+                tvStatus = current + " No key yet, so it can be read but not changed."
+            } else if modes.isAvailable {
+                try await app.tv.verifyKey(modes)
+                tvStatus = current + " Key accepted."
+            } else {
+                tvStatus = current + " The key can be tested while a video is playing."
+            }
         } catch { tvStatus = error.localizedDescription }
     }
 }

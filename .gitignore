@@ -7,3 +7,4 @@ DerivedData/
 secrets/
 *.token
 Config/Local.xcconfig
+__pycache__/

@@ -27,7 +27,7 @@ struct SearchView: View {
         .searchable(text: $text, prompt: "Movies and TV Shows")
         .task(id: text) {
             let q = text.trimmingCharacters(in: .whitespaces)
-            guard q.count >= 2 else { searched = false; movies = []; shows = []; return }
+            guard q.count >= 2 else { searched = false; error = nil; movies = []; shows = []; return }
             try? await Task.sleep(for: .milliseconds(350))      // wait for typing to pause
             guard !Task.isCancelled else { return }
             await runSearch(q)

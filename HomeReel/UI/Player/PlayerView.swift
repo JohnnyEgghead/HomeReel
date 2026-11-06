@@ -39,6 +39,10 @@ struct PlayerSession: View {
     let startAt: Double?
     let onNext: (PlexItem) -> Void
     let onClose: (PlayerExit) -> Void
+    /// Set once the viewer leaves, so more presses of Menu do nothing.
+    @State private var closing = false
+    /// Set while the next episode's details load.
+    @State private var movingOn = false
 
     init(item: PlexItem, client: PlexClient, startAt: Double?, onNext: @escaping (PlexItem) -> Void, onClose: @escaping (PlayerExit) -> Void) {
         _model = StateObject(wrappedValue: PlayerModel(item: item, client: client))
@@ -74,7 +78,7 @@ struct PlayerSession: View {
 
             SubtitleOverlay(feed: model.feed, liftForControls: model.overlayVisible)
 
-            if model.isBuffering || model.phase == .loading { ProgressView().scaleEffect(2) }
+            if model.isBuffering || model.phase == .loading || movingOn { ProgressView().scaleEffect(2) }
             if case .failed(let msg) = model.phase { FailureOverlay(message: msg, onClose: { close(.back) }) }
             if model.overlayVisible, model.phase != .loading, !model.panelOpen, !showsEnd { TransportOverlay(model: model) }
             if model.panelOpen { PlayerPanel(model: model) }
@@ -96,6 +100,7 @@ struct PlayerSession: View {
             guard p == .ended else { return }
             model.closePanel()
             if model.item.type != .episode { close(.back) }     // a movie returns to its page; an episode offers what is next
+            else if model.nextLookupFailed { Task { await model.loadNextEpisode() } }   // the first try was at the start
         }
         .onAppear { UIApplication.shared.isIdleTimerDisabled = true }
         .onDisappear { UIApplication.shared.isIdleTimerDisabled = false }
@@ -104,24 +109,26 @@ struct PlayerSession: View {
     private var isFailed: Bool { if case .failed = model.phase { return true } else { return false } }
     private var showsEnd: Bool { model.phase == .ended && model.item.type == .episode }
 
+    /// Closes at once and saves afterward, so a slow or missing network never holds the screen open.
     private func close(_ exit: PlayerExit) {
-        Task {
-            await model.finish()
-            await app.loadDetailAndParents(model.item)
-            onClose(exit)
-        }
+        guard !closing else { return }
+        closing = true
+        onClose(exit)
+        let model = self.model, app = self.app
+        Task { await app.finishPlayback(model) }
     }
 
     /// Saves this episode as watched, loads the next one's full details (the season list has no file info), and plays it.
     private func playNext(_ next: PlexItem) {
+        guard !closing, !movingOn else { return }
+        movingOn = true
+        let model = self.model, app = self.app
+        Task { await app.finishPlayback(model) }
         Task {
-            await model.finish()
-            await app.loadDetailAndParents(model.item)
-            guard let full = try? await model.client.metadata(next.ratingKey) else {
-                onClose(.episodeList(model.item))
-                return
-            }
-            onNext(full)
+            let full = try? await model.client.metadata(next.ratingKey)
+            movingOn = false
+            guard !closing else { return }
+            if let full { onNext(full) } else { close(.episodeList(model.item)) }
         }
     }
 }
@@ -132,7 +139,7 @@ struct EpisodeEndedOverlay: View {
     @ObservedObject var model: PlayerModel
     let onNext: (PlexItem) -> Void
     let onList: () -> Void
-    private enum Choice { case next, list }
+    private enum Choice { case next, list, retry }
     @FocusState private var focus: Choice?
 
     var body: some View {
@@ -158,6 +165,14 @@ struct EpisodeEndedOverlay: View {
                         Button { onList() } label: { Label("Episode List", systemImage: "list.bullet") }
                             .focused($focus, equals: .list)
                     }
+                } else if model.nextLookupFailed {
+                    Text("Could not find the next episode").font(.system(size: 40, weight: .bold))
+                    HStack(spacing: 40) {
+                        Button { Task { await model.loadNextEpisode() } } label: { Label("Try Again", systemImage: "arrow.clockwise") }
+                            .focused($focus, equals: .retry)
+                        Button { onList() } label: { Label("Episode List", systemImage: "list.bullet") }
+                            .focused($focus, equals: .list)
+                    }
                 } else if model.nextChecked {
                     Text("That was the last episode").font(.system(size: 40, weight: .bold))
                     Button { onList() } label: { Label("Episode List", systemImage: "list.bullet") }
@@ -168,9 +183,9 @@ struct EpisodeEndedOverlay: View {
             }
             .padding(80)
         }
-        .onAppear { focus = model.nextEpisode != nil ? .next : .list }
+        .onAppear { focus = model.nextEpisode != nil ? .next : (model.nextLookupFailed ? .retry : .list) }
         .onChange(of: model.nextEpisode) { _, n in if n != nil { focus = .next } }
-        .onChange(of: model.nextChecked) { _, _ in if model.nextEpisode == nil { focus = .list } }
+        .onChange(of: model.nextChecked) { _, _ in if model.nextEpisode == nil { focus = model.nextLookupFailed ? .retry : .list } }
         .onExitCommand { onList() }
     }
 }

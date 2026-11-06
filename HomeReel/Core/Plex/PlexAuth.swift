@@ -19,6 +19,8 @@ struct PlexResource: Decodable, Sendable {
     var name: String
     var provides: String
     var owned: Bool?
+    /// The server's own id, which its /identity page also reports.
+    var clientIdentifier: String?
     var connections: [PlexResourceConnection]
     var isServer: Bool { provides.split(separator: ",").contains("server") }
 }
@@ -40,7 +42,12 @@ struct PlexAuth: Sendable {
     }
 
     private func fetch<T: Decodable>(_ req: URLRequest, as: T.Type) async throws -> T {
-        let (data, resp) = try await session.data(for: req)
+        let data: Data, resp: URLResponse
+        do { (data, resp) = try await session.data(for: req) }
+        catch {
+            if error.isCancellation { throw CancellationError() }
+            throw error
+        }
         guard let http = resp as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
             throw PlexError.badResponse((resp as? HTTPURLResponse)?.statusCode ?? 0)
         }
@@ -69,26 +76,36 @@ struct PlexAuth: Sendable {
 /// Picks the address to use: local first, then any direct (non-relay) address.
 enum PlexConnectionPicker {
     /// For a local server, plex.tv usually lists only a "*.plex.direct" https name. Some home routers
-    /// refuse to resolve those names (DNS rebinding protection), so the plain local IP is tried first.
+    /// refuse to resolve those names (DNS rebinding protection), which fails in a fraction of a second, so
+    /// that name is tried first and the plain local IP comes right after it. The token is account-wide,
+    /// so it should only cross the network in the clear when https is not available.
     static func candidates(for server: PlexResource) -> [URL] {
         let direct = server.connections.filter { !$0.relay }
         var out: [URL] = []
         for c in direct.filter(\.local) + direct.filter({ !$0.local }) {
-            if c.local, let a = c.address, let p = c.port, let ip = URL(string: "http://\(a):\(p)") { out.append(ip) }
             if let u = URL(string: c.uri) { out.append(u) }
+            if c.local, let a = c.address, let p = c.port, let ip = URL(string: "http://\(a):\(p)") { out.append(ip) }
         }
         var seen = Set<URL>()
         return out.filter { seen.insert($0).inserted }
     }
 
-    /// First address that answers /identity within a few seconds.
-    static func firstReachable(_ urls: [URL], session: URLSession = .shared) async -> URL? {
+    /// First address that answers /identity within a few seconds. With `machineID`, it must also be that server:
+    /// a local address from plex.tv can belong to some other device on the network you are on, and the token
+    /// goes to whatever address is picked here. The check itself sends no token.
+    static func firstReachable(_ urls: [URL], machineID: String? = nil, session: URLSession = .shared) async -> URL? {
         for u in urls {
             var r = URLRequest(url: u.appendingPathComponent("identity"), timeoutInterval: 3)
             r.setValue("application/json", forHTTPHeaderField: "Accept")
-            if let (_, resp) = try? await session.data(for: r),
-               (resp as? HTTPURLResponse)?.statusCode == 200 { return u }
+            guard let (data, resp) = try? await session.data(for: r), (resp as? HTTPURLResponse)?.statusCode == 200 else { continue }
+            if let machineID, reportedID(in: data) != machineID { continue }
+            return u
         }
         return nil
+    }
+
+    private static func reportedID(in identity: Data) -> String? {
+        struct Reply: Decodable { struct MC: Decodable { var machineIdentifier: String? }; var MediaContainer: MC }
+        return (try? JSONDecoder().decode(Reply.self, from: identity))?.MediaContainer.machineIdentifier
     }
 }

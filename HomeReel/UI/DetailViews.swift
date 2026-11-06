@@ -263,6 +263,8 @@ extension ShowDetailView {
             item = try await full
             seasons = try await kids
             error = nil
+        } catch is CancellationError {
+            return
         } catch { self.error = error.localizedDescription }
     }
 }
@@ -301,7 +303,9 @@ struct SeasonView: View {
 
     private func loadEpisodes() async {
         guard let c = app.client else { return }
-        do { episodes = try await c.children(season.ratingKey); error = nil } catch { self.error = error.localizedDescription }
+        do { episodes = try await c.children(season.ratingKey); error = nil }
+        catch is CancellationError { return }
+        catch { self.error = error.localizedDescription }
         loaded = true
         // Scores for the whole season in one request. The list already shows what it has; this fills in the rest.
         if let full = try? await c.metadata(keys: episodes.map(\.ratingKey)) {

@@ -1,7 +1,7 @@
 #if DEBUG
 import Foundation
 
-/// A pretend Plex server for UI tests and screenshots: `-fixture normal|empty|offline|unauthorized|libraryerror|signedout`.
+/// A pretend Plex server for UI tests and screenshots: `-fixture <mode>`. docs/DESIGN.md lists the modes.
 /// It answers from the saved JSON in HomeReel/Fixtures, so no network or real server is needed.
 final class FixtureURLProtocol: URLProtocol {
     nonisolated(unsafe) static var mode = "normal"
@@ -93,6 +93,7 @@ final class FixtureURLProtocol: URLProtocol {
         if mode == "unauthorized" { return (401, Data(), "") }
         if path == "/identity" { return (200, Data("{}".utf8), "application/json") }
         if path.hasPrefix("/photo/") { return (200, placeholderPNG, "image/png") }
+        if mode == "watcherror", path.hasSuffix("/scrobble") { return (500, Data(), "") }
         if path.hasPrefix("/:/") {
             // Watched or unwatched marks both take a title off Continue Watching, as the real server does.
             if path.hasSuffix("scrobble"), let key = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.first(where: { $0.name == "key" })?.value {

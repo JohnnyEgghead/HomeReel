@@ -41,7 +41,7 @@ final class AuthTests: XCTestCase {
                        ["http://10.0.0.5:32400", "https://remote.example:443"])
     }
 
-    func testLocalServerTriesPlainIPBeforePlexDirectName() throws {
+    func testLocalServerTriesPlexDirectNameBeforePlainIP() throws {
         let json = #"""
         [{"name":"NAS","provides":"server","owned":true,"connections":[
           {"protocol":"https","address":"10.0.0.5","port":32400,
@@ -49,7 +49,7 @@ final class AuthTests: XCTestCase {
         """#
         let servers = try JSONDecoder().decode([PlexResource].self, from: Data(json.utf8))
         XCTAssertEqual(PlexConnectionPicker.candidates(for: servers[0]).map(\.absoluteString),
-                       ["http://10.0.0.5:32400", "https://10-0-0-5.abc.plex.direct:32400"])
+                       ["https://10-0-0-5.abc.plex.direct:32400", "http://10.0.0.5:32400"], "https first, plain address as the fallback")
     }
 
     func testFirstReachableSkipsDeadAddresses() async {

@@ -34,6 +34,7 @@ final class AppFlowTests: XCTestCase {
     func testRejectedLoginReturnsToSignIn() {
         let app = launch("unauthorized")
         wait(app.buttons["Sign In with a Code"])
+        wait(text(app, containing: "did not accept"), 5, "the sign-in screen should say why it came back")
     }
 
     func testOfflineShowsRetryAndSignOut() {
@@ -209,6 +210,28 @@ final class AppFlowTests: XCTestCase {
         wait(app.buttons["Play Next Episode"], 20)
         XCUIRemote.shared.press(.select)
         wait(app.staticTexts["Third Door"], 20, "after the next episode, the screen offers the one after it")
+    }
+
+    func testFailedNextEpisodeLookupIsNotCalledTheLastEpisode() {
+        let app = launch("normal", ["-open", "1003", "-autoepisode", "1", "-autoplay", "1", "-showend", "1", "-nextfail", "1"])
+        wait(app.staticTexts["Could not find the next episode"], 20)
+        XCTAssertFalse(app.staticTexts["That was the last episode"].exists)
+        wait(app.buttons["Try Again"])
+        XCUIRemote.shared.press(.select)
+        wait(app.staticTexts["Up Next"], 20, "a retry that works shows the next episode")
+    }
+
+    func testAWatchedMarkThatCannotBeSavedSaysSo() {
+        let app = launch("watcherror", ["-open", "1003", "-autoepisode", "1", "-autoplay", "1", "-showend", "1"])
+        wait(app.buttons["Play Next Episode"], 20)
+        XCUIRemote.shared.press(.menu)
+        wait(app.staticTexts["Season 1"], 10, "leaving never waits on the network")
+        wait(text(app, containing: "as watched"), 20, "after the tries run out, a message says what happened")
+    }
+
+    func testPersonPageSaysWhenItCouldNotReadYourLibrary() {
+        let app = launch("libraryerror", ["-open", "8217", "-person", "1"])
+        wait(text(app, containing: "Could not read your library"), 20)
     }
 
     func testMenuAfterAnEpisodeEndsShowsTheEpisodeList() {

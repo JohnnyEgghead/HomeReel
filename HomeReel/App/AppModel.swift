@@ -28,10 +28,18 @@ final class AppModel: ObservableObject {
     /// rebuilt by navigation never loses what it fetched.
     @Published private(set) var details: [String: PlexItem] = [:]
 
+    /// Why the sign-in screen is showing, when something sent the viewer back to it.
+    @Published private(set) var signInNotice: String?
+    /// A short message over every screen for a few seconds, such as a watched mark that could not be saved.
+    @Published private(set) var banner: String?
+    /// Goes up each time the player finishes saving, so lists know to reload.
+    @Published private(set) var playbackSaves = 0
+
     private let secrets: SecretStore
     private let session: URLSession
     private let images: ImageStore
     private var linkTask: Task<Void, Never>?
+    private var bannerTask: Task<Void, Never>?
 
     enum Key {
         static let token = "plexToken"
@@ -81,6 +89,7 @@ final class AppModel: ObservableObject {
 
     func start() async {
         images.removeOldCacheOnce()
+        #if DEBUG
         // Developer shortcut: seed the Keychain from launch environment variables (simulator and devicectl).
         let env = ProcessInfo.processInfo.environment
         if let t = env["HR_TOKEN"], let s = env["HR_SERVER"] {
@@ -90,6 +99,7 @@ final class AppModel: ObservableObject {
         if let k = env["HR_TV_PSK"] { secrets.set(k, for: Key.tvKey) }
         if let h = env["HR_TV_HOST"] { secrets.set(h, for: Key.tvHost) }
         if let e = env["HR_TV_ENABLED"] { tvEnabled = e == "1" }
+        #endif
         guard secrets.get(Key.token) != nil, secrets.get(Key.server) != nil else {
             phase = .signedOut
             return
@@ -113,9 +123,22 @@ final class AppModel: ObservableObject {
             phase = .ready
         } catch PlexError.unauthorized {
             secrets.remove(Key.token)
+            signInNotice = PlexError.unauthorized.errorDescription
+            phase = .signedOut
+        } catch is CancellationError {
             phase = .signedOut
         } catch {
             phase = .failed(error.localizedDescription)
+        }
+    }
+
+    func show(banner text: String) {
+        banner = text
+        bannerTask?.cancel()
+        bannerTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(8))
+            guard !Task.isCancelled else { return }
+            self?.banner = nil
         }
     }
 
@@ -124,23 +147,35 @@ final class AppModel: ObservableObject {
     private var catalog: (date: Date, items: [PlexItem])?
 
     /// Every movie and show you own, kept for ten minutes. Person pages match online credits against it.
-    func libraryCatalog() async -> [PlexItem] {
+    /// Nil when the server could not be read and there is no earlier copy: an unknown library, not an empty one.
+    func libraryCatalog() async -> [PlexItem]? {
         if let catalog, Date().timeIntervalSince(catalog.date) < 600 { return catalog.items }
-        guard let c = client, let items = try? await c.allTitles(in: movieLibraries + showLibraries) else { return catalog?.items ?? [] }
+        guard let c = client, let items = try? await c.allTitles(in: movieLibraries + showLibraries) else { return catalog?.items }
         catalog = (Date(), items)
         return items
     }
 
     // MARK: Details
 
-    /// The freshest copy of an item: the full details if we have loaded them, else what the list gave us.
-    /// Posters read this so a watched mark made on a detail page shows on every list.
-    func current(_ item: PlexItem) -> PlexItem { details[item.ratingKey] ?? item }
+    /// The freshest copy of an item. Posters read this so a watched mark made on a detail page shows on every list.
+    /// The full details usually win, unless the list saw a later viewing, such as one on another device.
+    func current(_ item: PlexItem) -> PlexItem {
+        guard let full = details[item.ratingKey] else { return item }
+        return (item.lastViewedAt ?? 0) > (full.lastViewedAt ?? 0) ? item : full
+    }
 
     /// After an episode changes, its season and show change too (unwatched counts), so reload those as well.
     func loadDetailAndParents(_ item: PlexItem) async {
         await loadDetail(item.ratingKey)
         for key in [item.parentRatingKey, item.grandparentRatingKey].compactMap({ $0 }) { await loadDetail(key) }
+    }
+
+    /// Saves what the player needs saved, then refreshes what changed. The screen has already closed by now,
+    /// so a slow or missing network never holds it open.
+    func finishPlayback(_ model: PlayerModel) async {
+        if let problem = await model.finish() { show(banner: problem) }
+        await loadDetailAndParents(model.item)
+        playbackSaves += 1
     }
 
     func loadDetail(_ ratingKey: String) async {
@@ -155,8 +190,19 @@ final class AppModel: ObservableObject {
 
     // MARK: Sign in with a code (plex.tv/link)
 
+    /// Keeps the sign-in. If this Apple TV refuses, says so here, because the next launch would look signed out.
+    private func saveSignIn(token: String, server: String) -> Bool {
+        guard secrets.set(token, for: Key.token), secrets.set(server, for: Key.server) else {
+            secrets.remove(Key.token)
+            phase = .failed("Could not save your sign-in on this Apple TV.")
+            return false
+        }
+        return true
+    }
+
     func signInWithCode() {
         linkTask?.cancel()
+        signInNotice = nil
         linkTask = Task {
             let auth = PlexAuth(identity: identity, session: session)
             do {
@@ -172,18 +218,18 @@ final class AppModel: ObservableObject {
                     if !Task.isCancelled { phase = .failed("The code expired. Try again.") }
                     return
                 }
+                try Task.checkCancellation()
                 phase = .connecting
                 let servers = try await auth.servers(token: token)
                 guard let server = servers.first(where: { $0.owned == true }) ?? servers.first else {
                     phase = .failed("No Plex server found on this account.")
                     return
                 }
-                guard let url = await PlexConnectionPicker.firstReachable(PlexConnectionPicker.candidates(for: server), session: session) else {
+                guard let url = await PlexConnectionPicker.firstReachable(PlexConnectionPicker.candidates(for: server), machineID: server.clientIdentifier, session: session) else {
                     phase = .failed("Found \(server.name) but could not reach it from this network. You can also sign in with the server address and token.")
                     return
                 }
-                secrets.set(token, for: Key.token)
-                secrets.set(url.absoluteString, for: Key.server)
+                guard saveSignIn(token: token, server: url.absoluteString) else { return }
                 secrets.set(server.name, for: Key.serverName)
                 await connect()
             } catch is CancellationError {
@@ -195,13 +241,20 @@ final class AppModel: ObservableObject {
 
     /// Fallback: type the server address and a token.
     func signInManually(address: String, token: String) async {
-        var a = address.trimmingCharacters(in: .whitespaces)
-        if !a.contains("://") { a = "http://" + a }
-        if URL(string: a)?.port == nil, let u = URL(string: a), u.scheme == "http" { a += ":32400" }
-        secrets.set(token.trimmingCharacters(in: .whitespaces), for: Key.token)
-        secrets.set(a, for: Key.server)
+        signInNotice = nil
+        guard saveSignIn(token: token.trimmingCharacters(in: .whitespacesAndNewlines), server: Self.serverAddress(from: address)) else { return }
         secrets.remove(Key.serverName)
         await connect()
+    }
+
+    /// What was typed as a server address, made complete: a scheme, and Plex's port for plain http.
+    static func serverAddress(from typed: String) -> String {
+        var a = typed.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !a.contains("://") { a = "http://" + a }
+        guard var c = URLComponents(string: a), c.host?.isEmpty == false else { return a }
+        if c.scheme == "http", c.port == nil { c.port = 32400 }
+        c.path = ""
+        return c.string ?? a
     }
 
     func cancelLinking() {
@@ -216,6 +269,8 @@ final class AppModel: ObservableObject {
         secrets.remove(Key.serverName)
         images.clear()
         client = nil
+        catalog = nil
+        serverName = ""
         details = [:]
         movieLibraries = []
         showLibraries = []

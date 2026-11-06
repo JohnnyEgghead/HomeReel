@@ -20,6 +20,8 @@ final class LibraryModel: ObservableObject {
     private var client: PlexClient?
     private var section: PlexSection?
     private let pageSize = 60
+    /// Where the next page starts on the server. Not `items.count`: an odd item can be skipped when decoding.
+    private var nextStart = 0
 
     func configure(client: PlexClient?, section: PlexSection?) async {
         guard self.section?.key != section?.key || items.isEmpty else { return }
@@ -31,18 +33,22 @@ final class LibraryModel: ObservableObject {
     func reload() async {
         items = []
         total = 0
+        nextStart = 0
         await loadMore()
     }
 
     func loadMore() async {
-        guard let client, let section, !loading, items.isEmpty || items.count < total else { return }
+        guard let client, let section, !loading, items.isEmpty || nextStart < total else { return }
         loading = true
         defer { loading = false }
         do {
-            let page = try await client.items(section: section, sort: sort, unwatchedOnly: unwatchedOnly, start: items.count, size: pageSize)
+            let page = try await client.items(section: section, sort: sort, unwatchedOnly: unwatchedOnly, start: nextStart, size: pageSize)
             items += page.items
             total = page.total
+            nextStart += pageSize
             error = nil
+        } catch is CancellationError {
+            return
         } catch {
             self.error = error.localizedDescription
         }
@@ -164,6 +170,13 @@ struct LibraryView: View {
                     .scrollTargetLayout()
                     .padding(.leading, 80)
                     if model.loading { ProgressView().frame(maxWidth: .infinity) }
+                    if let error = model.error {
+                        HStack(spacing: 30) {
+                            Text("Could not load more: \(error)").font(.callout).foregroundStyle(.orange)
+                            Button("Try Again") { Task { await model.loadMore() } }
+                        }
+                        .padding(.horizontal, 80)
+                    }
                 }
             }
         }

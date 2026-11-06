@@ -17,6 +17,9 @@ enum PlaybackPolicy {
         duration > 0 && time / duration >= watchedFraction
     }
 
+    /// How many times to try saving a watched mark before telling the viewer it failed.
+    static let watchedAttempts = 3
+
     /// Seconds a left or right press on the remote jumps.
     static let skipSeconds = 10.0
 

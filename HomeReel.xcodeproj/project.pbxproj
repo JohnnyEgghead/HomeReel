@@ -59,6 +59,7 @@
 		C7CFD5D06166E6B3C438D0B1 /* TrackLabels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CB11ABDA4F7F58D71412FA5 /* TrackLabels.swift */; };
 		CB4C5426D197873EB044BCA6 /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8585314B0EA9F5E516ABF6EE /* Formatting.swift */; };
 		D10F52152AF4D4F029BD177B /* AuthAndAppModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DAB306F6BC325AB4C732857 /* AuthAndAppModelTests.swift */; };
+		D65FC98DB9DA12E0DE205085 /* FailurePathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833C42F273817DE9B437F9DF /* FailurePathTests.swift */; };
 		DA51580211B32B84537E7522 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32A012C98CCBE7E37A904F72 /* AppModel.swift */; };
 		DC469739FD16952715645F30 /* continue.json in Resources */ = {isa = PBXBuildFile; fileRef = DD3319061A1CA2B0CBC71318 /* continue.json */; };
 		DF4A2CAC254F3697125F25BC /* SubtitleOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = D45022BAA44216DAE38CC5B1 /* SubtitleOverlay.swift */; };
@@ -116,6 +117,7 @@
 		6E63E838BDAD6A4EE9E1A12C /* person_knownfor.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = person_knownfor.json; sourceTree = "<group>"; };
 		70A88467AD9EBF5181B1D14A /* PlayerPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerPanel.swift; sourceTree = "<group>"; };
 		7ADB6942E33FF5D2C74C3C4D /* ExternalSubtitles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalSubtitles.swift; sourceTree = "<group>"; };
+		833C42F273817DE9B437F9DF /* FailurePathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FailurePathTests.swift; sourceTree = "<group>"; };
 		84F0141DB1936EABAD71E728 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		8541402651DC3B6A8B26E7F0 /* PeopleAndRatingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleAndRatingsTests.swift; sourceTree = "<group>"; };
 		8585314B0EA9F5E516ABF6EE /* Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatting.swift; sourceTree = "<group>"; };
@@ -310,6 +312,7 @@
 			children = (
 				5DAB306F6BC325AB4C732857 /* AuthAndAppModelTests.swift */,
 				A7F4D9D03A99968166566089 /* BraviaTests.swift */,
+				833C42F273817DE9B437F9DF /* FailurePathTests.swift */,
 				6416B2AA956011FFD99787C3 /* FormattingTests.swift */,
 				865296836AF0E96ECD934E29 /* HomeScreenTests.swift */,
 				E1F5C48B0477CC301315DD47 /* LibraryScanTests.swift */,
@@ -503,6 +506,7 @@
 			files = (
 				D10F52152AF4D4F029BD177B /* AuthAndAppModelTests.swift in Sources */,
 				165BBC0B8D0CB9BA92D4F13A /* BraviaTests.swift in Sources */,
+				D65FC98DB9DA12E0DE205085 /* FailurePathTests.swift in Sources */,
 				134D5B470A664D7785C0D5FD /* FormattingTests.swift in Sources */,
 				20CFE3CCC256F14552139138 /* HomeScreenTests.swift in Sources */,
 				EAAF00681BFFC42909747F08 /* LibraryScanTests.swift in Sources */,
@@ -579,7 +583,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 0.1;
+				MARKETING_VERSION = 0.1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -612,6 +616,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				EXCLUDED_SOURCE_FILE_NAMES = "Fixtures/*";
 				INFOPLIST_FILE = HomeReel/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HomeReel;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -695,7 +700,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 0.1;
+				MARKETING_VERSION = 0.1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;

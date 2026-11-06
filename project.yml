@@ -10,7 +10,7 @@ configFiles:
 settings:
   base:
     SWIFT_VERSION: "6.0"
-    MARKETING_VERSION: "0.1"
+    MARKETING_VERSION: "0.1.0"
     CURRENT_PROJECT_VERSION: "1"
     GENERATE_INFOPLIST_FILE: YES
     CODE_SIGN_STYLE: Automatic
@@ -30,6 +30,8 @@ targets:
     info:
       path: HomeReel/Info.plist
       properties:
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         NSLocalNetworkUsageDescription: HomeReel connects to your media server, and to your TV to change its picture mode, on your home network.
         NSAppTransportSecurity:
           NSAllowsLocalNetworking: true
@@ -38,6 +40,9 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.johnloring.homereel
         INFOPLIST_KEY_CFBundleDisplayName: HomeReel
         ASSETCATALOG_COMPILER_APPICON_NAME: "App Icon & Top Shelf Image"
+      configs:
+        Release:
+          EXCLUDED_SOURCE_FILE_NAMES: "Fixtures/*"
   HomeReelTests:
     type: bundle.unit-test
     platform: tvOS

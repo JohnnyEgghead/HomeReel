@@ -16,6 +16,12 @@ enum PlexError: Error, Equatable, LocalizedError {
     }
 }
 
+extension Error {
+    /// True for a cancelled task, however it surfaced. URLSession reports one as `URLError(.cancelled)`,
+    /// not `CancellationError`, so a plain `catch is CancellationError` misses it.
+    var isCancellation: Bool { self is CancellationError || (self as? URLError)?.code == .cancelled }
+}
+
 /// Who we are to Plex. The client ID is made once per install and kept.
 struct PlexIdentity: Sendable {
     var clientID: String
@@ -73,7 +79,7 @@ struct PlexPage {
     var total: Int
 }
 
-/// Talks to one Plex Media Server on the local network. Always asks for original files:
+/// Talks to one Plex Media Server. Always asks for original files:
 /// there is no transcode call anywhere in this type except the image resizer.
 struct PlexClient: Sendable {
     let baseURL: URL
@@ -91,10 +97,10 @@ struct PlexClient: Sendable {
     // MARK: Request plumbing
 
     func url(_ path: String, _ query: [URLQueryItem] = []) -> URL {
-        var c = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)!
-        c.path = path
+        guard var c = URLComponents(url: baseURL, resolvingAgainstBaseURL: false) else { return baseURL }
+        c.path = path.hasPrefix("/") ? path : "/" + path      // paths come from the server, and a bad one must not crash
         c.queryItems = query.isEmpty ? nil : query
-        return c.url!
+        return c.url ?? baseURL
     }
 
     func request(_ path: String, _ query: [URLQueryItem] = [], method: String = "GET") -> URLRequest {
@@ -108,7 +114,10 @@ struct PlexClient: Sendable {
     func send(_ req: URLRequest) async throws -> Data {
         let data: Data, resp: URLResponse
         do { (data, resp) = try await session.data(for: req) }
-        catch { throw PlexError.unreachable((error as? URLError)?.localizedDescription ?? "\(error)") }
+        catch {
+            if error.isCancellation { throw CancellationError() }
+            throw PlexError.unreachable((error as? URLError)?.localizedDescription ?? "\(error)")
+        }
         guard let http = resp as? HTTPURLResponse else { throw PlexError.badResponse(0) }
         if http.statusCode == 401 { throw PlexError.unauthorized }
         guard (200..<300).contains(http.statusCode) else { throw PlexError.badResponse(http.statusCode) }
@@ -163,10 +172,11 @@ struct PlexClient: Sendable {
         for section in sections {
             var start = 0
             while true {
-                let page = try await items(section: section, sort: .title, unwatchedOnly: false, start: start, size: size).items
-                out += page
-                if page.count < size { break }
+                // Follow the server's own count: a page can come back shorter when an odd item is skipped.
+                let page = try await items(section: section, sort: .title, unwatchedOnly: false, start: start, size: size)
+                out += page.items
                 start += size
+                if start >= page.total { break }
             }
         }
         return out

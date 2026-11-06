@@ -10,6 +10,8 @@ final class PersonModel: ObservableObject {
     @Published private(set) var library: [PlexItem] = []
     @Published private(set) var onlineError: String?
     @Published private(set) var loaded = false
+    /// Your server could not be read, so this page cannot say what you own.
+    @Published private(set) var libraryUnknown = false
 
     /// Everything you own, by the id Plex uses on both sides ("plex://movie/<id>").
     private var owned: [String: PlexItem] = [:]
@@ -23,11 +25,13 @@ final class PersonModel: ObservableObject {
     }
 
     func load(tag: PlexTag, app: AppModel) async {
-        async let own: Void = loadLibrary(tag: tag, app: app)
+        async let own: Bool = loadLibrary(tag: tag, app: app)
         async let online: Void = loadOnline(tag: tag, app: app)
         async let all = app.libraryCatalog()
-        _ = await (own, online)
-        matchCredits(against: await all)
+        let (ownRead, _) = await (own, online)
+        let catalog = await all
+        libraryUnknown = !ownRead || catalog == nil
+        matchCredits(against: catalog ?? [])
         loaded = true
     }
 
@@ -48,9 +52,16 @@ final class PersonModel: ObservableObject {
         library = shown.sorted { ($0.year ?? 0, $0.title) > ($1.year ?? 0, $1.title) }
     }
 
-    private func loadLibrary(tag: PlexTag, app: AppModel) async {
-        guard let c = app.client, let filter = tag.filter else { return }
-        library = (try? await c.titles(withPerson: filter, in: app.movieLibraries + app.showLibraries)) ?? []
+    /// False when the server could not be read.
+    private func loadLibrary(tag: PlexTag, app: AppModel) async -> Bool {
+        guard let c = app.client, let filter = tag.filter else { return true }
+        do {
+            library = try await c.titles(withPerson: filter, in: app.movieLibraries + app.showLibraries)
+            return true
+        } catch {
+            library = []
+            return false
+        }
     }
 
     private func loadOnline(tag: PlexTag, app: AppModel) async {
@@ -64,8 +75,10 @@ final class PersonModel: ObservableObject {
             async let g = d.credits(tagKey: key)
             profile = try await p
             knownFor = (try? await k) ?? []
-            groups = (try? await g) ?? []
+            groups = try await g
             onlineError = nil
+        } catch is CancellationError {
+            return
         } catch {
             onlineError = error.localizedDescription
         }
@@ -93,6 +106,13 @@ struct PersonView: View {
                         }
                         .padding(.horizontal, 80)
                     }
+                    if model.libraryUnknown {
+                        HStack(spacing: 30) {
+                            Text("Could not read your library, so this page may not show everything you own.").font(.callout).foregroundStyle(Theme.secondaryText)
+                            Button("Try Again") { Task { await model.load(tag: tag, app: app) } }
+                        }
+                        .padding(.horizontal, 80)
+                    }
                     Shelf(title: "In Your Library", items: model.library)
                     if !model.knownFor.isEmpty {
                         CreditShelf(title: "Known For", titles: model.knownFor.map { ($0, nil) }, model: model, notOwned: $notOwned)
@@ -100,7 +120,7 @@ struct PersonView: View {
                     ForEach(model.groups) { g in
                         CreditList(title: g.title, titles: g.Credit.map { ($0.Metadata, $0.role) }, model: model, notOwned: $notOwned)
                     }
-                    if model.loaded, model.onlineError == nil, model.library.isEmpty, model.groups.isEmpty, model.knownFor.isEmpty {
+                    if model.loaded, model.onlineError == nil, !model.libraryUnknown, model.library.isEmpty, model.groups.isEmpty, model.knownFor.isEmpty {
                         Text("No titles found.").font(.title3).foregroundStyle(Theme.secondaryText).padding(.horizontal, 80)
                     }
                 }
@@ -111,7 +131,7 @@ struct PersonView: View {
         .environment(\.colorScheme, .dark)
         .task(id: tag.tag) { await model.load(tag: tag, app: app) }
         .sheet(isPresented: $showBio) { BiographySheet(name: tag.tag, text: model.profile?.summary ?? "") }
-        .sheet(item: $notOwned) { NotInLibrarySheet(title: $0) }
+        .sheet(item: $notOwned) { NotInLibrarySheet(title: $0, unknown: model.libraryUnknown) }
     }
 
     private var header: some View {
@@ -286,6 +306,8 @@ struct BiographySheet: View {
 
 struct NotInLibrarySheet: View {
     let title: DiscoverTitle
+    /// Your server could not be read, so "not in your library" would be a guess.
+    var unknown = false
 
     var body: some View {
         HStack(alignment: .top, spacing: 50) {
@@ -295,7 +317,11 @@ struct NotInLibrarySheet: View {
                 Text(title.title).font(.largeTitle.bold())
                 Text([title.typeLabel, title.year.map(String.init)].compactMap { $0 }.joined(separator: " · "))
                     .font(.title3).foregroundStyle(Theme.secondaryText)
-                Label("Not in your library", systemImage: "xmark.circle").font(.title3)
+                if unknown {
+                    Label("Could not check your library", systemImage: "exclamationmark.triangle").font(.title3)
+                } else {
+                    Label("Not in your library", systemImage: "xmark.circle").font(.title3)
+                }
             }
         }
         .padding(80)

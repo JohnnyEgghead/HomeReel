@@ -1,7 +1,7 @@
 import XCTest
 
 /// Drives the real remote path (season list, then an episode) against the live server and saves a screenshot.
-/// Developer check only: needs HR_TOKEN and HR_SERVER in the environment and a reachable server.
+/// Developer check only: needs TEST_RUNNER_HR_LIVE_TOKEN and TEST_RUNNER_HR_LIVE_SERVER in the environment and a reachable server.
 final class NavigationShotTests: XCTestCase {
     func testOpenEpisodeFromSeasonList() throws {
         let env = ProcessInfo.processInfo.environment
