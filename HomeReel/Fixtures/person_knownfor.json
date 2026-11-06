@@ -1,0 +1,61 @@
+{
+  "MediaContainer": {
+    "title": "Known For",
+    "librarySectionID": "home",
+    "librarySectionTitle": "Discover",
+    "offset": 0,
+    "totalSize": 26,
+    "identifier": "tv.plex.provider.discover",
+    "size": 26,
+    "Metadata": [
+      {
+        "guid": "plex://show/074a6cb6f1d82f596a937bf2",
+        "ratingKey": "074a6cb6f1d82f596a937bf2",
+        "type": "show",
+        "thumb": "https://image.tmdb.org/t/p/original/59b8b398211dace4737fa708e448c812.jpg",
+        "title": "Harbor Lights",
+        "year": 2006
+      },
+      {
+        "guid": "plex://movie/a72cd8a6fdfbd912459be1fa",
+        "ratingKey": "a72cd8a6fdfbd912459be1fa",
+        "type": "movie",
+        "thumb": "https://metadata-static.plex.tv/dfe6cc90963e28b05325629ddc547697.jpg",
+        "title": "Broken Garden",
+        "year": 2004
+      },
+      {
+        "guid": "plex://movie/a83647e634cbc905c73e8187",
+        "ratingKey": "a83647e634cbc905c73e8187",
+        "type": "movie",
+        "thumb": "https://metadata-static.plex.tv/9d5462f4651c37871add2724dff74723.jpg",
+        "title": "The Stone Lantern",
+        "year": 2020
+      },
+      {
+        "guid": "plex://movie/de069255ed7efc463fdffc2d",
+        "ratingKey": "de069255ed7efc463fdffc2d",
+        "type": "movie",
+        "thumb": "https://metadata-static.plex.tv/089ccad873ea892a352a38efd3c8bfa2.jpg",
+        "title": "Thin Library",
+        "year": 2010
+      },
+      {
+        "guid": "plex://movie/6e0c1a54485a2635227e1e4b",
+        "ratingKey": "6e0c1a54485a2635227e1e4b",
+        "type": "movie",
+        "thumb": "https://metadata-static.plex.tv/e9899da01024e1ba574cf2a2697604e5.jpg",
+        "title": "Amber Voyage",
+        "year": 2010
+      },
+      {
+        "guid": "plex://movie/443c5c9495a91c291fa63386",
+        "ratingKey": "443c5c9495a91c291fa63386",
+        "type": "movie",
+        "thumb": "https://image.tmdb.org/t/p/original/bc5f4df09afa06314aacf98302e2e9f7.jpg",
+        "title": "The Marble Parade",
+        "year": 2016
+      }
+    ]
+  }
+}

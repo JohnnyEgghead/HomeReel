@@ -1,0 +1,3 @@
+// Shared build settings. Your own, untracked settings (for example your Apple developer team) go in
+// Config/Local.xcconfig. Copy Config/Local.example.xcconfig to start.
+#include? "Local.xcconfig"

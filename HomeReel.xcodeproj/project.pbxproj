@@ -1,0 +1,821 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		00A58A0B987C7A4A50C9AC8B /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF92A5201F048C8125A67F86 /* PlayerView.swift */; };
+		02F0600264D0B8A11D69A272 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4A3883B936D4505ACDE351 /* Components.swift */; };
+		0B17390971C0DE592930E122 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D786EE62F802DAD19D34EF /* HomeView.swift */; };
+		0DB0FC7911899015590CB539 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A9DB92AF9A2A10629FB8CE /* Keychain.swift */; };
+		134D5B470A664D7785C0D5FD /* FormattingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6416B2AA956011FFD99787C3 /* FormattingTests.swift */; };
+		165BBC0B8D0CB9BA92D4F13A /* BraviaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F4D9D03A99968166566089 /* BraviaTests.swift */; };
+		1EEC1FA88639FB27E949CB7A /* PlaybackPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3979CF4A292D833617C989 /* PlaybackPolicy.swift */; };
+		1F9F29795DD01F14503A5FD3 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE0BAAE3973CDB9947749F5 /* SettingsView.swift */; };
+		20220D2AE353079D9119F81A /* person_knownfor.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E63E838BDAD6A4EE9E1A12C /* person_knownfor.json */; };
+		20CFE3CCC256F14552139138 /* HomeScreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 865296836AF0E96ECD934E29 /* HomeScreenTests.swift */; };
+		20F2C31A3CE803C4AEF4B60D /* seasons.json in Resources */ = {isa = PBXBuildFile; fileRef = B98FD19D1C995AB1EDB804F3 /* seasons.json */; };
+		28AF1D6F2FF5D24EDF01152C /* DetailViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEF25632C6FEB94E0BC6B7E0 /* DetailViews.swift */; };
+		2BE8F135C81E1C6CAF00A2AB /* AlphaIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4D79A279418981684CDF41 /* AlphaIndex.swift */; };
+		2E19CD27B9B146A396B2214C /* SecretStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4436371392FA9A038D418A54 /* SecretStore.swift */; };
+		31B49011141AFEC779744636 /* HomeReelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EAB3C2C73CC43BF7CEDDED4 /* HomeReelApp.swift */; };
+		35D47CF225533D5A087125E2 /* Bravia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47634774A53A2EE10672828F /* Bravia.swift */; };
+		3F75AAF8270B8D0C4D8A9927 /* PlaybackPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08D1D9E4DE1B66C98F764507 /* PlaybackPolicyTests.swift */; };
+		3FA59D0917C2DA979A2EB3D1 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F60BA6B49E9E7DD702DEF7 /* RootView.swift */; };
+		4272F6EBB41E5A399BF2AFB9 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF6FB53A928DDF6135DE84C /* SearchView.swift */; };
+		4912A36DD1B57820AB0C516F /* PlexAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2594754324760A7EDA1B33 /* PlexAuth.swift */; };
+		54468B5E10626CD081A470DD /* PlayerPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70A88467AD9EBF5181B1D14A /* PlayerPanel.swift */; };
+		5B4A5EAE601343BC5BF2313B /* movie_detail.json in Resources */ = {isa = PBXBuildFile; fileRef = 327B1CAF03FAF089FABA5F52 /* movie_detail.json */; };
+		66829D1B62E71F544A3DD2BA /* shows.json in Resources */ = {isa = PBXBuildFile; fileRef = FF4249FE4C99F4DFB0D52502 /* shows.json */; };
+		687031255F6A96E994304B04 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F0141DB1936EABAD71E728 /* SignInView.swift */; };
+		6DFA0F630CE087CD9C60CD5F /* search.json in Resources */ = {isa = PBXBuildFile; fileRef = CDC4A7868B7CCFE92083677A /* search.json */; };
+		7015DDFC9E4ACC65B244CC60 /* FixtureServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEB17E3AB35205B6B377C81C /* FixtureServer.swift */; };
+		747B9CDE458AD9CA21ADC0DC /* PlexClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AABF4EC3C5C37C968A96A73 /* PlexClient.swift */; };
+		816A578139D5CA835D4AB453 /* PlexModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 910508DB0A18F1BC3F20339C /* PlexModelsTests.swift */; };
+		8C895B959DB1C0680FEB2BE2 /* episode_detail.json in Resources */ = {isa = PBXBuildFile; fileRef = 3D49286E4E77943248AAD111 /* episode_detail.json */; };
+		8EA9FB47E4CEAD4866353A0D /* show_detail.json in Resources */ = {isa = PBXBuildFile; fileRef = 1C52A9F5AA2354A4303704A9 /* show_detail.json */; };
+		9376BCAF8014BE5D171674B1 /* PeopleAndRatingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8541402651DC3B6A8B26E7F0 /* PeopleAndRatingsTests.swift */; };
+		9701FA0FEAD6219D825FBF79 /* movies.json in Resources */ = {isa = PBXBuildFile; fileRef = A1A34C715B57D505B259FA66 /* movies.json */; };
+		9C50569C387A77E06D198129 /* recent.json in Resources */ = {isa = PBXBuildFile; fileRef = 33C5CE45E7B8F5C1199AF120 /* recent.json */; };
+		9F98D1AB0BC3E78781AD571F /* Ratings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3773A3B479AC96BA9A342840 /* Ratings.swift */; };
+		9FEC057BF8854F605AB2B957 /* PlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D3167721F421B3588B681D /* PlayerModel.swift */; };
+		A571B9D8773BCDF6A0B5B12E /* PlexDiscover.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E87856CB808CE6B4DBDF67 /* PlexDiscover.swift */; };
+		A6E7AD9BFC8F6563FB2CA29D /* sections.json in Resources */ = {isa = PBXBuildFile; fileRef = 4CA79DF9043AD2E04F4C5313 /* sections.json */; };
+		AECB84772651168CD619DC01 /* PlexModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7EFDBD4C0F7ACD60491BAA5 /* PlexModels.swift */; };
+		AEE0F945A73F806D0AC7EC8B /* PersonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35A0231ACAA9BF8E6FC13CA2 /* PersonView.swift */; };
+		B03A07586670624BBB308444 /* episodes.json in Resources */ = {isa = PBXBuildFile; fileRef = 66F600C89C31E5232CC7F7E1 /* episodes.json */; };
+		B0BDA48FC2DBF32F56F13603 /* person_credits.json in Resources */ = {isa = PBXBuildFile; fileRef = 6CE96828EF250C35BB22508F /* person_credits.json */; };
+		B0FECE7CFBE62ACBE73E1BAD /* person.json in Resources */ = {isa = PBXBuildFile; fileRef = E9EB647CC8F6DF8A9FB5952A /* person.json */; };
+		B3DBC0103AAC77157C5491E2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3BA4A00BC81BAB5C11917F9F /* Assets.xcassets */; };
+		B659BE8DC19489638CD6E2B1 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4D0CF774ED710CAE688994D /* LibraryView.swift */; };
+		B8C6EFD4CA1D5A2524674011 /* ExternalSubtitles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ADB6942E33FF5D2C74C3C4D /* ExternalSubtitles.swift */; };
+		BEEA6BEDD24AE1BCBDB1BB57 /* AppFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02173A2F7968E99E31DB0960 /* AppFlowTests.swift */; };
+		C0B158761CE871A913D7A92F /* NavigationShotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652DC12C13F61B5612BF3244 /* NavigationShotTests.swift */; };
+		C566500792445821DC6B5CCE /* TestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DA31FA0C6113E92B605E770 /* TestSupport.swift */; };
+		C6ECF6B2E9C0F13E92C50211 /* PlexClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD6E561092C630CDF9C22937 /* PlexClientTests.swift */; };
+		C7CFD5D06166E6B3C438D0B1 /* TrackLabels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CB11ABDA4F7F58D71412FA5 /* TrackLabels.swift */; };
+		CB4C5426D197873EB044BCA6 /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8585314B0EA9F5E516ABF6EE /* Formatting.swift */; };
+		D10F52152AF4D4F029BD177B /* AuthAndAppModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DAB306F6BC325AB4C732857 /* AuthAndAppModelTests.swift */; };
+		DA51580211B32B84537E7522 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32A012C98CCBE7E37A904F72 /* AppModel.swift */; };
+		DC469739FD16952715645F30 /* continue.json in Resources */ = {isa = PBXBuildFile; fileRef = DD3319061A1CA2B0CBC71318 /* continue.json */; };
+		DF4A2CAC254F3697125F25BC /* SubtitleOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = D45022BAA44216DAE38CC5B1 /* SubtitleOverlay.swift */; };
+		E62EB4E2A52F4F515D330889 /* AetherEngine in Frameworks */ = {isa = PBXBuildFile; productRef = A6E109693F9967A8AA91F67D /* AetherEngine */; };
+		EAAF00681BFFC42909747F08 /* LibraryScanTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F5C48B0477CC301315DD47 /* LibraryScanTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		72A66C8F1D731B1DD2EAA7A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 919A0D2F0D6C530CCD8F0FB0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5F140003EE5F0EA00366E36F;
+			remoteInfo = HomeReel;
+		};
+		CF059DA18A2F1EAD0AE8E05A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 919A0D2F0D6C530CCD8F0FB0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5F140003EE5F0EA00366E36F;
+			remoteInfo = HomeReel;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		02173A2F7968E99E31DB0960 /* AppFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFlowTests.swift; sourceTree = "<group>"; };
+		031581B8479003B5C2C3BE22 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		08D1D9E4DE1B66C98F764507 /* PlaybackPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackPolicyTests.swift; sourceTree = "<group>"; };
+		0FF6FB53A928DDF6135DE84C /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
+		15D786EE62F802DAD19D34EF /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		1C52A9F5AA2354A4303704A9 /* show_detail.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = show_detail.json; sourceTree = "<group>"; };
+		21F60BA6B49E9E7DD702DEF7 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		2DA31FA0C6113E92B605E770 /* TestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSupport.swift; sourceTree = "<group>"; };
+		327B1CAF03FAF089FABA5F52 /* movie_detail.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = movie_detail.json; sourceTree = "<group>"; };
+		32A012C98CCBE7E37A904F72 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		33C5CE45E7B8F5C1199AF120 /* recent.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = recent.json; sourceTree = "<group>"; };
+		34A9DB92AF9A2A10629FB8CE /* Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
+		35A0231ACAA9BF8E6FC13CA2 /* PersonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonView.swift; sourceTree = "<group>"; };
+		3773A3B479AC96BA9A342840 /* Ratings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ratings.swift; sourceTree = "<group>"; };
+		3B2594754324760A7EDA1B33 /* PlexAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlexAuth.swift; sourceTree = "<group>"; };
+		3BA4A00BC81BAB5C11917F9F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		3D49286E4E77943248AAD111 /* episode_detail.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = episode_detail.json; sourceTree = "<group>"; };
+		4436371392FA9A038D418A54 /* SecretStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecretStore.swift; sourceTree = "<group>"; };
+		47634774A53A2EE10672828F /* Bravia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bravia.swift; sourceTree = "<group>"; };
+		4AABF4EC3C5C37C968A96A73 /* PlexClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlexClient.swift; sourceTree = "<group>"; };
+		4CA79DF9043AD2E04F4C5313 /* sections.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = sections.json; sourceTree = "<group>"; };
+		5DAB306F6BC325AB4C732857 /* AuthAndAppModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthAndAppModelTests.swift; sourceTree = "<group>"; };
+		5EAB3C2C73CC43BF7CEDDED4 /* HomeReelApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeReelApp.swift; sourceTree = "<group>"; };
+		5F6040CC7ED00819C0C516C8 /* HomeReel.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = HomeReel.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6416B2AA956011FFD99787C3 /* FormattingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormattingTests.swift; sourceTree = "<group>"; };
+		652DC12C13F61B5612BF3244 /* NavigationShotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationShotTests.swift; sourceTree = "<group>"; };
+		66F600C89C31E5232CC7F7E1 /* episodes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = episodes.json; sourceTree = "<group>"; };
+		6CB11ABDA4F7F58D71412FA5 /* TrackLabels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackLabels.swift; sourceTree = "<group>"; };
+		6CE96828EF250C35BB22508F /* person_credits.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = person_credits.json; sourceTree = "<group>"; };
+		6E63E838BDAD6A4EE9E1A12C /* person_knownfor.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = person_knownfor.json; sourceTree = "<group>"; };
+		70A88467AD9EBF5181B1D14A /* PlayerPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerPanel.swift; sourceTree = "<group>"; };
+		7ADB6942E33FF5D2C74C3C4D /* ExternalSubtitles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalSubtitles.swift; sourceTree = "<group>"; };
+		84F0141DB1936EABAD71E728 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
+		8541402651DC3B6A8B26E7F0 /* PeopleAndRatingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleAndRatingsTests.swift; sourceTree = "<group>"; };
+		8585314B0EA9F5E516ABF6EE /* Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatting.swift; sourceTree = "<group>"; };
+		865296836AF0E96ECD934E29 /* HomeScreenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreenTests.swift; sourceTree = "<group>"; };
+		8C3979CF4A292D833617C989 /* PlaybackPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackPolicy.swift; sourceTree = "<group>"; };
+		910508DB0A18F1BC3F20339C /* PlexModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlexModelsTests.swift; sourceTree = "<group>"; };
+		A1A34C715B57D505B259FA66 /* movies.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = movies.json; sourceTree = "<group>"; };
+		A7F4D9D03A99968166566089 /* BraviaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BraviaTests.swift; sourceTree = "<group>"; };
+		ABD755659CE758F42F06F953 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		AD4A3883B936D4505ACDE351 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		AEB17E3AB35205B6B377C81C /* FixtureServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixtureServer.swift; sourceTree = "<group>"; };
+		B98FD19D1C995AB1EDB804F3 /* seasons.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = seasons.json; sourceTree = "<group>"; };
+		C2D3167721F421B3588B681D /* PlayerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerModel.swift; sourceTree = "<group>"; };
+		C4D0CF774ED710CAE688994D /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
+		CDC4A7868B7CCFE92083677A /* search.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = search.json; sourceTree = "<group>"; };
+		D45022BAA44216DAE38CC5B1 /* SubtitleOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleOverlay.swift; sourceTree = "<group>"; };
+		DD3319061A1CA2B0CBC71318 /* continue.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = continue.json; sourceTree = "<group>"; };
+		DEF25632C6FEB94E0BC6B7E0 /* DetailViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViews.swift; sourceTree = "<group>"; };
+		DF4D79A279418981684CDF41 /* AlphaIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlphaIndex.swift; sourceTree = "<group>"; };
+		E1F5C48B0477CC301315DD47 /* LibraryScanTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryScanTests.swift; sourceTree = "<group>"; };
+		E363CF31984F00CA167B10E5 /* HomeReelTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = HomeReelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E9EB647CC8F6DF8A9FB5952A /* person.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = person.json; sourceTree = "<group>"; };
+		EF92A5201F048C8125A67F86 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
+		F3016437417BF40375F21F57 /* HomeReelUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = HomeReelUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F7EFDBD4C0F7ACD60491BAA5 /* PlexModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlexModels.swift; sourceTree = "<group>"; };
+		F8E87856CB808CE6B4DBDF67 /* PlexDiscover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlexDiscover.swift; sourceTree = "<group>"; };
+		FAE0BAAE3973CDB9947749F5 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		FD6E561092C630CDF9C22937 /* PlexClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlexClientTests.swift; sourceTree = "<group>"; };
+		FF4249FE4C99F4DFB0D52502 /* shows.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = shows.json; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6139CE0ADEC16377AB35FF38 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E62EB4E2A52F4F515D330889 /* AetherEngine in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0486B01173D21B00F3BCACEC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5F6040CC7ED00819C0C516C8 /* HomeReel.app */,
+				E363CF31984F00CA167B10E5 /* HomeReelTests.xctest */,
+				F3016437417BF40375F21F57 /* HomeReelUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2E6F47F6268DC7863CF7D1D1 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				DF4D79A279418981684CDF41 /* AlphaIndex.swift */,
+				47634774A53A2EE10672828F /* Bravia.swift */,
+				8585314B0EA9F5E516ABF6EE /* Formatting.swift */,
+				34A9DB92AF9A2A10629FB8CE /* Keychain.swift */,
+				3773A3B479AC96BA9A342840 /* Ratings.swift */,
+				4436371392FA9A038D418A54 /* SecretStore.swift */,
+				EBB2FC39F54D5F6556B71ED3 /* Playback */,
+				E4E6AF538B4E03F6D0B2935E /* Plex */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		43DB42021D9DBCDD8523DA43 = {
+			isa = PBXGroup;
+			children = (
+				77FF83510EFB6621C71BAEC9 /* Config */,
+				7B86AB9529AA33DDA96B8A16 /* HomeReel */,
+				F19B8C6854D11184021B39C7 /* HomeReelTests */,
+				6A56802FE6E4C6320ABE77FA /* HomeReelUITests */,
+				0486B01173D21B00F3BCACEC /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5C5AB769AAC05FFDE23170F1 /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				C2D3167721F421B3588B681D /* PlayerModel.swift */,
+				70A88467AD9EBF5181B1D14A /* PlayerPanel.swift */,
+				EF92A5201F048C8125A67F86 /* PlayerView.swift */,
+				D45022BAA44216DAE38CC5B1 /* SubtitleOverlay.swift */,
+			);
+			path = Player;
+			sourceTree = "<group>";
+		};
+		6A56802FE6E4C6320ABE77FA /* HomeReelUITests */ = {
+			isa = PBXGroup;
+			children = (
+				02173A2F7968E99E31DB0960 /* AppFlowTests.swift */,
+				652DC12C13F61B5612BF3244 /* NavigationShotTests.swift */,
+			);
+			path = HomeReelUITests;
+			sourceTree = "<group>";
+		};
+		76DE829F4D8454F7BE0E1BEA /* App */ = {
+			isa = PBXGroup;
+			children = (
+				32A012C98CCBE7E37A904F72 /* AppModel.swift */,
+				AEB17E3AB35205B6B377C81C /* FixtureServer.swift */,
+				5EAB3C2C73CC43BF7CEDDED4 /* HomeReelApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		77FF83510EFB6621C71BAEC9 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				031581B8479003B5C2C3BE22 /* Base.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		7B86AB9529AA33DDA96B8A16 /* HomeReel */ = {
+			isa = PBXGroup;
+			children = (
+				3BA4A00BC81BAB5C11917F9F /* Assets.xcassets */,
+				ABD755659CE758F42F06F953 /* Info.plist */,
+				76DE829F4D8454F7BE0E1BEA /* App */,
+				2E6F47F6268DC7863CF7D1D1 /* Core */,
+				E6524BD2B7B019D51D5A502D /* Fixtures */,
+				AE8401B4484E0C80B22F3087 /* UI */,
+			);
+			path = HomeReel;
+			sourceTree = "<group>";
+		};
+		AE8401B4484E0C80B22F3087 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				AD4A3883B936D4505ACDE351 /* Components.swift */,
+				DEF25632C6FEB94E0BC6B7E0 /* DetailViews.swift */,
+				15D786EE62F802DAD19D34EF /* HomeView.swift */,
+				C4D0CF774ED710CAE688994D /* LibraryView.swift */,
+				35A0231ACAA9BF8E6FC13CA2 /* PersonView.swift */,
+				21F60BA6B49E9E7DD702DEF7 /* RootView.swift */,
+				0FF6FB53A928DDF6135DE84C /* SearchView.swift */,
+				FAE0BAAE3973CDB9947749F5 /* SettingsView.swift */,
+				84F0141DB1936EABAD71E728 /* SignInView.swift */,
+				5C5AB769AAC05FFDE23170F1 /* Player */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		E4E6AF538B4E03F6D0B2935E /* Plex */ = {
+			isa = PBXGroup;
+			children = (
+				3B2594754324760A7EDA1B33 /* PlexAuth.swift */,
+				4AABF4EC3C5C37C968A96A73 /* PlexClient.swift */,
+				F8E87856CB808CE6B4DBDF67 /* PlexDiscover.swift */,
+				F7EFDBD4C0F7ACD60491BAA5 /* PlexModels.swift */,
+			);
+			path = Plex;
+			sourceTree = "<group>";
+		};
+		E6524BD2B7B019D51D5A502D /* Fixtures */ = {
+			isa = PBXGroup;
+			children = (
+				DD3319061A1CA2B0CBC71318 /* continue.json */,
+				3D49286E4E77943248AAD111 /* episode_detail.json */,
+				66F600C89C31E5232CC7F7E1 /* episodes.json */,
+				327B1CAF03FAF089FABA5F52 /* movie_detail.json */,
+				A1A34C715B57D505B259FA66 /* movies.json */,
+				6CE96828EF250C35BB22508F /* person_credits.json */,
+				6E63E838BDAD6A4EE9E1A12C /* person_knownfor.json */,
+				E9EB647CC8F6DF8A9FB5952A /* person.json */,
+				33C5CE45E7B8F5C1199AF120 /* recent.json */,
+				CDC4A7868B7CCFE92083677A /* search.json */,
+				B98FD19D1C995AB1EDB804F3 /* seasons.json */,
+				4CA79DF9043AD2E04F4C5313 /* sections.json */,
+				1C52A9F5AA2354A4303704A9 /* show_detail.json */,
+				FF4249FE4C99F4DFB0D52502 /* shows.json */,
+			);
+			path = Fixtures;
+			sourceTree = "<group>";
+		};
+		EBB2FC39F54D5F6556B71ED3 /* Playback */ = {
+			isa = PBXGroup;
+			children = (
+				7ADB6942E33FF5D2C74C3C4D /* ExternalSubtitles.swift */,
+				8C3979CF4A292D833617C989 /* PlaybackPolicy.swift */,
+				6CB11ABDA4F7F58D71412FA5 /* TrackLabels.swift */,
+			);
+			path = Playback;
+			sourceTree = "<group>";
+		};
+		F19B8C6854D11184021B39C7 /* HomeReelTests */ = {
+			isa = PBXGroup;
+			children = (
+				5DAB306F6BC325AB4C732857 /* AuthAndAppModelTests.swift */,
+				A7F4D9D03A99968166566089 /* BraviaTests.swift */,
+				6416B2AA956011FFD99787C3 /* FormattingTests.swift */,
+				865296836AF0E96ECD934E29 /* HomeScreenTests.swift */,
+				E1F5C48B0477CC301315DD47 /* LibraryScanTests.swift */,
+				8541402651DC3B6A8B26E7F0 /* PeopleAndRatingsTests.swift */,
+				08D1D9E4DE1B66C98F764507 /* PlaybackPolicyTests.swift */,
+				FD6E561092C630CDF9C22937 /* PlexClientTests.swift */,
+				910508DB0A18F1BC3F20339C /* PlexModelsTests.swift */,
+				2DA31FA0C6113E92B605E770 /* TestSupport.swift */,
+			);
+			path = HomeReelTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		21A8B5853695346D464326E7 /* HomeReelTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 474572D7084705EBBE4703A6 /* Build configuration list for PBXNativeTarget "HomeReelTests" */;
+			buildPhases = (
+				F1061429E28240E21FBA0289 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				51CC032ECAE7BCFA90968085 /* PBXTargetDependency */,
+			);
+			name = HomeReelTests;
+			packageProductDependencies = (
+			);
+			productName = HomeReelTests;
+			productReference = E363CF31984F00CA167B10E5 /* HomeReelTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		5F140003EE5F0EA00366E36F /* HomeReel */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9DEC664A8C22B06D81DF84C7 /* Build configuration list for PBXNativeTarget "HomeReel" */;
+			buildPhases = (
+				C798FEEFEFDA30115A5110AC /* Sources */,
+				36F39A2AD0017298B0367F77 /* Resources */,
+				6139CE0ADEC16377AB35FF38 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HomeReel;
+			packageProductDependencies = (
+				A6E109693F9967A8AA91F67D /* AetherEngine */,
+			);
+			productName = HomeReel;
+			productReference = 5F6040CC7ED00819C0C516C8 /* HomeReel.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A89A2B8D244560067736CC6D /* HomeReelUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C69489043BAF82D774189C0B /* Build configuration list for PBXNativeTarget "HomeReelUITests" */;
+			buildPhases = (
+				90917F32472E22343037914A /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7124E0C87C6AB7C0F7DD3D06 /* PBXTargetDependency */,
+			);
+			name = HomeReelUITests;
+			packageProductDependencies = (
+			);
+			productName = HomeReelUITests;
+			productReference = F3016437417BF40375F21F57 /* HomeReelUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		919A0D2F0D6C530CCD8F0FB0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					21A8B5853695346D464326E7 = {
+						ProvisioningStyle = Automatic;
+					};
+					5F140003EE5F0EA00366E36F = {
+						ProvisioningStyle = Automatic;
+					};
+					A89A2B8D244560067736CC6D = {
+						ProvisioningStyle = Automatic;
+						TestTargetID = 5F140003EE5F0EA00366E36F;
+					};
+				};
+			};
+			buildConfigurationList = 25FF865A61126882A416C435 /* Build configuration list for PBXProject "HomeReel" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 43DB42021D9DBCDD8523DA43;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				5A1E19EBC841DF6E6C1AC5CD /* XCRemoteSwiftPackageReference "AetherEngine" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 0486B01173D21B00F3BCACEC /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5F140003EE5F0EA00366E36F /* HomeReel */,
+				21A8B5853695346D464326E7 /* HomeReelTests */,
+				A89A2B8D244560067736CC6D /* HomeReelUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		36F39A2AD0017298B0367F77 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3DBC0103AAC77157C5491E2 /* Assets.xcassets in Resources */,
+				DC469739FD16952715645F30 /* continue.json in Resources */,
+				8C895B959DB1C0680FEB2BE2 /* episode_detail.json in Resources */,
+				B03A07586670624BBB308444 /* episodes.json in Resources */,
+				5B4A5EAE601343BC5BF2313B /* movie_detail.json in Resources */,
+				9701FA0FEAD6219D825FBF79 /* movies.json in Resources */,
+				B0FECE7CFBE62ACBE73E1BAD /* person.json in Resources */,
+				B0BDA48FC2DBF32F56F13603 /* person_credits.json in Resources */,
+				20220D2AE353079D9119F81A /* person_knownfor.json in Resources */,
+				9C50569C387A77E06D198129 /* recent.json in Resources */,
+				6DFA0F630CE087CD9C60CD5F /* search.json in Resources */,
+				20F2C31A3CE803C4AEF4B60D /* seasons.json in Resources */,
+				A6E7AD9BFC8F6563FB2CA29D /* sections.json in Resources */,
+				8EA9FB47E4CEAD4866353A0D /* show_detail.json in Resources */,
+				66829D1B62E71F544A3DD2BA /* shows.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		90917F32472E22343037914A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BEEA6BEDD24AE1BCBDB1BB57 /* AppFlowTests.swift in Sources */,
+				C0B158761CE871A913D7A92F /* NavigationShotTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C798FEEFEFDA30115A5110AC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2BE8F135C81E1C6CAF00A2AB /* AlphaIndex.swift in Sources */,
+				DA51580211B32B84537E7522 /* AppModel.swift in Sources */,
+				35D47CF225533D5A087125E2 /* Bravia.swift in Sources */,
+				02F0600264D0B8A11D69A272 /* Components.swift in Sources */,
+				28AF1D6F2FF5D24EDF01152C /* DetailViews.swift in Sources */,
+				B8C6EFD4CA1D5A2524674011 /* ExternalSubtitles.swift in Sources */,
+				7015DDFC9E4ACC65B244CC60 /* FixtureServer.swift in Sources */,
+				CB4C5426D197873EB044BCA6 /* Formatting.swift in Sources */,
+				31B49011141AFEC779744636 /* HomeReelApp.swift in Sources */,
+				0B17390971C0DE592930E122 /* HomeView.swift in Sources */,
+				0DB0FC7911899015590CB539 /* Keychain.swift in Sources */,
+				B659BE8DC19489638CD6E2B1 /* LibraryView.swift in Sources */,
+				AEE0F945A73F806D0AC7EC8B /* PersonView.swift in Sources */,
+				1EEC1FA88639FB27E949CB7A /* PlaybackPolicy.swift in Sources */,
+				9FEC057BF8854F605AB2B957 /* PlayerModel.swift in Sources */,
+				54468B5E10626CD081A470DD /* PlayerPanel.swift in Sources */,
+				00A58A0B987C7A4A50C9AC8B /* PlayerView.swift in Sources */,
+				4912A36DD1B57820AB0C516F /* PlexAuth.swift in Sources */,
+				747B9CDE458AD9CA21ADC0DC /* PlexClient.swift in Sources */,
+				A571B9D8773BCDF6A0B5B12E /* PlexDiscover.swift in Sources */,
+				AECB84772651168CD619DC01 /* PlexModels.swift in Sources */,
+				9F98D1AB0BC3E78781AD571F /* Ratings.swift in Sources */,
+				3FA59D0917C2DA979A2EB3D1 /* RootView.swift in Sources */,
+				4272F6EBB41E5A399BF2AFB9 /* SearchView.swift in Sources */,
+				2E19CD27B9B146A396B2214C /* SecretStore.swift in Sources */,
+				1F9F29795DD01F14503A5FD3 /* SettingsView.swift in Sources */,
+				687031255F6A96E994304B04 /* SignInView.swift in Sources */,
+				DF4A2CAC254F3697125F25BC /* SubtitleOverlay.swift in Sources */,
+				C7CFD5D06166E6B3C438D0B1 /* TrackLabels.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F1061429E28240E21FBA0289 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D10F52152AF4D4F029BD177B /* AuthAndAppModelTests.swift in Sources */,
+				165BBC0B8D0CB9BA92D4F13A /* BraviaTests.swift in Sources */,
+				134D5B470A664D7785C0D5FD /* FormattingTests.swift in Sources */,
+				20CFE3CCC256F14552139138 /* HomeScreenTests.swift in Sources */,
+				EAAF00681BFFC42909747F08 /* LibraryScanTests.swift in Sources */,
+				9376BCAF8014BE5D171674B1 /* PeopleAndRatingsTests.swift in Sources */,
+				3F75AAF8270B8D0C4D8A9927 /* PlaybackPolicyTests.swift in Sources */,
+				C6ECF6B2E9C0F13E92C50211 /* PlexClientTests.swift in Sources */,
+				816A578139D5CA835D4AB453 /* PlexModelsTests.swift in Sources */,
+				C566500792445821DC6B5CCE /* TestSupport.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		51CC032ECAE7BCFA90968085 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5F140003EE5F0EA00366E36F /* HomeReel */;
+			targetProxy = CF059DA18A2F1EAD0AE8E05A /* PBXContainerItemProxy */;
+		};
+		7124E0C87C6AB7C0F7DD3D06 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5F140003EE5F0EA00366E36F /* HomeReel */;
+			targetProxy = 72A66C8F1D731B1DD2EAA7A8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		26FCE6534E8FA1A461180885 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 031581B8479003B5C2C3BE22 /* Base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 0.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+				TVOS_DEPLOYMENT_TARGET = 18.0;
+			};
+			name = Release;
+		};
+		37E6B68BD47B377BDFFC2805 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.johnloring.homereel.tests;
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HomeReel.app/HomeReel";
+			};
+			name = Debug;
+		};
+		46DB22B59BD9FB7A0A3730F3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				INFOPLIST_FILE = HomeReel/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HomeReel;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.johnloring.homereel;
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+			};
+			name = Release;
+		};
+		9D67D867D0D3CA3CD6730575 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.johnloring.homereel.tests;
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HomeReel.app/HomeReel";
+			};
+			name = Release;
+		};
+		AA607EB283FF0CF372409537 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 031581B8479003B5C2C3BE22 /* Base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 0.1;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+				TVOS_DEPLOYMENT_TARGET = 18.0;
+			};
+			name = Debug;
+		};
+		D24675194EC39A6545964379 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				INFOPLIST_FILE = HomeReel/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HomeReel;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.johnloring.homereel;
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+			};
+			name = Debug;
+		};
+		F38613CFADC5C1C0A55D546C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.johnloring.homereel.uitests;
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_TARGET_NAME = HomeReel;
+			};
+			name = Release;
+		};
+		FFF819145E1C95E6A03D1EAF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.johnloring.homereel.uitests;
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_TARGET_NAME = HomeReel;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		25FF865A61126882A416C435 /* Build configuration list for PBXProject "HomeReel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA607EB283FF0CF372409537 /* Debug */,
+				26FCE6534E8FA1A461180885 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		474572D7084705EBBE4703A6 /* Build configuration list for PBXNativeTarget "HomeReelTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				37E6B68BD47B377BDFFC2805 /* Debug */,
+				9D67D867D0D3CA3CD6730575 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9DEC664A8C22B06D81DF84C7 /* Build configuration list for PBXNativeTarget "HomeReel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D24675194EC39A6545964379 /* Debug */,
+				46DB22B59BD9FB7A0A3730F3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C69489043BAF82D774189C0B /* Build configuration list for PBXNativeTarget "HomeReelUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FFF819145E1C95E6A03D1EAF /* Debug */,
+				F38613CFADC5C1C0A55D546C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5A1E19EBC841DF6E6C1AC5CD /* XCRemoteSwiftPackageReference "AetherEngine" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/superuser404notfound/AetherEngine";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.58.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A6E109693F9967A8AA91F67D /* AetherEngine */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5A1E19EBC841DF6E6C1AC5CD /* XCRemoteSwiftPackageReference "AetherEngine" */;
+			productName = AetherEngine;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 919A0D2F0D6C530CCD8F0FB0 /* Project object */;
+}

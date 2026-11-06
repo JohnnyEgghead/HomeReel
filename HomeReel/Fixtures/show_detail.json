@@ -1,0 +1,128 @@
+{
+  "MediaContainer": {
+    "size": 1,
+    "allowSync": true,
+    "identifier": "com.plexapp.plugins.library",
+    "librarySectionID": 2,
+    "librarySectionTitle": "TV Shows",
+    "librarySectionUUID": "129e481c-ffce-4cb7-a49b-af476f46d50d",
+    "mediaTagPrefix": "/system/bundle/media/flags/",
+    "mediaTagVersion": 1758205129,
+    "Metadata": [
+      {
+        "ratingKey": "1002",
+        "key": "/library/metadata/1002/children",
+        "guid": "plex://show/074a6cb6f1d82f596a937bf2",
+        "slug": "harbor-lights",
+        "studio": "Northern Light Studios",
+        "type": "show",
+        "title": "Harbor Lights",
+        "librarySectionTitle": "TV Shows",
+        "librarySectionID": 2,
+        "librarySectionKey": "/library/sections/2",
+        "contentRating": "TV-14",
+        "contentRatingAge": 15,
+        "summary": "Two old friends is pulled into a mystery nobody asked for. A quiet town tries to save the place they love.",
+        "index": 1,
+        "audienceRating": 7.5,
+        "viewCount": 11,
+        "skipCount": 3,
+        "lastViewedAt": 1765614104,
+        "year": 2006,
+        "tagline": "Paper theater, open hearts.",
+        "thumb": "/library/metadata/1002/thumb/1792054330",
+        "art": "/library/metadata/1002/art/1792054330",
+        "theme": "/library/metadata/1002/theme/1792054330",
+        "duration": 1320000,
+        "originallyAvailableAt": "2006-09-10",
+        "leafCount": 146,
+        "viewedLeafCount": 11,
+        "childCount": 7,
+        "addedAt": 1652091857,
+        "updatedAt": 1792054330,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "hasPremiumPrimaryExtra": "1",
+        "primaryExtraKey": "/library/metadata/1061",
+        "Genre": [
+          {
+            "id": 81,
+            "filter": "genre=81",
+            "tag": "Comedy"
+          }
+        ],
+        "Rating": [
+          {
+            "image": "imdb://image.rating",
+            "value": 8.3,
+            "type": "audience"
+          },
+          {
+            "image": "rottentomatoes://image.rating.ripe",
+            "value": 7.8,
+            "type": "critic"
+          },
+          {
+            "image": "rottentomatoes://image.rating.upright",
+            "value": 9.2,
+            "type": "audience"
+          },
+          {
+            "image": "themoviedb://image.rating",
+            "value": 7.5,
+            "type": "audience"
+          }
+        ],
+        "Role": [
+          {
+            "id": 470,
+            "filter": "actor=470",
+            "tag": "Dana Whitfield",
+            "tagKey": "303269f8ea7f3e488d500461",
+            "role": "Casey Lane",
+            "thumb": "https://metadata-static.plex.tv/7e0ee65c7eca661b298cd9f1a8d62215.jpg"
+          },
+          {
+            "id": 1561,
+            "filter": "actor=1561",
+            "tag": "Marcus Hale",
+            "tagKey": "c84d650168ca2f8cd6e8febf",
+            "role": "Victor Reed",
+            "thumb": "https://metadata-static.plex.tv/e1739c37f32fc8639a2c0809f5d53fe7.jpg"
+          },
+          {
+            "id": 5195,
+            "filter": "actor=5195",
+            "tag": "Leo Marsh",
+            "tagKey": "e597142d01438bac1f9a24ac",
+            "role": "Dex Holloway",
+            "thumb": "https://metadata-static.plex.tv/bdd63897f0538fa5531de7de00298eed.jpg"
+          },
+          {
+            "id": 5196,
+            "filter": "actor=5196",
+            "tag": "Nora Brandt",
+            "tagKey": "6bcc59b624045088e5ac38bc",
+            "role": "Elena Moreau",
+            "thumb": "https://metadata-static.plex.tv/b225ee6b7ec4a4176966be8688b45f2c.jpg"
+          },
+          {
+            "id": 5197,
+            "filter": "actor=5197",
+            "tag": "Bruno Yoder",
+            "tagKey": "2c950b59a3469367eda4e8e0",
+            "role": "Quinn Zeller",
+            "thumb": "https://metadata-static.plex.tv/a3e06ece4a5b5c307acec521b8e45dfb.jpg"
+          },
+          {
+            "id": 5198,
+            "filter": "actor=5198",
+            "tag": "Victor Thorne",
+            "tagKey": "7c408e16d4e4ce80a19a4774",
+            "role": "Jonas Whitfield",
+            "thumb": "https://metadata-static.plex.tv/267ddf70540fd6bfdda624b368130317.jpg"
+          }
+        ]
+      }
+    ]
+  }
+}

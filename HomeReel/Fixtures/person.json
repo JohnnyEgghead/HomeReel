@@ -1,0 +1,54 @@
+{
+  "MediaContainer": {
+    "librarySectionID": "home",
+    "librarySectionTitle": "Discover",
+    "totalSize": 1,
+    "identifier": "tv.plex.provider.discover",
+    "size": 1,
+    "Metadata": [
+      {
+        "birthPlace": "Springfield, Exampleland",
+        "bornAt": "1971-03-04",
+        "key": "/library/people/303269f8ea7f3e488d500461",
+        "knownFor": "Acting",
+        "metadataId": "303269f8ea7f3e488d500461",
+        "ratingKey": "303269f8ea7f3e488d500461",
+        "slug": "dana-whitfield",
+        "thumb": "https://metadata-static.plex.tv/7e0ee65c7eca661b298cd9f1a8d62215.jpg",
+        "title": "Dana Whitfield",
+        "summary": "Fictional biography for test data. Born in a small town and known for stage and screen work.",
+        "type": "person",
+        "External": [
+          {
+            "id": "DanaWhitfield",
+            "source": "web",
+            "sourceTitle": "Web",
+            "url": "https://example.invalid/profile"
+          }
+        ],
+        "CreditType": [
+          {
+            "type": "writer",
+            "count": 519,
+            "title": "Writer"
+          },
+          {
+            "type": "actor",
+            "count": 459,
+            "title": "Actor"
+          },
+          {
+            "type": "producer",
+            "count": 428,
+            "title": "Producer"
+          },
+          {
+            "type": "director",
+            "count": 4,
+            "title": "Director"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,730 @@
+{
+  "MediaContainer": {
+    "size": 17,
+    "Hub": [
+      {
+        "title": "Shows",
+        "type": "show",
+        "hubIdentifier": "show",
+        "context": "",
+        "size": 3,
+        "more": false,
+        "style": "shelf",
+        "Metadata": [
+          {
+            "librarySectionTitle": "TV Shows",
+            "score": "0.53079",
+            "ratingKey": "1630",
+            "key": "/library/metadata/1630/children",
+            "guid": "plex://show/5887757ca6a59be50980f487",
+            "slug": "crimson-engine",
+            "studio": "Copper Hill Productions",
+            "type": "show",
+            "title": "Crimson Engine",
+            "titleSort": "Crimson Engine",
+            "librarySectionID": 2,
+            "librarySectionKey": "/library/sections/2",
+            "contentRating": "TV-PG",
+            "contentRatingAge": 14,
+            "summary": "A new neighbor finds help from an unlikely ally. A new neighbor faces an unexpected choice.",
+            "index": 1,
+            "audienceRating": 7.9,
+            "skipCount": 2,
+            "lastViewedAt": 1747795682,
+            "year": 2007,
+            "tagline": "Narrow island, bright hearts.",
+            "thumb": "/library/metadata/1630/thumb/1792054332",
+            "art": "/library/metadata/1630/art/1792054332",
+            "theme": "/library/metadata/1630/theme/1792054332",
+            "duration": 1320000,
+            "originallyAvailableAt": "2007-09-24",
+            "leafCount": 277,
+            "viewedLeafCount": 0,
+            "childCount": 12,
+            "addedAt": 1652094514,
+            "updatedAt": 1792054332,
+            "audienceRatingImage": "themoviedb://image.rating",
+            "hasPremiumExtras": "1",
+            "hasPremiumPrimaryExtra": "1",
+            "primaryExtraKey": "/library/metadata/1871",
+            "Genre": [
+              {
+                "tag": "Comedy"
+              },
+              {
+                "tag": "Romance"
+              }
+            ],
+            "Role": [
+              {
+                "tag": "Elena Zeller"
+              },
+              {
+                "tag": "Hugo Dunmore"
+              },
+              {
+                "tag": "Felix Pruitt"
+              }
+            ]
+          },
+          {
+            "librarySectionTitle": "TV Shows",
+            "score": "0.53075",
+            "ratingKey": "7733",
+            "key": "/library/metadata/7733/children",
+            "guid": "plex://show/ae5ac16c288c33d5116f107b",
+            "slug": "harbor-shadow",
+            "studio": "Stone Bridge Pictures",
+            "type": "show",
+            "title": "Harbor Shadow",
+            "titleSort": "Harbor Shadow",
+            "librarySectionID": 2,
+            "librarySectionKey": "/library/sections/2",
+            "contentRating": "TV-G",
+            "contentRatingAge": 10,
+            "summary": "A retired pilot has one week to set things right. A family on the edge of the city tries to save the place they love.",
+            "index": 1,
+            "audienceRating": 7.5,
+            "viewCount": 15,
+            "lastViewedAt": 1760492174,
+            "year": 1972,
+            "thumb": "/library/metadata/7733/thumb/1788943015",
+            "art": "/library/metadata/7733/art/1788943015",
+            "theme": "/library/metadata/7733/theme/1788943015",
+            "duration": 1500000,
+            "originallyAvailableAt": "1972-09-16",
+            "leafCount": 142,
+            "viewedLeafCount": 13,
+            "childCount": 6,
+            "addedAt": 1721512291,
+            "updatedAt": 1788943015,
+            "audienceRatingImage": "themoviedb://image.rating",
+            "hasPremiumExtras": "1",
+            "hasPremiumPrimaryExtra": "1",
+            "primaryExtraKey": "/library/metadata/7857",
+            "Genre": [
+              {
+                "tag": "Comedy"
+              }
+            ],
+            "Role": [
+              {
+                "tag": "Wes Reed"
+              },
+              {
+                "tag": "Marcus Okafor"
+              },
+              {
+                "tag": "Hugo Draper"
+              }
+            ]
+          },
+          {
+            "librarySectionTitle": "TV Shows",
+            "score": "0.33081",
+            "ratingKey": "12162",
+            "key": "/library/metadata/12162/children",
+            "guid": "plex://show/4ae6391e24ea49af81d9cc91",
+            "slug": "electric-river",
+            "studio": "Amber Road Productions",
+            "type": "show",
+            "title": "Electric River",
+            "librarySectionID": 2,
+            "librarySectionKey": "/library/sections/2",
+            "contentRating": "TV-14",
+            "contentRatingAge": 13,
+            "summary": "The crew of a river ferry finds help from an unlikely ally. The crew of a river ferry discovers a secret that changes everything.",
+            "index": 1,
+            "audienceRating": 8.1,
+            "viewCount": 2,
+            "skipCount": 1,
+            "lastViewedAt": 1771567265,
+            "year": 1997,
+            "tagline": "Slow picnic, amber hearts.",
+            "thumb": "/library/metadata/12162/thumb/1788943022",
+            "art": "/library/metadata/12162/art/1788943022",
+            "theme": "/library/metadata/12162/theme/1788943022",
+            "duration": 2700000,
+            "originallyAvailableAt": "1997-03-07",
+            "leafCount": 144,
+            "viewedLeafCount": 0,
+            "childCount": 7,
+            "addedAt": 1765060869,
+            "updatedAt": 1788943022,
+            "audienceRatingImage": "themoviedb://image.rating",
+            "Genre": [
+              {
+                "tag": "Drama"
+              },
+              {
+                "tag": "Fantasy"
+              }
+            ],
+            "Role": [
+              {
+                "tag": "Yara Ashby"
+              },
+              {
+                "tag": "Elena Dunmore"
+              },
+              {
+                "tag": "Dana Lane"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Movies",
+        "type": "movie",
+        "hubIdentifier": "movie",
+        "context": "",
+        "size": 3,
+        "more": false,
+        "style": "shelf",
+        "Metadata": [
+          {
+            "librarySectionTitle": "Movies",
+            "score": "0.53071",
+            "ratingKey": "8217",
+            "key": "/library/metadata/8217",
+            "guid": "plex://movie/0c23c3e2fc266bf0a91f2aca",
+            "slug": "the-quiet-street",
+            "studio": "Gentle Wave Films",
+            "type": "movie",
+            "title": "The Quiet Street",
+            "titleSort": "Quiet Street",
+            "librarySectionID": 1,
+            "librarySectionKey": "/library/sections/1",
+            "contentRating": "PG",
+            "contentRatingAge": 13,
+            "summary": "A quiet town discovers a secret that changes everything. A young detective tries to save the place they love.",
+            "rating": 5.7,
+            "audienceRating": 7.1,
+            "year": 1989,
+            "tagline": "Early ferry, crimson hearts.",
+            "thumb": "/library/metadata/8217/thumb/1783586784",
+            "art": "/library/metadata/8217/art/1783586784",
+            "duration": 6100385,
+            "originallyAvailableAt": "1989-02-17",
+            "addedAt": 1729111266,
+            "updatedAt": 1783586784,
+            "audienceRatingImage": "rottentomatoes://image.rating.upright",
+            "chapterSource": "media",
+            "hasPremiumExtras": "1",
+            "hasPremiumPrimaryExtra": "1",
+            "ratingImage": "rottentomatoes://image.rating.rotten",
+            "Media": [
+              {
+                "id": 11264,
+                "duration": 6100385,
+                "bitrate": 5441,
+                "width": 1920,
+                "height": 1036,
+                "aspectRatio": 1.85,
+                "audioChannels": 2,
+                "audioCodec": "aac",
+                "videoCodec": "hevc",
+                "videoResolution": "1080",
+                "container": "mkv",
+                "videoFrameRate": "24p",
+                "audioProfile": "lc",
+                "videoProfile": "main 10",
+                "Part": [
+                  {
+                    "id": 11281,
+                    "key": "/library/parts/11281/1729110132/file.mkv",
+                    "duration": 6100385,
+                    "size": 4148181346,
+                    "audioProfile": "lc",
+                    "container": "mkv",
+                    "videoProfile": "main 10"
+                  }
+                ]
+              }
+            ],
+            "Genre": [
+              {
+                "tag": "Comedy"
+              },
+              {
+                "tag": "Thriller"
+              }
+            ],
+            "Director": [
+              {
+                "tag": "Boris Yoder"
+              }
+            ],
+            "Role": [
+              {
+                "tag": "Zane Castellan"
+              },
+              {
+                "tag": "Fabio Ashby"
+              },
+              {
+                "tag": "Wren Irving"
+              }
+            ]
+          },
+          {
+            "librarySectionTitle": "Movies",
+            "score": "0.53063",
+            "ratingKey": "553",
+            "key": "/library/metadata/553",
+            "guid": "plex://movie/c0f554664d8293c365381006",
+            "slug": "the-rusty-fortune",
+            "studio": "Blue Meadow Studios",
+            "type": "movie",
+            "title": "The Rusty Fortune",
+            "titleSort": "Rusty Fortune",
+            "librarySectionID": 1,
+            "librarySectionKey": "/library/sections/1",
+            "contentRating": "G",
+            "contentRatingAge": 6,
+            "summary": "A new neighbor tries to save the place they love. A new neighbor faces an unexpected choice.",
+            "rating": 8.3,
+            "audienceRating": 6.3,
+            "year": 1961,
+            "tagline": "Amber province, open hearts.",
+            "thumb": "/library/metadata/553/thumb/1783586774",
+            "art": "/library/metadata/553/art/1783586774",
+            "duration": 5759962,
+            "originallyAvailableAt": "1961-03-16",
+            "addedAt": 1652077985,
+            "updatedAt": 1783586774,
+            "audienceRatingImage": "rottentomatoes://image.rating.upright",
+            "ratingImage": "rottentomatoes://image.rating.ripe",
+            "Media": [
+              {
+                "id": 1495,
+                "duration": 5759962,
+                "bitrate": 1102,
+                "width": 1024,
+                "height": 576,
+                "aspectRatio": 1.78,
+                "audioChannels": 2,
+                "audioCodec": "mp3",
+                "videoCodec": "mpeg4",
+                "videoResolution": "576",
+                "container": "avi",
+                "videoFrameRate": "PAL",
+                "videoProfile": "advanced simple",
+                "Part": [
+                  {
+                    "id": 1495,
+                    "key": "/library/parts/1495/1652077985/file.avi",
+                    "duration": 5759962,
+                    "size": 800085426,
+                    "container": "avi",
+                    "videoProfile": "advanced simple"
+                  }
+                ]
+              }
+            ],
+            "Genre": [
+              {
+                "tag": "Comedy"
+              },
+              {
+                "tag": "Family"
+              }
+            ],
+            "Director": [
+              {
+                "tag": "Felix Holt"
+              }
+            ],
+            "Role": [
+              {
+                "tag": "Rhea Fontaine"
+              },
+              {
+                "tag": "Wes Moreau"
+              },
+              {
+                "tag": "Victor Navarro"
+              }
+            ]
+          },
+          {
+            "librarySectionTitle": "Movies",
+            "score": "0.33086",
+            "ratingKey": "6",
+            "key": "/library/metadata/6",
+            "guid": "plex://movie/280330fbbdb9e0ec11d76744",
+            "slug": "gentle-circus",
+            "studio": "Paper Moon Media",
+            "type": "movie",
+            "title": "Gentle Circus",
+            "librarySectionID": 1,
+            "librarySectionKey": "/library/sections/1",
+            "contentRating": "PG-13",
+            "contentRatingAge": 14,
+            "summary": "Two old friends is pulled into a mystery nobody asked for. A young detective discovers a secret that changes everything.",
+            "rating": 6.6,
+            "audienceRating": 8.6,
+            "year": 2004,
+            "tagline": "Late summit, cold hearts.",
+            "thumb": "/library/metadata/6/thumb/1784705197",
+            "art": "/library/metadata/6/art/1784705197",
+            "duration": 6560170,
+            "originallyAvailableAt": "2004-06-09",
+            "addedAt": 1652079160,
+            "updatedAt": 1784705197,
+            "audienceRatingImage": "rottentomatoes://image.rating.upright",
+            "hasPremiumExtras": "1",
+            "hasPremiumPrimaryExtra": "1",
+            "ratingImage": "rottentomatoes://image.rating.ripe",
+            "Media": [
+              {
+                "id": 69,
+                "duration": 6560170,
+                "bitrate": 1963,
+                "width": 1920,
+                "height": 1078,
+                "aspectRatio": 1.78,
+                "audioChannels": 2,
+                "audioCodec": "aac",
+                "videoCodec": "h264",
+                "videoResolution": "1080",
+                "container": "mp4",
+                "videoFrameRate": "24p",
+                "optimizedForStreaming": 1,
+                "audioProfile": "lc",
+                "has64bitOffsets": false,
+                "videoProfile": "high",
+                "Part": [
+                  {
+                    "id": 69,
+                    "key": "/library/parts/69/1652078808/file.mp4",
+                    "duration": 6560170,
+                    "size": 1613051757,
+                    "audioProfile": "lc",
+                    "container": "mp4",
+                    "has64bitOffsets": false,
+                    "optimizedForStreaming": true,
+                    "videoProfile": "high"
+                  }
+                ]
+              },
+              {
+                "id": 8,
+                "duration": 5573276,
+                "bitrate": 1041,
+                "width": 720,
+                "height": 400,
+                "aspectRatio": 1.78,
+                "audioChannels": 2,
+                "audioCodec": "mp3",
+                "videoCodec": "mpeg4",
+                "videoResolution": "sd",
+                "container": "avi",
+                "videoFrameRate": "24p",
+                "videoProfile": "simple",
+                "Part": [
+                  {
+                    "id": 8,
+                    "key": "/library/parts/8/1652079160/file.avi",
+                    "duration": 5573276,
+                    "size": 733745146,
+                    "container": "avi",
+                    "videoProfile": "simple"
+                  }
+                ]
+              }
+            ],
+            "Genre": [
+              {
+                "tag": "Comedy"
+              }
+            ],
+            "Director": [
+              {
+                "tag": "Elena Thorne"
+              }
+            ],
+            "Role": [
+              {
+                "tag": "Jules Lane"
+              },
+              {
+                "tag": "Esme Lindqvist"
+              },
+              {
+                "tag": "Dario Underhill"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Episodes",
+        "type": "episode",
+        "hubIdentifier": "episode",
+        "context": "",
+        "size": 3,
+        "more": false,
+        "style": "shelf",
+        "Metadata": [
+          {
+            "librarySectionTitle": "TV Shows",
+            "score": "0.51077",
+            "ratingKey": "1014",
+            "key": "/library/metadata/1014",
+            "parentRatingKey": "1003",
+            "grandparentRatingKey": "1002",
+            "guid": "plex://episode/ea77a1194a6e2c8c9159022c",
+            "parentGuid": "plex://season/39a0fcd9fe8736158fface98",
+            "grandparentGuid": "plex://show/074a6cb6f1d82f596a937bf2",
+            "grandparentSlug": "harbor-lights",
+            "type": "episode",
+            "title": "Open Engine",
+            "titleSort": "Open Engine",
+            "grandparentKey": "/library/metadata/1002",
+            "parentKey": "/library/metadata/1003",
+            "librarySectionID": 2,
+            "librarySectionKey": "/library/sections/2",
+            "grandparentTitle": "Harbor Lights",
+            "parentTitle": "Season 1",
+            "contentRating": "TV-14",
+            "summary": "A stubborn inventor finds help from an unlikely ally. A quiet town learns that the past is not finished.",
+            "index": 11,
+            "parentIndex": 1,
+            "audienceRating": 7.7,
+            "year": 2007,
+            "thumb": "/library/metadata/1014/thumb/1652091949",
+            "art": "/library/metadata/1002/art/1792054330",
+            "parentThumb": "/library/metadata/1003/thumb/1696641839",
+            "grandparentThumb": "/library/metadata/1002/thumb/1792054330",
+            "grandparentArt": "/library/metadata/1002/art/1792054330",
+            "grandparentTheme": "/library/metadata/1002/theme/1792054330",
+            "duration": 1265430,
+            "originallyAvailableAt": "2007-01-18",
+            "addedAt": 1652091949,
+            "audienceRatingImage": "themoviedb://image.rating",
+            "chapterSource": "media",
+            "Media": [
+              {
+                "id": 14897,
+                "duration": 1265430,
+                "bitrate": 4470,
+                "width": 1920,
+                "height": 1080,
+                "aspectRatio": 1.78,
+                "audioChannels": 6,
+                "audioCodec": "aac",
+                "videoCodec": "hevc",
+                "videoResolution": "1080",
+                "container": "mkv",
+                "videoFrameRate": "24p",
+                "audioProfile": "lc",
+                "videoProfile": "main 10",
+                "Part": [
+                  {
+                    "id": 14915,
+                    "key": "/library/parts/14915/1757320543/file.mkv",
+                    "duration": 1265430,
+                    "size": 702599062,
+                    "audioProfile": "lc",
+                    "container": "mkv",
+                    "videoProfile": "main 10"
+                  }
+                ]
+              }
+            ],
+            "Director": [
+              {
+                "tag": "Nico Dunmore"
+              }
+            ],
+            "Role": [
+              {
+                "tag": "Dana Whitfield"
+              },
+              {
+                "tag": "Marcus Hale"
+              },
+              {
+                "tag": "Leo Marsh"
+              }
+            ]
+          },
+          {
+            "librarySectionTitle": "TV Shows",
+            "score": "0.51077",
+            "ratingKey": "1005",
+            "key": "/library/metadata/1005",
+            "parentRatingKey": "1003",
+            "grandparentRatingKey": "1002",
+            "guid": "plex://episode/d6249e6e11bc33de69f13c78",
+            "parentGuid": "plex://season/39a0fcd9fe8736158fface98",
+            "grandparentGuid": "plex://show/074a6cb6f1d82f596a937bf2",
+            "grandparentSlug": "harbor-lights",
+            "type": "episode",
+            "title": "Second Wind",
+            "titleSort": "Second Wind",
+            "grandparentKey": "/library/metadata/1002",
+            "parentKey": "/library/metadata/1003",
+            "librarySectionID": 2,
+            "librarySectionKey": "/library/sections/2",
+            "grandparentTitle": "Harbor Lights",
+            "parentTitle": "Season 1",
+            "contentRating": "TV-14",
+            "summary": "The night shift at a hospital learns that the past is not finished. A new neighbor plans one last big job.",
+            "index": 2,
+            "parentIndex": 1,
+            "audienceRating": 7.7,
+            "viewCount": 1,
+            "lastViewedAt": 1757299712,
+            "year": 2006,
+            "thumb": "/library/metadata/1005/thumb/1757347567",
+            "art": "/library/metadata/1002/art/1792054330",
+            "parentThumb": "/library/metadata/1003/thumb/1696641839",
+            "grandparentThumb": "/library/metadata/1002/thumb/1792054330",
+            "grandparentArt": "/library/metadata/1002/art/1792054330",
+            "grandparentTheme": "/library/metadata/1002/theme/1792054330",
+            "duration": 1282614,
+            "originallyAvailableAt": "2006-10-18",
+            "addedAt": 1652091965,
+            "updatedAt": 1757347567,
+            "audienceRatingImage": "themoviedb://image.rating",
+            "chapterSource": "media",
+            "Media": [
+              {
+                "id": 14888,
+                "duration": 1282614,
+                "bitrate": 4760,
+                "width": 1920,
+                "height": 1080,
+                "aspectRatio": 1.78,
+                "audioChannels": 6,
+                "audioCodec": "aac",
+                "videoCodec": "hevc",
+                "videoResolution": "1080",
+                "container": "mkv",
+                "videoFrameRate": "24p",
+                "audioProfile": "lc",
+                "videoProfile": "main 10",
+                "Part": [
+                  {
+                    "id": 14906,
+                    "key": "/library/parts/14906/1757320513/file.mkv",
+                    "duration": 1282614,
+                    "size": 758620375,
+                    "audioProfile": "lc",
+                    "container": "mkv",
+                    "videoProfile": "main 10"
+                  }
+                ]
+              }
+            ],
+            "Director": [
+              {
+                "tag": "Edith Rinaldi"
+              }
+            ],
+            "Role": [
+              {
+                "tag": "Dana Whitfield"
+              },
+              {
+                "tag": "Marcus Hale"
+              },
+              {
+                "tag": "Leo Marsh"
+              }
+            ]
+          },
+          {
+            "librarySectionTitle": "TV Shows",
+            "score": "0.51074",
+            "ratingKey": "1011",
+            "key": "/library/metadata/1011",
+            "parentRatingKey": "1003",
+            "grandparentRatingKey": "1002",
+            "guid": "plex://episode/02e1549913327378e74600f8",
+            "parentGuid": "plex://season/39a0fcd9fe8736158fface98",
+            "grandparentGuid": "plex://show/074a6cb6f1d82f596a937bf2",
+            "grandparentSlug": "harbor-lights",
+            "type": "episode",
+            "title": "Marble Library",
+            "titleSort": "Marble Library",
+            "grandparentKey": "/library/metadata/1002",
+            "parentKey": "/library/metadata/1003",
+            "librarySectionID": 2,
+            "librarySectionKey": "/library/sections/2",
+            "grandparentTitle": "Harbor Lights",
+            "parentTitle": "Season 1",
+            "contentRating": "TV-14",
+            "summary": "The night shift at a hospital discovers a secret that changes everything. The crew of a river ferry plans one last big job.",
+            "index": 8,
+            "parentIndex": 1,
+            "audienceRating": 7.4,
+            "year": 2006,
+            "thumb": "/library/metadata/1011/thumb/1652091958",
+            "art": "/library/metadata/1002/art/1792054330",
+            "parentThumb": "/library/metadata/1003/thumb/1696641839",
+            "grandparentThumb": "/library/metadata/1002/thumb/1792054330",
+            "grandparentArt": "/library/metadata/1002/art/1792054330",
+            "grandparentTheme": "/library/metadata/1002/theme/1792054330",
+            "duration": 1295210,
+            "originallyAvailableAt": "2006-12-14",
+            "addedAt": 1652091958,
+            "audienceRatingImage": "themoviedb://image.rating",
+            "chapterSource": "media",
+            "Media": [
+              {
+                "id": 14894,
+                "duration": 1295210,
+                "bitrate": 3503,
+                "width": 1920,
+                "height": 1080,
+                "aspectRatio": 1.78,
+                "audioChannels": 6,
+                "audioCodec": "aac",
+                "videoCodec": "hevc",
+                "videoResolution": "1080",
+                "container": "mkv",
+                "videoFrameRate": "24p",
+                "audioProfile": "lc",
+                "videoProfile": "main 10",
+                "Part": [
+                  {
+                    "id": 14912,
+                    "key": "/library/parts/14912/1757320497/file.mkv",
+                    "duration": 1295210,
+                    "size": 562052258,
+                    "audioProfile": "lc",
+                    "container": "mkv",
+                    "videoProfile": "main 10"
+                  }
+                ]
+              }
+            ],
+            "Director": [
+              {
+                "tag": "Edith Rinaldi"
+              },
+              {
+                "tag": "Fabio Holt"
+              }
+            ],
+            "Role": [
+              {
+                "tag": "Dana Whitfield"
+              },
+              {
+                "tag": "Marcus Hale"
+              },
+              {
+                "tag": "Leo Marsh"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+# Secret scanner settings. Run: gitleaks git --no-banner .
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Plex's public database ids (24 hex characters) inside saved server responses used as test data"
+paths = [
+  '''HomeReel/Fixtures/.*\.json''',
+  '''HomeReelTests/.*''',
+]

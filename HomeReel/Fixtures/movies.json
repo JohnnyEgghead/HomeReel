@@ -1,0 +1,263 @@
+{
+  "MediaContainer": {
+    "size": 3,
+    "totalSize": 158,
+    "offset": 0,
+    "allowSync": true,
+    "art": "/:/resources/movie-fanart.jpg",
+    "identifier": "com.plexapp.plugins.library",
+    "librarySectionID": 1,
+    "librarySectionTitle": "Movies",
+    "librarySectionUUID": "f3cc4b5c-a8bf-4fab-ae3c-5d0316026281",
+    "mediaTagPrefix": "/system/bundle/media/flags/",
+    "mediaTagVersion": 1758205129,
+    "thumb": "/:/resources/movie.png",
+    "title1": "Movies",
+    "title2": "All Movies",
+    "viewGroup": "movie",
+    "viewMode": 65592,
+    "Metadata": [
+      {
+        "ratingKey": "8217",
+        "key": "/library/metadata/8217",
+        "guid": "plex://movie/0c23c3e2fc266bf0a91f2aca",
+        "slug": "the-quiet-street",
+        "studio": "Gentle Wave Films",
+        "type": "movie",
+        "title": "The Quiet Street",
+        "titleSort": "Quiet Street",
+        "contentRating": "PG",
+        "contentRatingAge": 13,
+        "summary": "A quiet town discovers a secret that changes everything. A young detective tries to save the place they love.",
+        "rating": 5.7,
+        "audienceRating": 7.1,
+        "year": 1989,
+        "tagline": "Early ferry, crimson hearts.",
+        "thumb": "/library/metadata/8217/thumb/1783586784",
+        "art": "/library/metadata/8217/art/1783586784",
+        "duration": 6100385,
+        "originallyAvailableAt": "1989-02-17",
+        "addedAt": 1729111266,
+        "updatedAt": 1783586784,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "chapterSource": "media",
+        "hasPremiumExtras": "1",
+        "hasPremiumPrimaryExtra": "1",
+        "ratingImage": "rottentomatoes://image.rating.rotten",
+        "Media": [
+          {
+            "id": 11264,
+            "duration": 6100385,
+            "bitrate": 5441,
+            "width": 1920,
+            "height": 1036,
+            "aspectRatio": 1.85,
+            "audioChannels": 2,
+            "audioCodec": "aac",
+            "videoCodec": "hevc",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "audioProfile": "lc",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 11281,
+                "key": "/library/parts/11281/1729110132/file.mkv",
+                "duration": 6100385,
+                "size": 4148181346,
+                "audioProfile": "lc",
+                "container": "mkv",
+                "videoProfile": "main 10",
+                "Stream": []
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Thriller"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Boris Yoder"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Zane Castellan"
+          },
+          {
+            "tag": "Fabio Ashby"
+          },
+          {
+            "tag": "Wren Irving"
+          }
+        ]
+      },
+      {
+        "ratingKey": "5",
+        "key": "/library/metadata/5",
+        "guid": "plex://movie/d81dc7c429c9aa39ef2d9a9b",
+        "slug": "paper-station",
+        "studio": "Silver Reed Entertainment",
+        "type": "movie",
+        "title": "Paper Station",
+        "contentRating": "Not Rated",
+        "summary": "The night shift at a hospital finds help from an unlikely ally. The staff of a small theater plans one last big job.",
+        "audienceRating": 7.7,
+        "viewCount": 1,
+        "lastViewedAt": 1759127412,
+        "year": 2011,
+        "tagline": "Winter parade, savage hearts.",
+        "thumb": "/library/metadata/5/thumb/1789283064",
+        "art": "/library/metadata/5/art/1789283064",
+        "duration": 2524448,
+        "originallyAvailableAt": "2011-10-09",
+        "addedAt": 1652079578,
+        "updatedAt": 1789283064,
+        "audienceRatingImage": "imdb://image.rating",
+        "Media": [
+          {
+            "id": 7,
+            "duration": 2524448,
+            "bitrate": 6806,
+            "width": 1280,
+            "height": 720,
+            "aspectRatio": 1.78,
+            "audioChannels": 6,
+            "audioCodec": "ac3",
+            "videoCodec": "h264",
+            "videoResolution": "720",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "high",
+            "Part": [
+              {
+                "id": 7,
+                "key": "/library/parts/7/1652079578/file.mkv",
+                "duration": 2524448,
+                "size": 2148270329,
+                "container": "mkv",
+                "videoProfile": "high",
+                "Stream": []
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Documentary"
+          },
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Dana Thorne"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Hollis Ibarra"
+          },
+          {
+            "tag": "Owen Whitlock"
+          },
+          {
+            "tag": "Mara Brandt"
+          }
+        ]
+      },
+      {
+        "ratingKey": "7",
+        "key": "/library/metadata/7",
+        "guid": "plex://movie/4e1f6092a9325fedd2c318da",
+        "slug": "golden-harbor",
+        "studio": "Velvet Line Studios",
+        "type": "movie",
+        "title": "Golden Harbor",
+        "contentRating": "Not Rated",
+        "contentRatingAge": 12,
+        "summary": "The night shift at a hospital discovers a secret that changes everything. The crew of a river ferry discovers a secret that changes everything.",
+        "rating": 10.0,
+        "audienceRating": 9.7,
+        "year": 1957,
+        "tagline": "Electric crossing, lucky hearts.",
+        "thumb": "/library/metadata/7/thumb/1775634389",
+        "art": "/library/metadata/7/art/1775634389",
+        "duration": 5781930,
+        "originallyAvailableAt": "1957-04-10",
+        "addedAt": 1652079300,
+        "updatedAt": 1775634389,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "hasPremiumExtras": "1",
+        "hasPremiumPrimaryExtra": "1",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 9,
+            "duration": 5781930,
+            "bitrate": 1012,
+            "width": 1200,
+            "height": 720,
+            "aspectRatio": 1.66,
+            "audioChannels": 1,
+            "audioCodec": "aac",
+            "videoCodec": "h264",
+            "videoResolution": "720",
+            "container": "mp4",
+            "videoFrameRate": "24p",
+            "optimizedForStreaming": 1,
+            "audioProfile": "lc",
+            "has64bitOffsets": false,
+            "videoProfile": "high",
+            "Part": [
+              {
+                "id": 9,
+                "key": "/library/parts/9/1652079300/file.mp4",
+                "duration": 5781930,
+                "size": 734077147,
+                "audioProfile": "lc",
+                "container": "mp4",
+                "has64bitOffsets": false,
+                "optimizedForStreaming": true,
+                "videoProfile": "high",
+                "Stream": []
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Drama"
+          },
+          {
+            "tag": "Crime"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Felix Vance"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Lucian Lockwood"
+          },
+          {
+            "tag": "Jules Pruitt"
+          },
+          {
+            "tag": "Nico Lockwood"
+          }
+        ]
+      }
+    ]
+  }
+}

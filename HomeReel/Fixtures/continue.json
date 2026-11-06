@@ -1,0 +1,286 @@
+{
+  "MediaContainer": {
+    "size": 1,
+    "allowSync": true,
+    "identifier": "com.plexapp.plugins.library",
+    "Hub": [
+      {
+        "hubKey": "/library/metadata/16218,9030,15492,14359,14791,16188,12092,15265,11932,13815,737,3555,8027,13657,12959,12692",
+        "key": "/hubs/continueWatching/items",
+        "title": "Continue Watching",
+        "type": "mixed",
+        "hubIdentifier": "continueWatching",
+        "context": "hub.continueWatching",
+        "size": 16,
+        "more": false,
+        "style": "hero",
+        "Metadata": [
+          {
+            "ratingKey": "16218",
+            "key": "/library/metadata/16218",
+            "guid": "plex://movie/350605a1fd320d108be7dae6",
+            "slug": "copper-lantern",
+            "studio": "Harbor Television",
+            "type": "movie",
+            "title": "Copper Lantern",
+            "librarySectionTitle": "Movies",
+            "librarySectionID": 1,
+            "librarySectionKey": "/library/sections/1",
+            "contentRating": "R",
+            "contentRatingAge": 17,
+            "summary": "The staff of a small theater faces an unexpected choice. A family on the edge of the city finds help from an unlikely ally.",
+            "rating": 9.1,
+            "audienceRating": 8.9,
+            "viewOffset": 6075849,
+            "lastViewedAt": 1793918530,
+            "includedAt": 1793918530,
+            "year": 2007,
+            "tagline": "Paper market, silver hearts.",
+            "thumb": "/library/metadata/16218/thumb/1793867900",
+            "art": "/library/metadata/16218/art/1793867900",
+            "duration": 7246953,
+            "originallyAvailableAt": "2007-02-16",
+            "addedAt": 1793867898,
+            "updatedAt": 1793867900,
+            "audienceRatingImage": "rottentomatoes://image.rating.upright",
+            "hasPremiumExtras": "1",
+            "hasPremiumPrimaryExtra": "1",
+            "ratingImage": "rottentomatoes://image.rating.ripe",
+            "Media": [
+              {
+                "id": 21541,
+                "duration": 7246953,
+                "bitrate": 2010,
+                "width": 1920,
+                "height": 812,
+                "aspectRatio": 2.35,
+                "audioChannels": 2,
+                "audioCodec": "aac",
+                "videoCodec": "h264",
+                "videoResolution": "1080",
+                "container": "mp4",
+                "videoFrameRate": "24p",
+                "optimizedForStreaming": 1,
+                "audioProfile": "lc",
+                "has64bitOffsets": false,
+                "videoProfile": "high",
+                "Part": [
+                  {
+                    "id": 21559,
+                    "key": "/library/parts/21559/1793867862/file.mp4",
+                    "duration": 7246953,
+                    "size": 1820730217,
+                    "audioProfile": "lc",
+                    "container": "mp4",
+                    "has64bitOffsets": false,
+                    "optimizedForStreaming": true,
+                    "videoProfile": "high"
+                  }
+                ]
+              }
+            ],
+            "Genre": [
+              {
+                "tag": "Comedy"
+              },
+              {
+                "tag": "Mystery"
+              }
+            ],
+            "Director": [
+              {
+                "tag": "Talia Whitlock"
+              }
+            ],
+            "Role": [
+              {
+                "tag": "Carla Jarrett"
+              },
+              {
+                "tag": "Quinn Everhart"
+              },
+              {
+                "tag": "Tomas Okafor"
+              }
+            ]
+          },
+          {
+            "ratingKey": "9030",
+            "key": "/library/metadata/9030",
+            "guid": "plex://movie/551c67c4cec634bc4d3ffde9",
+            "slug": "midnight-ferry",
+            "studio": "Midnight Ferry Works",
+            "type": "movie",
+            "title": "Midnight Ferry",
+            "librarySectionTitle": "Movies",
+            "librarySectionID": 1,
+            "librarySectionKey": "/library/sections/1",
+            "contentRating": "PG",
+            "contentRatingAge": 13,
+            "summary": "Two old friends faces an unexpected choice. Two old friends discovers a secret that changes everything.",
+            "rating": 1.4,
+            "audienceRating": 3.8,
+            "viewOffset": 2659204,
+            "viewCount": 3,
+            "lastViewedAt": 1793867267,
+            "includedAt": 1793867267,
+            "year": 1986,
+            "tagline": "Quick lantern, hollow hearts.",
+            "thumb": "/library/metadata/9030/thumb/1789283075",
+            "art": "/library/metadata/9030/art/1789283075",
+            "duration": 6626665,
+            "originallyAvailableAt": "1986-08-01",
+            "addedAt": 1735031876,
+            "updatedAt": 1789283075,
+            "audienceRatingImage": "rottentomatoes://image.rating.spilled",
+            "hasPremiumPrimaryExtra": "1",
+            "ratingImage": "rottentomatoes://image.rating.rotten",
+            "Media": [
+              {
+                "id": 12190,
+                "duration": 6626665,
+                "bitrate": 2224,
+                "width": 1920,
+                "height": 1036,
+                "aspectRatio": 1.85,
+                "audioChannels": 6,
+                "audioCodec": "aac",
+                "videoCodec": "hevc",
+                "videoResolution": "1080",
+                "container": "mp4",
+                "videoFrameRate": "24p",
+                "optimizedForStreaming": 0,
+                "audioProfile": "lc",
+                "has64bitOffsets": false,
+                "videoProfile": "main 10",
+                "Part": [
+                  {
+                    "id": 12207,
+                    "key": "/library/parts/12207/1735031453/file.mp4",
+                    "duration": 6626665,
+                    "size": 1847752992,
+                    "audioProfile": "lc",
+                    "container": "mp4",
+                    "has64bitOffsets": false,
+                    "optimizedForStreaming": false,
+                    "videoProfile": "main 10"
+                  }
+                ]
+              }
+            ],
+            "Genre": [
+              {
+                "tag": "Comedy"
+              },
+              {
+                "tag": "Science Fiction"
+              }
+            ],
+            "Director": [
+              {
+                "tag": "Hollis Kessler"
+              }
+            ],
+            "Role": [
+              {
+                "tag": "Marcus Yoder"
+              },
+              {
+                "tag": "Anya Lane"
+              },
+              {
+                "tag": "Ines Zeller"
+              }
+            ]
+          },
+          {
+            "ratingKey": "1004",
+            "key": "/library/metadata/1004",
+            "parentRatingKey": "1003",
+            "grandparentRatingKey": "1002",
+            "guid": "plex://episode/e7152c6bb79dffebbbff9aa0",
+            "parentGuid": "plex://season/9ec0951d2307c8a112ed171b",
+            "grandparentGuid": "plex://show/cf4effa3b5feabb183f19fc9",
+            "grandparentSlug": "harbor-lights",
+            "studio": "Cedar Point Television",
+            "type": "episode",
+            "title": "First Light",
+            "titleSort": "First Light",
+            "grandparentKey": "/library/metadata/1002",
+            "parentKey": "/library/metadata/1003",
+            "librarySectionTitle": "TV Shows",
+            "librarySectionID": 2,
+            "librarySectionKey": "/library/sections/2",
+            "grandparentTitle": "Harbor Lights",
+            "parentTitle": "Season 1",
+            "contentRating": "TV-PG",
+            "summary": "The crew of a river ferry faces an unexpected choice. A young detective discovers a secret that changes everything.",
+            "index": 1,
+            "parentIndex": 1,
+            "audienceRating": 7.7,
+            "viewOffset": 987532,
+            "lastViewedAt": 1793853833,
+            "includedAt": 1793853833,
+            "year": 1987,
+            "thumb": "/library/metadata/15492/thumb/1792687632",
+            "art": "/library/metadata/15337/art/1792687624",
+            "parentThumb": "/library/metadata/15478/thumb/1792687630",
+            "grandparentThumb": "/library/metadata/15337/thumb/1792687624",
+            "grandparentArt": "/library/metadata/15337/art/1792687624",
+            "grandparentTheme": "/library/metadata/15337/theme/1792687624",
+            "duration": 1486036,
+            "originallyAvailableAt": "1987-01-17",
+            "addedAt": 1792687624,
+            "updatedAt": 1792687632,
+            "audienceRatingImage": "themoviedb://image.rating",
+            "Media": [
+              {
+                "id": 20837,
+                "duration": 1486036,
+                "bitrate": 1472,
+                "width": 702,
+                "height": 476,
+                "aspectRatio": 1.33,
+                "audioChannels": 2,
+                "audioCodec": "aac",
+                "videoCodec": "hevc",
+                "videoResolution": "480",
+                "container": "mkv",
+                "videoFrameRate": "24p",
+                "audioProfile": "lc",
+                "videoProfile": "main 10",
+                "Part": [
+                  {
+                    "id": 20855,
+                    "key": "/library/parts/20855/1792672192/file.mkv",
+                    "duration": 1486036,
+                    "size": 273200339,
+                    "audioProfile": "lc",
+                    "container": "mkv",
+                    "videoProfile": "main 10"
+                  }
+                ]
+              }
+            ],
+            "Director": [
+              {
+                "tag": "Yara Zeller"
+              }
+            ],
+            "Role": [
+              {
+                "tag": "Uri Ashby"
+              },
+              {
+                "tag": "Dex Farrow"
+              },
+              {
+                "tag": "Hana Reed"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

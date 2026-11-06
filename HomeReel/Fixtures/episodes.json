@@ -1,0 +1,277 @@
+{
+  "MediaContainer": {
+    "size": 29,
+    "allowSync": true,
+    "art": "/library/metadata/1002/art/1792054330",
+    "grandparentContentRating": "TV-14",
+    "grandparentRatingKey": 1002,
+    "grandparentStudio": "Northern Light Studios",
+    "grandparentTheme": "/library/metadata/1002/theme/1792054330",
+    "grandparentThumb": "/library/metadata/1002/thumb/1792054330",
+    "grandparentTitle": "Harbor Lights",
+    "identifier": "com.plexapp.plugins.library",
+    "key": "1003",
+    "librarySectionID": 2,
+    "librarySectionTitle": "TV Shows",
+    "librarySectionUUID": "129e481c-ffce-4cb7-a49b-af476f46d50d",
+    "mediaTagPrefix": "/system/bundle/media/flags/",
+    "mediaTagVersion": 1758205129,
+    "nocache": true,
+    "parentIndex": 1,
+    "parentTitle": "",
+    "theme": "/library/metadata/1002/theme/1792054330",
+    "thumb": "/library/metadata/1003/thumb/1696641839",
+    "title1": "Harbor Lights",
+    "title2": "Season 1",
+    "viewGroup": "episode",
+    "viewMode": 65592,
+    "Metadata": [
+      {
+        "ratingKey": "1004",
+        "key": "/library/metadata/1004",
+        "parentRatingKey": "1003",
+        "grandparentRatingKey": "1002",
+        "guid": "plex://episode/2b9499dfe9e81195206a8e1e",
+        "parentGuid": "plex://season/39a0fcd9fe8736158fface98",
+        "grandparentGuid": "plex://show/074a6cb6f1d82f596a937bf2",
+        "grandparentSlug": "harbor-lights",
+        "type": "episode",
+        "title": "First Light",
+        "grandparentKey": "/library/metadata/1002",
+        "parentKey": "/library/metadata/1003",
+        "grandparentTitle": "Harbor Lights",
+        "parentTitle": "Season 1",
+        "contentRating": "TV-14",
+        "summary": "The staff of a small theater finds help from an unlikely ally. The staff of a small theater plans one last big job.",
+        "index": 1,
+        "parentIndex": 1,
+        "audienceRating": 6.8,
+        "viewCount": 1,
+        "lastViewedAt": 1757298374,
+        "year": 2006,
+        "thumb": "/library/metadata/1004/thumb/1757347566",
+        "art": "/library/metadata/1002/art/1792054330",
+        "parentThumb": "/library/metadata/1003/thumb/1696641839",
+        "grandparentThumb": "/library/metadata/1002/thumb/1792054330",
+        "grandparentArt": "/library/metadata/1002/art/1792054330",
+        "grandparentTheme": "/library/metadata/1002/theme/1792054330",
+        "duration": 1321820,
+        "originallyAvailableAt": "2006-10-11",
+        "addedAt": 1652091957,
+        "updatedAt": 1757347566,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "chapterSource": "media",
+        "Media": [
+          {
+            "id": 14887,
+            "duration": 1321820,
+            "bitrate": 4846,
+            "width": 1920,
+            "height": 1080,
+            "aspectRatio": 1.78,
+            "audioChannels": 6,
+            "audioCodec": "aac",
+            "videoCodec": "hevc",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "audioProfile": "lc",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 14905,
+                "key": "/library/parts/14905/1757295703/file.mkv",
+                "duration": 1321820,
+                "size": 795554781,
+                "audioProfile": "lc",
+                "container": "mkv",
+                "videoProfile": "main 10",
+                "Stream": []
+              }
+            ]
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Edith Rinaldi"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Dana Whitfield"
+          },
+          {
+            "tag": "Marcus Hale"
+          },
+          {
+            "tag": "Leo Marsh"
+          }
+        ]
+      },
+      {
+        "ratingKey": "1005",
+        "key": "/library/metadata/1005",
+        "parentRatingKey": "1003",
+        "grandparentRatingKey": "1002",
+        "guid": "plex://episode/d6249e6e11bc33de69f13c78",
+        "parentGuid": "plex://season/39a0fcd9fe8736158fface98",
+        "grandparentGuid": "plex://show/074a6cb6f1d82f596a937bf2",
+        "grandparentSlug": "harbor-lights",
+        "type": "episode",
+        "title": "Second Wind",
+        "titleSort": "Second Wind",
+        "grandparentKey": "/library/metadata/1002",
+        "parentKey": "/library/metadata/1003",
+        "grandparentTitle": "Harbor Lights",
+        "parentTitle": "Season 1",
+        "contentRating": "TV-14",
+        "summary": "The night shift at a hospital learns that the past is not finished. A new neighbor plans one last big job.",
+        "index": 2,
+        "parentIndex": 1,
+        "audienceRating": 7.7,
+        "viewCount": 1,
+        "lastViewedAt": 1757299712,
+        "year": 2006,
+        "thumb": "/library/metadata/1005/thumb/1757347567",
+        "art": "/library/metadata/1002/art/1792054330",
+        "parentThumb": "/library/metadata/1003/thumb/1696641839",
+        "grandparentThumb": "/library/metadata/1002/thumb/1792054330",
+        "grandparentArt": "/library/metadata/1002/art/1792054330",
+        "grandparentTheme": "/library/metadata/1002/theme/1792054330",
+        "duration": 1282614,
+        "originallyAvailableAt": "2006-10-18",
+        "addedAt": 1652091965,
+        "updatedAt": 1757347567,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "chapterSource": "media",
+        "Media": [
+          {
+            "id": 14888,
+            "duration": 1282614,
+            "bitrate": 4760,
+            "width": 1920,
+            "height": 1080,
+            "aspectRatio": 1.78,
+            "audioChannels": 6,
+            "audioCodec": "aac",
+            "videoCodec": "hevc",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "audioProfile": "lc",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 14906,
+                "key": "/library/parts/14906/1757320513/file.mkv",
+                "duration": 1282614,
+                "size": 758620375,
+                "audioProfile": "lc",
+                "container": "mkv",
+                "videoProfile": "main 10",
+                "Stream": []
+              }
+            ]
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Edith Rinaldi"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Dana Whitfield"
+          },
+          {
+            "tag": "Marcus Hale"
+          },
+          {
+            "tag": "Leo Marsh"
+          }
+        ]
+      },
+      {
+        "ratingKey": "1006",
+        "key": "/library/metadata/1006",
+        "parentRatingKey": "1003",
+        "grandparentRatingKey": "1002",
+        "guid": "plex://episode/4b62d5d227275b26dc09982b",
+        "parentGuid": "plex://season/39a0fcd9fe8736158fface98",
+        "grandparentGuid": "plex://show/074a6cb6f1d82f596a937bf2",
+        "grandparentSlug": "harbor-lights",
+        "type": "episode",
+        "title": "Third Door",
+        "grandparentKey": "/library/metadata/1002",
+        "parentKey": "/library/metadata/1003",
+        "grandparentTitle": "Harbor Lights",
+        "parentTitle": "Season 1",
+        "contentRating": "TV-14",
+        "summary": "The staff of a small theater learns that the past is not finished. A quiet town learns that the past is not finished.",
+        "index": 3,
+        "parentIndex": 1,
+        "audienceRating": 7.2,
+        "viewCount": 1,
+        "lastViewedAt": 1757385192,
+        "year": 2006,
+        "thumb": "/library/metadata/1006/thumb/1652091964",
+        "art": "/library/metadata/1002/art/1792054330",
+        "parentThumb": "/library/metadata/1003/thumb/1696641839",
+        "grandparentThumb": "/library/metadata/1002/thumb/1792054330",
+        "grandparentArt": "/library/metadata/1002/art/1792054330",
+        "grandparentTheme": "/library/metadata/1002/theme/1792054330",
+        "duration": 1297045,
+        "originallyAvailableAt": "2006-10-25",
+        "addedAt": 1652091964,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "chapterSource": "media",
+        "Media": [
+          {
+            "id": 14889,
+            "duration": 1297045,
+            "bitrate": 3839,
+            "width": 1920,
+            "height": 1080,
+            "aspectRatio": 1.78,
+            "audioChannels": 6,
+            "audioCodec": "aac",
+            "videoCodec": "hevc",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "audioProfile": "lc",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 14907,
+                "key": "/library/parts/14907/1757320617/file.mkv",
+                "duration": 1297045,
+                "size": 618101924,
+                "audioProfile": "lc",
+                "container": "mkv",
+                "videoProfile": "main 10",
+                "Stream": []
+              }
+            ]
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Edith Rinaldi"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Dana Whitfield"
+          },
+          {
+            "tag": "Marcus Hale"
+          },
+          {
+            "tag": "Leo Marsh"
+          }
+        ]
+      }
+    ]
+  }
+}

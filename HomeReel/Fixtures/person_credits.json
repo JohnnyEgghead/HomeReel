@@ -1,0 +1,526 @@
+{
+  "MediaContainer": {
+    "identifier": "tv.plex.provider.discover",
+    "size": 6,
+    "CreditGroup": [
+      {
+        "title": "Actor",
+        "type": "actor",
+        "Credit": [
+          {
+            "order": 1,
+            "role": "Lucian Brandt",
+            "Metadata": {
+              "originallyAvailableAt": "2025-05-01T00:00:00.000Z",
+              "ratingKey": "51512ea3c8d6cd4c513286c1",
+              "thumb": "https://image.tmdb.org/t/p/original/6ccb97ebcbe315a983a4d2542d4e60ef.jpg",
+              "title": "Paper Summit (2025)",
+              "type": "show",
+              "year": 2025
+            }
+          },
+          {
+            "order": 10,
+            "role": "Nora Everhart",
+            "Metadata": {
+              "originallyAvailableAt": "2024-01-10T00:00:00.000Z",
+              "ratingKey": "174e78ac1a0e827c2d4fac43",
+              "thumb": "https://metadata-static.plex.tv/ebc2401b7775be78234ff836702c39c9.jpg",
+              "title": "Broken Garden",
+              "type": "movie",
+              "year": 2024
+            }
+          },
+          {
+            "order": 5,
+            "role": "Hana Navarro",
+            "Metadata": {
+              "originallyAvailableAt": "2023-09-13T00:00:00.000Z",
+              "ratingKey": "bc2194ad45809bf12a77ee96",
+              "thumb": "https://metadata-static.plex.tv/f04e9d1afdd7f53ecf90e15159feef7d.jpg",
+              "title": "The Northern Orchard",
+              "type": "movie",
+              "year": 2023
+            }
+          },
+          {
+            "order": 2,
+            "role": "Hugo Irving",
+            "Metadata": {
+              "playableKey": "provider://tv.plex.provider.vod/library/metadata/b5f9f6ac3eb2fbda29a349e0",
+              "originallyAvailableAt": "2023-06-15T00:00:00.000Z",
+              "ratingKey": "b5f9f6ac3eb2fbda29a349e0",
+              "thumb": "https://metadata-static.plex.tv/60b083e08fc3871fa1b95c0a9c8d9513.jpg",
+              "title": "Savage Theater",
+              "type": "movie",
+              "year": 2023
+            }
+          },
+          {
+            "order": 3,
+            "role": "Quinn Vance",
+            "Metadata": {
+              "originallyAvailableAt": "2023-05-12T00:00:00.000Z",
+              "ratingKey": "1fafb5687d150d1c12a340d3",
+              "thumb": "https://image.tmdb.org/t/p/original/56d78155d221130cde41b5befa596e86.jpg",
+              "title": "Golden Cabin",
+              "type": "show",
+              "year": 2023
+            }
+          },
+          {
+            "order": 19,
+            "role": "Anya Underhill",
+            "Metadata": {
+              "originallyAvailableAt": "2021-08-31T00:00:00.000Z",
+              "ratingKey": "2369c14dfe5d90cb9e46f7fa",
+              "thumb": "https://image.tmdb.org/t/p/original/f6c983f8bb4959f46d5021690e153713.jpg",
+              "title": "Late Theater",
+              "type": "show",
+              "year": 2021
+            }
+          },
+          {
+            "order": 24,
+            "role": "Hana Hale",
+            "Metadata": {
+              "originallyAvailableAt": "2021-08-11T00:00:00.000Z",
+              "ratingKey": "ed7c51bb332e3b43f8925d44",
+              "thumb": "https://metadata-static.plex.tv/36a601e2580b02fb225ffffa207ba08c.jpg",
+              "title": "Lonely Street",
+              "type": "movie",
+              "year": 2021
+            }
+          },
+          {
+            "order": 55,
+            "role": "Hana Lockwood",
+            "Metadata": {
+              "originallyAvailableAt": "2021-05-06T00:00:00.000Z",
+              "ratingKey": "ac1f6d52da6945c38c25c6cc",
+              "thumb": "https://image.tmdb.org/t/p/original/5ae9e1fac98fcb97a04478ac2c287b1c.jpg",
+              "title": "Wild Parade",
+              "type": "show",
+              "year": 2021
+            }
+          }
+        ]
+      },
+      {
+        "title": "Writer",
+        "type": "writer",
+        "Credit": [
+          {
+            "order": 4,
+            "Metadata": {
+              "originallyAvailableAt": "2025-05-01T00:00:00.000Z",
+              "ratingKey": "51512ea3c8d6cd4c513286c1",
+              "thumb": "https://image.tmdb.org/t/p/original/6ccb97ebcbe315a983a4d2542d4e60ef.jpg",
+              "title": "Paper Summit (2025)",
+              "type": "show",
+              "year": 2025
+            }
+          },
+          {
+            "order": 1,
+            "role": "Screenplay",
+            "Metadata": {
+              "originallyAvailableAt": "2024-01-10T00:00:00.000Z",
+              "ratingKey": "174e78ac1a0e827c2d4fac43",
+              "thumb": "https://metadata-static.plex.tv/ebc2401b7775be78234ff836702c39c9.jpg",
+              "title": "Broken Garden",
+              "type": "movie",
+              "year": 2024
+            }
+          },
+          {
+            "order": 2,
+            "Metadata": {
+              "originallyAvailableAt": "2021-01-07T00:00:00.000Z",
+              "ratingKey": "48c14c4d0f369d6416ec21cb",
+              "thumb": "https://image.tmdb.org/t/p/original/36c25e6d63b5372a3acb02f83afe76dc.jpg",
+              "title": "Cedar Station",
+              "type": "show",
+              "year": 2021
+            }
+          },
+          {
+            "order": 1,
+            "Metadata": {
+              "originallyAvailableAt": "2020-07-16T00:00:00.000Z",
+              "ratingKey": "dd5f1928b1f02c9017909a56",
+              "thumb": "https://image.tmdb.org/t/p/original/04ca0a0451061e8e56e47c1b7b2a2ff3.jpg",
+              "title": "The Paper Summit",
+              "type": "movie",
+              "year": 2020
+            }
+          },
+          {
+            "order": 2,
+            "Metadata": {
+              "originallyAvailableAt": "2020-05-12T00:00:00.000Z",
+              "ratingKey": "90654cb956d27d0cd317ba30",
+              "thumb": "https://metadata-static.plex.tv/64255f981e636a4e4e6d906eeb54cecc.jpg",
+              "title": "Cedar Signal",
+              "type": "movie",
+              "year": 2020
+            }
+          },
+          {
+            "order": 12,
+            "Metadata": {
+              "originallyAvailableAt": "2017-04-25T00:00:00.000Z",
+              "ratingKey": "429419f1634536d20c80440f",
+              "thumb": "https://image.tmdb.org/t/p/original/7172a40fd8be73a9969ce1852cacfd99.jpg",
+              "title": "Northern Valley",
+              "type": "show",
+              "year": 2017
+            }
+          },
+          {
+            "order": 5,
+            "Metadata": {
+              "originallyAvailableAt": "2015-03-06T00:00:00.000Z",
+              "ratingKey": "cec1ae27510c8d55a5dc115d",
+              "thumb": "https://image.tmdb.org/t/p/original/c557724f5418f796fbb3d34879762594.jpg",
+              "title": "Velvet Library",
+              "type": "show",
+              "year": 2015
+            }
+          },
+          {
+            "order": 3,
+            "Metadata": {
+              "originallyAvailableAt": "2015-02-15T00:00:00.000Z",
+              "ratingKey": "bc106057a23249d57f36cd68",
+              "thumb": "https://image.tmdb.org/t/p/original/b3d176fbf794fa77762602bf92527d7a.jpg",
+              "title": "Cold Shadow",
+              "type": "movie",
+              "year": 2015
+            }
+          }
+        ]
+      },
+      {
+        "title": "Appearances",
+        "type": "appeared",
+        "Credit": [
+          {
+            "order": 45,
+            "role": "Self - Actor",
+            "Metadata": {
+              "originallyAvailableAt": "2026-05-12T00:00:00.000Z",
+              "ratingKey": "c3ca18edb8ce961e901b764f",
+              "thumb": "https://metadata-static.plex.tv/95ac07f0e34baec33dd3b7e26b17c61e.jpg",
+              "title": "The Quiet Weather",
+              "type": "movie",
+              "year": 2026
+            }
+          },
+          {
+            "order": 31,
+            "role": "Self",
+            "Metadata": {
+              "originallyAvailableAt": "2026-04-17T00:00:00.000Z",
+              "ratingKey": "719cf93c21317cb2df519ca9",
+              "thumb": "https://image.tmdb.org/t/p/original/ccf4f62867f8e1f8e04d760ccc305ab5.jpg",
+              "title": "Rusty Engine",
+              "type": "movie",
+              "year": 2026
+            }
+          },
+          {
+            "order": 17,
+            "role": "Self - Host",
+            "Metadata": {
+              "originallyAvailableAt": "2026-03-21T00:00:00.000Z",
+              "ratingKey": "69c5e88bb647c66a7d09962a",
+              "thumb": "https://image.tmdb.org/t/p/original/66e49727a41791aa9f55689eab57aaee.jpg",
+              "title": "Early Season",
+              "type": "show",
+              "year": 2026
+            }
+          },
+          {
+            "order": 34,
+            "role": "Self - Cast",
+            "Metadata": {
+              "originallyAvailableAt": "2025-10-17T00:00:00.000Z",
+              "ratingKey": "c3cd2f5db88cbd6212c18784",
+              "thumb": "https://image.tmdb.org/t/p/original/7cb19ae8945c0cc4dcd61d99ba2bbc0b.jpg",
+              "title": "Cold Clock",
+              "type": "movie",
+              "year": 2025
+            }
+          },
+          {
+            "order": 49,
+            "role": "Self - Presenter",
+            "Metadata": {
+              "originallyAvailableAt": "2025-09-14T00:00:00.000Z",
+              "ratingKey": "c83e8fd92b1b279d3d68eb95",
+              "title": "Cold Lighthouse",
+              "type": "movie",
+              "year": 2025
+            }
+          },
+          {
+            "order": 24,
+            "role": "Self - Video Message",
+            "Metadata": {
+              "originallyAvailableAt": "2025-08-05T00:00:00.000Z",
+              "ratingKey": "27cfec37feaa234d12a34153",
+              "title": "The Lucky Fortune",
+              "type": "movie",
+              "year": 2025
+            }
+          },
+          {
+            "order": 5,
+            "role": "Self",
+            "Metadata": {
+              "originallyAvailableAt": "2025-03-31T00:00:00.000Z",
+              "ratingKey": "cc0dfc7eddeee4c1cdfa539d",
+              "thumb": "https://image.tmdb.org/t/p/original/f11af709eb294fa3ffd22df1228d5525.jpg",
+              "title": "Midnight Shadow",
+              "type": "movie",
+              "year": 2025
+            }
+          },
+          {
+            "order": 6,
+            "role": "Self",
+            "Metadata": {
+              "originallyAvailableAt": "2025-03-17T00:00:00.000Z",
+              "ratingKey": "d1f3bfea341f611d1648027b",
+              "thumb": "https://image.tmdb.org/t/p/original/f7555f0dc7b30bf9690b0f7ebaeffe10.jpg",
+              "title": "Pale Fortune",
+              "type": "movie",
+              "year": 2025
+            }
+          }
+        ]
+      },
+      {
+        "title": "Producer",
+        "type": "producer",
+        "Credit": [
+          {
+            "order": 2,
+            "role": "Executive Producer",
+            "Metadata": {
+              "originallyAvailableAt": "2026-01-18T00:00:00.000Z",
+              "ratingKey": "89b714201d39dfbe122e602f",
+              "thumb": "https://image.tmdb.org/t/p/original/7541549b6a1985d1d2223efba9b899b9.jpg",
+              "title": "The Silver Voyage",
+              "type": "show",
+              "year": 2026
+            }
+          },
+          {
+            "order": 18,
+            "role": "Executive Producer",
+            "Metadata": {
+              "originallyAvailableAt": "2025-05-01T00:00:00.000Z",
+              "ratingKey": "51512ea3c8d6cd4c513286c1",
+              "thumb": "https://image.tmdb.org/t/p/original/6ccb97ebcbe315a983a4d2542d4e60ef.jpg",
+              "title": "Paper Summit (2025)",
+              "type": "show",
+              "year": 2025
+            }
+          },
+          {
+            "order": 14,
+            "Metadata": {
+              "originallyAvailableAt": "2024-01-10T00:00:00.000Z",
+              "ratingKey": "174e78ac1a0e827c2d4fac43",
+              "thumb": "https://metadata-static.plex.tv/ebc2401b7775be78234ff836702c39c9.jpg",
+              "title": "Broken Garden",
+              "type": "movie",
+              "year": 2024
+            }
+          },
+          {
+            "order": 16,
+            "role": "Executive Producer",
+            "Metadata": {
+              "originallyAvailableAt": "2023-05-12T00:00:00.000Z",
+              "ratingKey": "1fafb5687d150d1c12a340d3",
+              "thumb": "https://image.tmdb.org/t/p/original/56d78155d221130cde41b5befa596e86.jpg",
+              "title": "Golden Cabin",
+              "type": "show",
+              "year": 2023
+            }
+          },
+          {
+            "order": 3,
+            "role": "Executive Producer",
+            "Metadata": {
+              "originallyAvailableAt": "2021-05-06T00:00:00.000Z",
+              "ratingKey": "ac1f6d52da6945c38c25c6cc",
+              "thumb": "https://image.tmdb.org/t/p/original/5ae9e1fac98fcb97a04478ac2c287b1c.jpg",
+              "title": "Wild Parade",
+              "type": "show",
+              "year": 2021
+            }
+          },
+          {
+            "order": 3,
+            "role": "Executive Producer",
+            "Metadata": {
+              "originallyAvailableAt": "2021-01-07T00:00:00.000Z",
+              "ratingKey": "48c14c4d0f369d6416ec21cb",
+              "thumb": "https://image.tmdb.org/t/p/original/36c25e6d63b5372a3acb02f83afe76dc.jpg",
+              "title": "Cedar Station",
+              "type": "show",
+              "year": 2021
+            }
+          },
+          {
+            "order": 2,
+            "role": "Executive Producer",
+            "Metadata": {
+              "originallyAvailableAt": "2020-07-16T00:00:00.000Z",
+              "ratingKey": "dd5f1928b1f02c9017909a56",
+              "thumb": "https://image.tmdb.org/t/p/original/04ca0a0451061e8e56e47c1b7b2a2ff3.jpg",
+              "title": "The Paper Summit",
+              "type": "movie",
+              "year": 2020
+            }
+          },
+          {
+            "order": 1,
+            "role": "Executive Producer",
+            "Metadata": {
+              "originallyAvailableAt": "2020-05-12T00:00:00.000Z",
+              "ratingKey": "90654cb956d27d0cd317ba30",
+              "thumb": "https://metadata-static.plex.tv/64255f981e636a4e4e6d906eeb54cecc.jpg",
+              "title": "Cedar Signal",
+              "type": "movie",
+              "year": 2020
+            }
+          }
+        ]
+      },
+      {
+        "title": "Director",
+        "type": "director",
+        "Credit": [
+          {
+            "order": 14,
+            "Metadata": {
+              "originallyAvailableAt": "2025-05-01T00:00:00.000Z",
+              "ratingKey": "51512ea3c8d6cd4c513286c1",
+              "thumb": "https://image.tmdb.org/t/p/original/6ccb97ebcbe315a983a4d2542d4e60ef.jpg",
+              "title": "Paper Summit (2025)",
+              "type": "show",
+              "year": 2025
+            }
+          }
+        ]
+      },
+      {
+        "title": "Additional Credits",
+        "type": "other",
+        "Credit": [
+          {
+            "order": 8,
+            "role": "Written By",
+            "Metadata": {
+              "originallyAvailableAt": "2025-02-16T00:00:00.000Z",
+              "ratingKey": "08d4a36a5a8c5ad356c79451",
+              "thumb": "https://metadata-static.plex.tv/79ed2ef133ef53ada3d7f706e93856f8.jpg",
+              "title": "Narrow Engine",
+              "type": "movie",
+              "year": 2025
+            }
+          },
+          {
+            "order": 5,
+            "role": "Dex Underhill",
+            "Metadata": {
+              "originallyAvailableAt": "2021-02-28T00:00:00.000Z",
+              "ratingKey": "5603d656c22e3234ba7ff1a2",
+              "thumb": "https://metadata-static.plex.tv/4d5ca2c16346bc308ffb09dbf222362d.jpg",
+              "title": "Open Railway",
+              "type": "movie",
+              "year": 2021
+            }
+          },
+          {
+            "order": 2,
+            "role": "Special Material By",
+            "Metadata": {
+              "originallyAvailableAt": "2021-02-28T00:00:00.000Z",
+              "ratingKey": "5603d656c22e3234ba7ff1a2",
+              "thumb": "https://metadata-static.plex.tv/4d5ca2c16346bc308ffb09dbf222362d.jpg",
+              "title": "Open Railway",
+              "type": "movie",
+              "year": 2021
+            }
+          },
+          {
+            "order": 8,
+            "role": "Special Material By",
+            "Metadata": {
+              "originallyAvailableAt": "2018-01-07T00:00:00.000Z",
+              "ratingKey": "0b4f4c37b6efd5348e3a3b1d",
+              "thumb": "https://metadata-static.plex.tv/942b4fbe6d5e4e18a5ebabb5cb546b90.jpg",
+              "title": "The Salt Mirror",
+              "type": "movie",
+              "year": 2018
+            }
+          },
+          {
+            "order": 2,
+            "role": "Special Material",
+            "Metadata": {
+              "originallyAvailableAt": "2015-01-11T00:00:00.000Z",
+              "ratingKey": "1a0b5365f6eb0793f13ba3a4",
+              "thumb": "https://metadata-static.plex.tv/334610ef11a43c7cedd753eb0038991f.jpg",
+              "title": "Marble Orbit",
+              "type": "movie",
+              "year": 2015
+            }
+          },
+          {
+            "order": 2,
+            "role": "Special Material",
+            "Metadata": {
+              "originallyAvailableAt": "2014-01-12T00:00:00.000Z",
+              "ratingKey": "c68b70dd71c309c3ad138bf2",
+              "thumb": "https://metadata-static.plex.tv/d9f9b471fb7e0e16be926f9bab03c805.jpg",
+              "title": "Savage Carousel",
+              "type": "movie",
+              "year": 2014
+            }
+          },
+          {
+            "order": 8,
+            "role": "Special Material",
+            "Metadata": {
+              "originallyAvailableAt": "2013-01-13T00:00:00.000Z",
+              "ratingKey": "602ed1e60ed7538a16d827b3",
+              "thumb": "https://metadata-static.plex.tv/e8bdf7bc9cc74eb0e83b3e7b0335a8bf.jpg",
+              "title": "Thin Carousel",
+              "type": "movie",
+              "year": 2013
+            }
+          },
+          {
+            "order": 4,
+            "role": "Characters",
+            "Metadata": {
+              "originallyAvailableAt": "2011-01-23T00:00:00.000Z",
+              "ratingKey": "3d2a310e60cb50913d38a3ab",
+              "thumb": "https://metadata-static.plex.tv/bacaf37e4d84d0209f59549152d6ce33.jpg",
+              "title": "The Rusty Festival",
+              "type": "movie",
+              "year": 2011
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

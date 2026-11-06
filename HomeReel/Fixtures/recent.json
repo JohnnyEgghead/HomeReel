@@ -1,0 +1,265 @@
+{
+  "MediaContainer": {
+    "size": 79,
+    "allowSync": true,
+    "art": "/:/resources/movie-fanart.jpg",
+    "identifier": "com.plexapp.plugins.library",
+    "librarySectionID": 1,
+    "librarySectionTitle": "Movies",
+    "librarySectionUUID": "f3cc4b5c-a8bf-4fab-ae3c-5d0316026281",
+    "mediaTagPrefix": "/system/bundle/media/flags/",
+    "mediaTagVersion": 1758205129,
+    "thumb": "/:/resources/movie.png",
+    "title1": "Movies",
+    "title2": "Recently Added",
+    "viewGroup": "movie",
+    "viewMode": 65592,
+    "Metadata": [
+      {
+        "ratingKey": "16228",
+        "key": "/library/metadata/16228",
+        "guid": "plex://movie/e837bd2e785f81386576237d",
+        "slug": "the-final-library",
+        "studio": "Iron Gate Productions",
+        "type": "movie",
+        "title": "The Final Library",
+        "contentRating": "R",
+        "contentRatingAge": 15,
+        "summary": "The crew of a river ferry has one week to set things right. A quiet town plans one last big job.",
+        "rating": 9.2,
+        "audienceRating": 9.3,
+        "year": 2004,
+        "tagline": "Midnight shadow, copper hearts.",
+        "thumb": "/library/metadata/16228/thumb/1793875001",
+        "art": "/library/metadata/16228/art/1793875001",
+        "duration": 5958496,
+        "originallyAvailableAt": "2004-04-09",
+        "addedAt": 1793874969,
+        "updatedAt": 1793875001,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "chapterSource": "media",
+        "hasPremiumExtras": "1",
+        "hasPremiumPrimaryExtra": "1",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 21552,
+            "duration": 5958496,
+            "bitrate": 10585,
+            "width": 1920,
+            "height": 804,
+            "aspectRatio": 2.35,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 21570,
+                "key": "/library/parts/21570/1793874921/file.mkv",
+                "duration": 5958496,
+                "size": 7883903591,
+                "container": "mkv",
+                "videoProfile": "main 10",
+                "Stream": []
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Horror"
+          },
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Talia Whitlock"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Carla Jarrett"
+          },
+          {
+            "tag": "Quinn Everhart"
+          },
+          {
+            "tag": "Hollis Holloway"
+          }
+        ]
+      },
+      {
+        "ratingKey": "16218",
+        "key": "/library/metadata/16218",
+        "guid": "plex://movie/350605a1fd320d108be7dae6",
+        "slug": "copper-lantern",
+        "studio": "Harbor Television",
+        "type": "movie",
+        "title": "Copper Lantern",
+        "contentRating": "R",
+        "contentRatingAge": 17,
+        "summary": "The staff of a small theater faces an unexpected choice. A family on the edge of the city finds help from an unlikely ally.",
+        "rating": 9.1,
+        "audienceRating": 8.9,
+        "viewOffset": 6075849,
+        "lastViewedAt": 1793918530,
+        "year": 2007,
+        "tagline": "Paper market, silver hearts.",
+        "thumb": "/library/metadata/16218/thumb/1793867900",
+        "art": "/library/metadata/16218/art/1793867900",
+        "duration": 7246953,
+        "originallyAvailableAt": "2007-02-16",
+        "addedAt": 1793867898,
+        "updatedAt": 1793867900,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "hasPremiumExtras": "1",
+        "hasPremiumPrimaryExtra": "1",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 21541,
+            "duration": 7246953,
+            "bitrate": 2010,
+            "width": 1920,
+            "height": 812,
+            "aspectRatio": 2.35,
+            "audioChannels": 2,
+            "audioCodec": "aac",
+            "videoCodec": "h264",
+            "videoResolution": "1080",
+            "container": "mp4",
+            "videoFrameRate": "24p",
+            "optimizedForStreaming": 1,
+            "audioProfile": "lc",
+            "has64bitOffsets": false,
+            "videoProfile": "high",
+            "Part": [
+              {
+                "id": 21559,
+                "key": "/library/parts/21559/1793867862/file.mp4",
+                "duration": 7246953,
+                "size": 1820730217,
+                "audioProfile": "lc",
+                "container": "mp4",
+                "has64bitOffsets": false,
+                "optimizedForStreaming": true,
+                "videoProfile": "high",
+                "Stream": []
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Mystery"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Talia Whitlock"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Carla Jarrett"
+          },
+          {
+            "tag": "Quinn Everhart"
+          },
+          {
+            "tag": "Tomas Okafor"
+          }
+        ]
+      },
+      {
+        "ratingKey": "15531",
+        "key": "/library/metadata/15531",
+        "guid": "plex://movie/d7aa1f289a2f215d9bba76e0",
+        "slug": "the-open-cabin",
+        "studio": "Lantern Pictures",
+        "type": "movie",
+        "title": "The Open Cabin",
+        "contentRating": "R",
+        "contentRatingAge": 15,
+        "summary": "Two old friends faces an unexpected choice. A retired pilot has one week to set things right.",
+        "rating": 8.6,
+        "audienceRating": 7.4,
+        "year": 2026,
+        "tagline": "Hollow blanket, northern hearts.",
+        "thumb": "/library/metadata/15531/thumb/1792832801",
+        "art": "/library/metadata/15531/art/1792832801",
+        "duration": 6636768,
+        "originallyAvailableAt": "2026-05-27",
+        "addedAt": 1792832794,
+        "updatedAt": 1792832801,
+        "audienceRatingImage": "rottentomatoes://image.rating.upright",
+        "chapterSource": "media",
+        "hasPremiumExtras": "1",
+        "hasPremiumPrimaryExtra": "1",
+        "ratingImage": "rottentomatoes://image.rating.ripe",
+        "Media": [
+          {
+            "id": 20875,
+            "duration": 6636768,
+            "bitrate": 7485,
+            "width": 1920,
+            "height": 1036,
+            "aspectRatio": 1.85,
+            "audioChannels": 6,
+            "audioCodec": "eac3",
+            "videoCodec": "hevc",
+            "videoResolution": "1080",
+            "container": "mkv",
+            "videoFrameRate": "24p",
+            "videoProfile": "main 10",
+            "Part": [
+              {
+                "id": 20893,
+                "key": "/library/parts/20893/1792831955/file.mkv",
+                "duration": 6636768,
+                "size": 6154718398,
+                "container": "mkv",
+                "hasThumbnail": "1",
+                "videoProfile": "main 10",
+                "Stream": []
+              }
+            ]
+          }
+        ],
+        "Genre": [
+          {
+            "tag": "Horror"
+          },
+          {
+            "tag": "Mystery"
+          }
+        ],
+        "Director": [
+          {
+            "tag": "Dana Ortega"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Fabio Gentry"
+          },
+          {
+            "tag": "Vera Fontaine"
+          },
+          {
+            "tag": "Bruno Okafor"
+          }
+        ]
+      }
+    ]
+  }
+}

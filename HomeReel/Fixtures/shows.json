@@ -1,0 +1,165 @@
+{
+  "MediaContainer": {
+    "size": 3,
+    "totalSize": 123,
+    "offset": 0,
+    "allowSync": true,
+    "art": "/:/resources/show-fanart.jpg",
+    "identifier": "com.plexapp.plugins.library",
+    "librarySectionID": 2,
+    "librarySectionTitle": "TV Shows",
+    "librarySectionUUID": "129e481c-ffce-4cb7-a49b-af476f46d50d",
+    "mediaTagPrefix": "/system/bundle/media/flags/",
+    "mediaTagVersion": 1758205129,
+    "nocache": true,
+    "thumb": "/:/resources/show.png",
+    "title1": "TV Shows",
+    "title2": "All Shows",
+    "viewGroup": "show",
+    "viewMode": 65592,
+    "Metadata": [
+      {
+        "ratingKey": "1002",
+        "key": "/library/metadata/1002/children",
+        "guid": "plex://show/074a6cb6f1d82f596a937bf2",
+        "slug": "harbor-lights",
+        "studio": "Northern Light Studios",
+        "type": "show",
+        "title": "Harbor Lights",
+        "contentRating": "TV-14",
+        "contentRatingAge": 15,
+        "summary": "Two old friends is pulled into a mystery nobody asked for. A quiet town tries to save the place they love.",
+        "index": 1,
+        "audienceRating": 7.5,
+        "viewCount": 11,
+        "skipCount": 3,
+        "lastViewedAt": 1765614104,
+        "year": 2006,
+        "tagline": "Paper theater, open hearts.",
+        "thumb": "/library/metadata/1002/thumb/1792054330",
+        "art": "/library/metadata/1002/art/1792054330",
+        "theme": "/library/metadata/1002/theme/1792054330",
+        "duration": 1320000,
+        "originallyAvailableAt": "2006-09-10",
+        "leafCount": 146,
+        "viewedLeafCount": 11,
+        "childCount": 7,
+        "addedAt": 1652091857,
+        "updatedAt": 1792054330,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "hasPremiumPrimaryExtra": "1",
+        "primaryExtraKey": "/library/metadata/1061",
+        "Genre": [
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Dana Whitfield"
+          },
+          {
+            "tag": "Marcus Hale"
+          },
+          {
+            "tag": "Leo Marsh"
+          }
+        ]
+      },
+      {
+        "ratingKey": "7700",
+        "key": "/library/metadata/7700/children",
+        "guid": "plex://show/7e7fac4810cc56c6e325a86f",
+        "slug": "late-fortune",
+        "studio": "Northern Light Studios",
+        "type": "show",
+        "title": "Late Fortune",
+        "contentRating": "TV-14",
+        "contentRatingAge": 14,
+        "summary": "The night shift at a hospital plans one last big job. The staff of a small theater plans one last big job.",
+        "index": 1,
+        "audienceRating": 6.9,
+        "viewCount": 8,
+        "lastViewedAt": 1750016050,
+        "year": 2018,
+        "tagline": "Harbor province, velvet hearts.",
+        "thumb": "/library/metadata/7700/thumb/1788943015",
+        "art": "/library/metadata/7700/art/1788943015",
+        "theme": "/library/metadata/7700/theme/1788943015",
+        "duration": 1320000,
+        "originallyAvailableAt": "2018-02-01",
+        "leafCount": 26,
+        "viewedLeafCount": 7,
+        "childCount": 2,
+        "addedAt": 1721274922,
+        "updatedAt": 1788943015,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "hasPremiumExtras": "1",
+        "hasPremiumPrimaryExtra": "1",
+        "primaryExtraKey": "/library/metadata/7715",
+        "Genre": [
+          {
+            "tag": "Comedy"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Priya Eastman"
+          },
+          {
+            "tag": "Kira Farrow"
+          },
+          {
+            "tag": "Alma Kessler"
+          }
+        ]
+      },
+      {
+        "ratingKey": "10354",
+        "key": "/library/metadata/10354/children",
+        "guid": "plex://show/5603c70650420a9c1664bfb0",
+        "slug": "the-hollow-valley",
+        "studio": "Orchard Lane Films",
+        "type": "show",
+        "title": "The Hollow Valley",
+        "contentRating": "TV-MA",
+        "contentRatingAge": 15,
+        "summary": "Two old friends tries to save the place they love. The crew of a river ferry has one week to set things right.",
+        "index": 1,
+        "audienceRating": 7.9,
+        "year": 2019,
+        "tagline": "Early canal, golden hearts.",
+        "thumb": "/library/metadata/10354/thumb/1788943020",
+        "art": "/library/metadata/10354/art/1788943020",
+        "theme": "/library/metadata/10354/theme/1788943020",
+        "duration": 1800000,
+        "originallyAvailableAt": "2019-03-08",
+        "leafCount": 18,
+        "viewedLeafCount": 0,
+        "childCount": 3,
+        "addedAt": 1749531499,
+        "updatedAt": 1788943020,
+        "audienceRatingImage": "themoviedb://image.rating",
+        "Genre": [
+          {
+            "tag": "Comedy"
+          },
+          {
+            "tag": "Drama"
+          }
+        ],
+        "Role": [
+          {
+            "tag": "Leo Bellamy"
+          },
+          {
+            "tag": "Priya Moreau"
+          },
+          {
+            "tag": "Yara Navarro"
+          }
+        ]
+      }
+    ]
+  }
+}
