@@ -87,7 +87,7 @@ final class FixtureURLProtocol: URLProtocol {
                 return (200, Data(#"{"id":1,"code":"ABCD","authToken":\#(token)}"#.utf8), "application/json")
             }
             if path.hasSuffix("/resources") {
-                let r = #"[{"name":"Fixture NAS","provides":"server","owned":true,"connections":[{"uri":"http://10.0.0.5:32400","address":"10.0.0.5","port":32400,"local":true,"relay":false,"protocol":"http"}]}]"#
+                let r = #"[{"name":"Fixture NAS","provides":"server","owned":true,"clientIdentifier":"fixture-server","connections":[{"uri":"http://10.0.0.5:32400","address":"10.0.0.5","port":32400,"local":true,"relay":false,"protocol":"http"}]}]"#
                 return (200, Data(r.utf8), "application/json")
             }
         }
@@ -106,8 +106,9 @@ final class FixtureURLProtocol: URLProtocol {
             return (404, Data(), "")
         }
         if path.hasPrefix("/sony/") { return tv(req, path: path) }
+        // A real server answers /identity to anyone, token or not.
+        if path == "/identity" { return (200, Data(#"{"MediaContainer":{"machineIdentifier":"fixture-server"}}"#.utf8), "application/json") }
         if mode == "unauthorized" { return (401, Data(), "") }
-        if path == "/identity" { return (200, Data("{}".utf8), "application/json") }
         if path.hasPrefix("/photo/") { return (200, placeholderPNG, "image/png") }
         if mode == "watcherror", path.hasSuffix("/scrobble") { return (500, Data(), "") }
         if path.hasPrefix("/:/") {

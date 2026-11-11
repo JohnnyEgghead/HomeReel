@@ -13,6 +13,16 @@ func debugLog(_ message: String) {
     #endif
 }
 
+/// A short message over the screen, such as a watched mark that could not be saved.
+struct BannerView: View {
+    let text: String
+    var body: some View {
+        Text(text).font(.callout).padding(.horizontal, 30).padding(.vertical, 16)
+            .background(.black.opacity(0.8), in: Capsule())
+            .padding(.bottom, 60)
+    }
+}
+
 /// A gentle grow-on-focus that replaces tvOS's own zoom, which cropped artwork.
 struct FocusScaleStyle: ButtonStyle {
     var scale: CGFloat = 1.06
@@ -73,42 +83,73 @@ struct FocusText: View {
 }
 
 /// Loads a picture through the server's image resizer and keeps a small disk cache.
+///
+/// The fetch carries the Plex token as a header, and a URL cache would save that header on disk with the
+/// request. So the fetch session has no cache. The picture is saved by hand under a plain request (the
+/// address only, no headers), and looked up the same way.
 final class ImageStore: @unchecked Sendable {
     static let shared = ImageStore()
-    private(set) var session: URLSession
+    /// Made when the first picture is fetched, not when the store is made. A session made in the same instant as a
+    /// removal from the app's shared cache can leave an entry behind (seen in a test, and it made that test fail on
+    /// some runs), so the one-time purge at launch and the cache tests never have a new session beside them.
+    private var madeSession: URLSession?
+    private let sessionLock = NSLock()
+    private let protocolClasses: [AnyClass]?
+    var session: URLSession {
+        sessionLock.lock(); defer { sessionLock.unlock() }
+        if let madeSession { return madeSession }
+        let made = URLSession.makeUncached(protocolClasses: protocolClasses, ignoreLocalCache: false)    // no cache, and no redirect to another host
+        madeSession = made
+        return made
+    }
     private let memory = NSCache<NSURL, UIImage>()
     private let cache: URLCache
-    private static let oldCacheRemovedKey = "imageCacheWithTokensRemoved"
+    private static let oldCacheRemovedKey = "cachesWithTokensRemoved.v2"
 
-    init(cache: URLCache = URLCache(memoryCapacity: 40 << 20, diskCapacity: 150 << 20)) {
+    /// `protocolClasses` is for tests, which answer requests without a network.
+    init(cache: URLCache = URLCache(memoryCapacity: 40 << 20, diskCapacity: 150 << 20), protocolClasses: [AnyClass]? = nil) {
         self.cache = cache
-        let cfg = URLSessionConfiguration.default
-        cfg.urlCache = cache
-        session = URLSession(configuration: cfg)
+        self.protocolClasses = protocolClasses
     }
 
-    /// Forgets every picture, in memory and on disk. Called at sign-out.
+    /// The request a picture is saved and found under: the address alone, so no header is ever stored.
+    private static func cacheKey(_ url: URL) -> URLRequest { URLRequest(url: url) }
+
+    /// Forgets every picture, in memory and on disk. Called at sign-out. Also empties the app's shared cache,
+    /// where earlier versions saved requests with their token header.
     func clear() {
         memory.removeAllObjects()
         cache.removeAllCachedResponses()
+        URLCache.shared.removeAllCachedResponses()
+        // One removal from the app's shared cache can be lost: in a test, an entry stayed after it on some runs, and a
+        // second removal a moment later always cleared it. That cache is where earlier versions kept requests with the
+        // token, so the removal is repeated once instead of trusted once.
+        Task.detached {
+            try? await Task.sleep(for: .milliseconds(400))
+            URLCache.shared.removeAllCachedResponses()
+        }
     }
 
-    /// Older versions put the token in picture addresses, and the disk cache kept those addresses.
-    /// Clears that cache once, the first time this version runs.
+    /// Earlier versions put the token in picture addresses, or in the headers of requests the cache kept.
+    /// Clears the caches once, the first time this version runs.
     func removeOldCacheOnce(defaults: UserDefaults = .standard) {
         guard !defaults.bool(forKey: Self.oldCacheRemovedKey) else { return }
         clear()
         defaults.set(true, forKey: Self.oldCacheRemovedKey)
+
     }
 
     /// UI tests swap in the pretend server so no picture request leaves the Mac.
-    func use(session: URLSession) { self.session = session; memory.removeAllObjects() }
+    func use(session: URLSession) { sessionLock.lock(); madeSession = session; sessionLock.unlock(); memory.removeAllObjects() }
 
     func image(for request: URLRequest) async -> UIImage? {
         guard let url = request.url else { return nil }
         if let hit = memory.object(forKey: url as NSURL) { return hit }
-        var request = request
-        request.cachePolicy = .returnCacheDataElseLoad
+        let key = Self.cacheKey(url)
+        if let saved = cache.cachedResponse(for: key), let img = UIImage(data: saved.data) {
+            memory.setObject(img, forKey: url as NSURL)
+            return img
+        }
         do {
             let (data, resp) = try await session.data(for: request)
             let code = (resp as? HTTPURLResponse)?.statusCode ?? 0
@@ -118,6 +159,7 @@ final class ImageStore: @unchecked Sendable {
                 #endif
                 return nil
             }
+            cache.storeCachedResponse(CachedURLResponse(response: resp, data: data, userInfo: nil, storagePolicy: .allowed), for: key)
             memory.setObject(img, forKey: url as NSURL)
             return img
         } catch {

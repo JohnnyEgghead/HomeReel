@@ -7,19 +7,20 @@ A short tour for people who want to read or change the code.
 - **Original files only.** The app asks Plex for the original media file and plays it directly. It never requests video or audio transcoding. The one thing it asks the server to resize is pictures (posters and photos).
 - **Movies and TV Shows only.** Other library types are ignored.
 - **Native tvOS look.** System components, system fonts, standard focus. Custom pieces (the player overlay, focus rings) follow the same style.
-- **Secrets stay in the Keychain.** The Plex token, and the optional TV key, are never written to files or logs. Picture requests send the token as a header, so the picture cache holds no token. Video and subtitle addresses do carry it, because the player opens them directly; the app never stores or logs those addresses.
-- **Local network.** Sign-in tries the server's HTTPS address first and falls back to plain HTTP on your home network, because some routers block `*.plex.direct` names. It only accepts an address whose `/identity` reports the expected server. The optional TV is reached over plain HTTP.
+- **Secrets stay in the Keychain.** The Plex token, and the optional TV key, are never written to files or logs. Every request sends the token as a header, never in an address. Calls to the server and plex.tv go through a session with no URL cache (`URLSession.uncached`), because a URL cache saves each request on disk with its headers. Pictures are fetched the same way and saved by hand under an address with no headers. The player gets the token as `LoadOptions.httpHeaders`, so video and subtitle addresses hold no token, and logs never show one.
+- **Local network.** Sign-in tries the local HTTPS address first, then the local plain address (some routers block `*.plex.direct` names), then other direct HTTPS addresses. It only accepts an address whose `/identity` reports the server's own id, and every launch asks the saved address again before the token is sent. If it no longer answers as that server, plex.tv is asked for the current address. A typed address has no id from plex.tv, so the first connection records the one the server reports. The optional TV is reached over plain HTTP.
 
 ## Layout
 
 | Folder | What is in it |
 | --- | --- |
-| `HomeReel/App` | App start, `AppModel` (sign-in state, settings, caches), and a pretend Plex server for tests (Debug builds only). |
+| `HomeReel/App` | App start, `AppModel` (sign-in state, settings) and `Session` (one per sign-in: the connection, libraries, and fetched details, dropped whole at sign-out or when the token is refused), and a pretend Plex server for tests (Debug builds only). |
 | `HomeReel/Core/Plex` | `PlexClient` (library, search, watched state, progress), models, sign-in with the plex.tv code, and the online database for people and credits. |
-| `HomeReel/Core` | Ratings and crew helpers, Keychain, formatting, the optional Sony TV client (`Bravia.swift`). |
+| `HomeReel/Core` | Ratings and crew helpers, the Keychain and the `SecretStore` that wraps it (with an in-memory copy for tests), formatting, `AlphaIndex` (letters for the A-Z strip), the optional Sony TV client (`Bravia.swift`). |
 | `HomeReel/Core/Playback` | Rules for resuming, subtitle and audio labels, sidecar subtitles. |
-| `HomeReel/UI` | Screens: Home, Movies and TV Shows, detail pages, person page, search, settings. |
-| `HomeReel/UI/Player` | The player: `PlayerModel` (state), `PlayerView` (screen and remote), `PlayerPanel` (info, subtitles, audio, picture). |
+| `HomeReel/UI` | Screens: Home, Movies and TV Shows, detail pages, person page, search, settings, and the sign-in screen. `Components.swift` holds shared pieces, including `ImageStore`, which loads and caches pictures. |
+| `HomeReel/UI/Player` | The player: `PlayerModel` (state), `PlayerView` (screen and remote), `PlayerPanel` (info, subtitles, audio, picture), `SubtitleOverlay` (draws the subtitle text). |
+| `HomeReel/Fixtures` | Made-up sample answers from a Plex server. Unit tests and the pretend server read them. Release builds leave them out. |
 
 Playback uses [AetherEngine](https://github.com/superuser404notfound/AetherEngine), which handles MKV, Dolby Vision, HDR10, DTS, TrueHD and older formats.
 
@@ -33,7 +34,7 @@ Playback uses [AetherEngine](https://github.com/superuser404notfound/AetherEngin
 
 ## Developer switches
 
-Release builds leave out the pretend server, its sample data, the environment variables, and the arguments that need them (`-fixture`, `-tv`, `-tvkey`, `-showend`, `-showpanel`, `-nextfail`). The other launch arguments exist in every build, but only developer tools can set them on an Apple TV.
+Release builds leave out the pretend server, its sample data, the environment variables, and the arguments that need them (`-fixture`, `-tv`, `-tvkey`, `-showend`, `-showpanel`, `-nextfail`, `-banner`). One exception: a Release build still looks for `-fixture` in one place, to shorten the library scan polling interval (`LibraryView.swift`). The other launch arguments exist in every build, but only developer tools can set them on an Apple TV.
 
 `-fixture <mode>` runs the app against the pretend server:
 
@@ -73,6 +74,7 @@ Launch arguments:
 | `-showpanel <tab>` | Opens the info panel without playing anything. |
 | `-showend 1` | Jumps to the end-of-episode screen. |
 | `-nextfail 1` | With `-showend`, fails the next-episode look-up, so Try Again can be tested. |
+| `-banner <text>` | With `-showend`, shows this message while the end screen is up. |
 | `-tv on` | With `-fixture`, turns on TV control. |
 | `-tvkey <key>` | With `-fixture`, sets the TV key. The pretend TV accepts `fixture-key`. |
 

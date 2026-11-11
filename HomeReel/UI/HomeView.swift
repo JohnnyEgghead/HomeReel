@@ -38,16 +38,22 @@ final class HomeModel: ObservableObject {
         await load(app: app)
     }
 
+    private static func recent(in section: PlexSection?, client: PlexClient) async throws -> [PlexItem] {
+        guard let section else { return [] }
+        return try await client.recentlyAdded(section: section)
+    }
+
     func load(app: AppModel) async {
         guard let c = app.client else { return }
         error = nil
         do {
-            async let cont = c.continueWatching()
-            async let movies = c.recentlyAdded(section: app.movieLibraries.first ?? PlexSection(key: "1", type: "movie", title: ""))
-            async let shows = c.recentlyAdded(section: app.showLibraries.first ?? PlexSection(key: "2", type: "show", title: ""))
+            async let cont = c.continueWatching(inSections: Set((app.movieLibraries + app.showLibraries).map(\.key)))
+            // No library, no request: a made-up section would ask the server about a library that is not there.
+            async let movies = Self.recent(in: app.movieLibraries.first, client: c)
+            async let shows = Self.recent(in: app.showLibraries.first, client: c)
             continueWatching = try await cont
-            recentMovies = app.movieLibraries.isEmpty ? [] : try await movies
-            recentShows = app.showLibraries.isEmpty ? [] : try await shows
+            recentMovies = try await movies
+            recentShows = try await shows
             loaded = true
         } catch is CancellationError {
             return

@@ -6,16 +6,26 @@ import XCTest
 final class StubURLProtocol: URLProtocol {
     nonisolated(unsafe) static var handler: (@Sendable (URLRequest) -> (Int, Data))?
     nonisolated(unsafe) static var seen: [URLRequest] = []
+    /// Seconds to hold back an answer, per request. Lets a test make one request finish after a later one.
+    /// Lets a test make the answers cacheable, as a real server's are, so a URL cache that is wired in would keep them.
+    nonisolated(unsafe) static var cacheable = false
+    nonisolated(unsafe) static var delayFor: (@Sendable (URLRequest) -> TimeInterval)?
 
     override class func canInit(with request: URLRequest) -> Bool { true }
     override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
     override func startLoading() {
         StubURLProtocol.seen.append(request)
         let (code, data) = StubURLProtocol.handler?(request) ?? (404, Data())
-        let resp = HTTPURLResponse(url: request.url!, statusCode: code, httpVersion: nil, headerFields: nil)!
-        client?.urlProtocol(self, didReceive: resp, cacheStoragePolicy: .notAllowed)
-        client?.urlProtocol(self, didLoad: data)
-        client?.urlProtocolDidFinishLoading(self)
+        let cacheable = StubURLProtocol.cacheable
+        let resp = HTTPURLResponse(url: request.url!, statusCode: code, httpVersion: nil,
+                                   headerFields: cacheable ? ["Cache-Control": "max-age=3600"] : nil)!
+        let answer = { [self] in
+            client?.urlProtocol(self, didReceive: resp, cacheStoragePolicy: cacheable ? .allowed : .notAllowed)
+            client?.urlProtocol(self, didLoad: data)
+            client?.urlProtocolDidFinishLoading(self)
+        }
+        let delay = StubURLProtocol.delayFor?(request) ?? 0
+        if delay > 0 { DispatchQueue.global().asyncAfter(deadline: .now() + delay, execute: answer) } else { answer() }
     }
     override func stopLoading() {}
 
@@ -24,7 +34,7 @@ final class StubURLProtocol: URLProtocol {
         cfg.protocolClasses = [StubURLProtocol.self]
         return URLSession(configuration: cfg)
     }
-    static func reset() { handler = nil; seen = [] }
+    static func reset() { handler = nil; seen = []; delayFor = nil; cacheable = false }
 }
 
 enum Fixture {
@@ -35,6 +45,14 @@ enum Fixture {
     }
     static func container(_ name: String) throws -> PlexContainer {
         try JSONDecoder().decode(PlexEnvelope<PlexContainer>.self, from: data(name)).MediaContainer
+    }
+}
+
+/// Wraps a stub answer so the server also answers /identity (as machine "m1"), which a saved sign-in is checked
+/// against at launch.
+func answering(_ other: @escaping @Sendable (URLRequest) -> (Int, Data)) -> @Sendable (URLRequest) -> (Int, Data) {
+    { req in
+        req.url?.path == "/identity" ? (200, Data(#"{"MediaContainer":{"machineIdentifier":"m1"}}"#.utf8)) : other(req)
     }
 }
 

@@ -87,9 +87,41 @@ enum TrackLabels {
 // MARK: - Remembering the viewer's choice
 
 /// What the viewer last chose for a show: no subtitles, or a language.
-struct SubtitleChoiceRecord: Codable, Equatable {
-    var off: Bool
-    var language: String?
+/// A track with no language says nothing about what to pick next time, so nothing is saved for it.
+enum SubtitleChoiceRecord: Equatable {
+    case off
+    case language(String)
+}
+
+extension SubtitleChoiceRecord {
+    /// What to remember after the viewer picks this track. Nil for a track with no language: it cannot be found
+    /// again by language, so remembering it would switch subtitles off at the next start.
+    static func remembered(afterPicking track: TrackDescriptor) -> SubtitleChoiceRecord? {
+        guard let code = track.language, TrackLabels.languageName(code) != nil else { return nil }
+        return .language(code)
+    }
+}
+
+extension SubtitleChoiceRecord: Codable {
+    // Stored as it always was: {"off": Bool, "language": String?}, so a choice saved by an earlier version still reads.
+    private enum Keys: String, CodingKey { case off, language }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: Keys.self)
+        if try c.decode(Bool.self, forKey: .off) { self = .off; return }
+        guard let lang = try c.decodeIfPresent(String.self, forKey: .language), !lang.isEmpty else {
+            throw DecodingError.dataCorruptedError(forKey: .language, in: c, debugDescription: "no language")
+        }
+        self = .language(lang)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: Keys.self)
+        switch self {
+        case .off: try c.encode(true, forKey: .off)
+        case .language(let l): try c.encode(false, forKey: .off); try c.encode(l, forKey: .language)
+        }
+    }
 }
 
 /// Stored in UserDefaults, one record per show (movies: per movie).
@@ -103,8 +135,10 @@ struct SubtitlePreferences {
         return try? JSONDecoder().decode(SubtitleChoiceRecord.self, from: data)
     }
 
-    func save(_ record: SubtitleChoiceRecord, for key: String) {
-        if let data = try? JSONEncoder().encode(record) { defaults.set(data, forKey: prefix + key) }
+    /// A nil record forgets the choice, so the next start falls back to the Settings default.
+    func save(_ record: SubtitleChoiceRecord?, for key: String) {
+        guard let record, let data = try? JSONEncoder().encode(record) else { defaults.removeObject(forKey: prefix + key); return }
+        defaults.set(data, forKey: prefix + key)
     }
 
     /// The Settings value: nil means "Off".
@@ -123,10 +157,12 @@ enum SubtitleDecision: Equatable {
 enum SubtitleChooser {
     /// Picks the track to start with. A saved choice for the show wins, then the Settings default.
     static func decide(tracks: [TrackDescriptor], saved: SubtitleChoiceRecord?, defaultLanguage: String?) -> SubtitleDecision {
-        if let saved {
-            if saved.off { return .off }
-            if let lang = saved.language, let t = best(in: tracks, language: lang) { return .track(t.id) }
+        switch saved {
+        case .off?: return .off
+        case .language(let lang)?:
+            if let t = best(in: tracks, language: lang) { return .track(t.id) }
             return .off
+        case nil: break
         }
         if let lang = defaultLanguage {
             if let t = best(in: tracks, language: lang) { return .track(t.id) }

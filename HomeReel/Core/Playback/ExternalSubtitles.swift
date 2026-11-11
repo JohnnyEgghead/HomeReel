@@ -20,7 +20,7 @@ enum ExternalSubtitles {
             let format = (s.format ?? s.codec ?? "").lowercased()
             guard supported.contains(format) else { return nil }
             return ExternalSubtitleSpec(
-                url: client.url(key, [URLQueryItem(name: "X-Plex-Token", value: client.token)]),
+                url: client.url(key),                    // no token: the player sends it as a header
                 name: s.displayTitle ?? s.title ?? "External subtitles",
                 language: s.languageCode ?? s.languageTag ?? s.language,
                 format: format == "subrip" ? "srt" : format,

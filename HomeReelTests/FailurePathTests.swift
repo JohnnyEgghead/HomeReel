@@ -39,7 +39,7 @@ final class FailurePathTests: XCTestCase {
     }
 
     func testAFailedSaveShowsABannerAndListsStillHearAboutIt() async throws {
-        StubURLProtocol.handler = { req in req.url?.path.hasSuffix("/scrobble") == true ? (500, Data()) : (200, Fixture.data("sections")) }
+        StubURLProtocol.handler = answering { req in req.url?.path.hasSuffix("/scrobble") == true ? (500, Data()) : (200, Fixture.data("sections")) }
         let m = AppModel(secrets: signedIn(), session: StubURLProtocol.session(), images: ImageStore(cache: CountingCache()))
         await m.start()
         let model = PlayerModel(item: try movie(), client: makeClient())
@@ -48,6 +48,53 @@ final class FailurePathTests: XCTestCase {
         await m.finishPlayback(model)
         XCTAssertNotNil(m.banner)
         XCTAssertEqual(m.playbackSaves, 1)
+    }
+
+    // MARK: Ending the session (J-11, J-16)
+
+    private func timelineStates() -> [String] {
+        requests("/:/timeline").compactMap { r in
+            URLComponents(url: r.url!, resolvingAgainstBaseURL: false)?.queryItems?.first { $0.name == "state" }?.value
+        }
+    }
+
+    func testAWatchedExitEndsTheSessionAfterTheMark() async throws {
+        StubURLProtocol.handler = { _ in (200, Data()) }
+        let model = PlayerModel(item: try movie(), client: makeClient())
+        await model.showEndForTesting()
+        let message = await model.finish()
+        XCTAssertNil(message)
+        XCTAssertEqual(timelineStates(), ["stopped"], "Plex must hear that playback ended")
+        let order = StubURLProtocol.seen.compactMap { $0.url?.path }.filter { $0.hasSuffix("/scrobble") || $0 == "/:/timeline" }
+        XCTAssertEqual(order, ["/:/scrobble", "/:/timeline"], "the mark first, so the report cannot undo it")
+    }
+
+    func testAnEarlyExitTellsYouWhenThePlaceCouldNotBeSaved() async throws {
+        StubURLProtocol.handler = { _ in (500, Data()) }
+        // Stopped at 1 minute of 100: not watched, so the stop report is the only thing that keeps the place.
+        let early = PlayerModel(item: try movie(), client: makeClient())
+        early.setTimeForTesting(60, duration: 6000)
+        let message = await early.finish()
+        XCTAssertEqual(timelineStates(), ["stopped"])
+        XCTAssertNotNil(message, "a place that was not saved is told to the viewer")
+    }
+
+    func testAnEarlyExitThatSavesIsQuiet() async throws {
+        StubURLProtocol.handler = { _ in (200, Data()) }
+        let early = PlayerModel(item: try movie(), client: makeClient())
+        early.setTimeForTesting(60, duration: 6000)
+        let message = await early.finish()
+        XCTAssertNil(message)
+        XCTAssertEqual(requests("/scrobble").count, 0, "not watched")
+        XCTAssertEqual(timelineStates(), ["stopped"])
+    }
+
+    func testStoppedReportThrowsButProgressReportDoesNot() async throws {
+        StubURLProtocol.handler = { _ in (500, Data()) }
+        let c = makeClient()
+        await c.reportTimeline(try movie(), state: .playing, time: 5, duration: 100)      // a miss is fine
+        do { try await c.reportStopped(try movie(), time: 5, duration: 100); XCTFail("should throw") }
+        catch { XCTAssertEqual(error as? PlexError, .badResponse(500)) }
     }
 
     // MARK: Cancellation (J-09)
@@ -84,7 +131,7 @@ final class FailurePathTests: XCTestCase {
     func testSigningOutForgetsTheOldServersCatalog() async throws {
         let old = #"{"MediaContainer":{"size":1,"totalSize":1,"Metadata":[{"ratingKey":"1","key":"/k","type":"movie","title":"Old Server Movie"}]}}"#
         let new = #"{"MediaContainer":{"size":1,"totalSize":1,"Metadata":[{"ratingKey":"1","key":"/k","type":"movie","title":"New Server Movie"}]}}"#
-        StubURLProtocol.handler = { req in
+        StubURLProtocol.handler = answering { req in
             guard req.url?.path.hasSuffix("/all") == true else { return (200, Fixture.data("sections")) }
             return (200, Data((req.url?.host == "10.0.0.5" ? old : new).utf8))
         }
@@ -121,7 +168,7 @@ final class FailurePathTests: XCTestCase {
 
     func testPostersTrustTheNewestViewing() async throws {
         let older = #"{"MediaContainer":{"Metadata":[{"ratingKey":"1","key":"/k","type":"movie","title":"Detail","lastViewedAt":100}]}}"#
-        StubURLProtocol.handler = { req in req.url?.path == "/library/sections" ? (200, Fixture.data("sections")) : (200, Data(older.utf8)) }
+        StubURLProtocol.handler = answering { req in req.url?.path == "/library/sections" ? (200, Fixture.data("sections")) : (200, Data(older.utf8)) }
         let m = AppModel(secrets: signedIn(), session: StubURLProtocol.session(), images: ImageStore(cache: CountingCache()))
         await m.start()
         await m.loadDetail("1")
@@ -179,25 +226,25 @@ final class FailurePathTests: XCTestCase {
 
     func testTheReachabilityCheckSendsNoToken() async {
         StubURLProtocol.handler = { _ in (200, Data()) }
-        _ = await PlexConnectionPicker.firstReachable(urls, session: StubURLProtocol.session())
+        _ = await PlexConnectionPicker.firstReachable(urls, machineID: "m1", session: StubURLProtocol.session())
         XCTAssertNil(StubURLProtocol.seen.first?.value(forHTTPHeaderField: "X-Plex-Token"))
     }
 
     // MARK: Sign-in messages (J-07, J-11)
 
     func testARejectedTokenSaysWhy() async {
-        StubURLProtocol.handler = { _ in (401, Data()) }
+        StubURLProtocol.handler = answering { _ in (401, Data()) }
         let m = AppModel(secrets: signedIn(), session: StubURLProtocol.session(), images: ImageStore(cache: CountingCache()))
         await m.start()
         XCTAssertEqual(m.phase, .signedOut)
-        XCTAssertEqual(m.signInNotice, PlexError.unauthorized.errorDescription)
+        XCTAssertEqual(m.signInNotice, AppModel.signInRefusedNotice)
     }
 
     func testTryingAgainClearsTheRejectedTokenMessage() async {
-        StubURLProtocol.handler = { _ in (401, Data()) }
+        StubURLProtocol.handler = answering { _ in (401, Data()) }
         let m = AppModel(secrets: signedIn(), session: StubURLProtocol.session(), images: ImageStore(cache: CountingCache()))
         await m.start()
-        StubURLProtocol.handler = { _ in (200, Fixture.data("sections")) }
+        StubURLProtocol.handler = answering { _ in (200, Fixture.data("sections")) }
         await m.signInManually(address: "10.0.0.5", token: "good")
         XCTAssertNil(m.signInNotice)
         XCTAssertEqual(m.phase, .ready)
@@ -233,6 +280,25 @@ final class FailurePathTests: XCTestCase {
         XCTAssertFalse(model.nextLookupFailed, "a later try that works clears the failure")
     }
 
+    func testALookUpAlreadyRunningIsNotStartedAgain() async throws {
+        let episode = try XCTUnwrap(Fixture.container("episodes").items.first)
+        StubURLProtocol.handler = { _ in (200, Fixture.data("episodes")) }
+        let once = PlayerModel(item: episode, client: makeClient())
+        await once.loadNextEpisode()
+        let perLookUp = StubURLProtocol.seen.count
+        XCTAssertGreaterThan(perLookUp, 0)
+
+        StubURLProtocol.reset()
+        StubURLProtocol.handler = { _ in (200, Fixture.data("episodes")) }
+        StubURLProtocol.delayFor = { _ in 0.15 }
+        let model = PlayerModel(item: episode, client: makeClient())
+        async let first: Void = model.loadNextEpisode()
+        try await Task.sleep(for: .milliseconds(30))
+        await model.loadNextEpisode()               // pressed while the first is still waiting
+        await first
+        XCTAssertEqual(StubURLProtocol.seen.count, perLookUp, "the second press did not ask the server again")
+    }
+
     func testPlayingWithoutFileDetailsDuringAnOutageSaysItIsTheNetwork() async throws {
         StubURLProtocol.handler = { _ in (500, Data()) }
         let bare = #"{"MediaContainer":{"Metadata":[{"ratingKey":"9","key":"/k","type":"episode","title":"No Details"}]}}"#
@@ -246,7 +312,7 @@ final class FailurePathTests: XCTestCase {
     // MARK: Person pages (J-14)
 
     func testAnUnreadableServerIsAnUnknownLibraryNotAnEmptyOne() async {
-        StubURLProtocol.handler = { req in req.url?.path == "/library/sections" ? (200, Fixture.data("sections")) : (500, Data()) }
+        StubURLProtocol.handler = answering { req in req.url?.path == "/library/sections" ? (200, Fixture.data("sections")) : (500, Data()) }
         let m = AppModel(secrets: signedIn(), session: StubURLProtocol.session(), images: ImageStore(cache: CountingCache()))
         await m.start()
         let catalog = await m.libraryCatalog()
@@ -258,7 +324,7 @@ final class FailurePathTests: XCTestCase {
 
     func testAPersonPageThatReadTheServerKnowsTheLibrary() async {
         let empty = #"{"MediaContainer":{"size":0,"totalSize":0,"Metadata":[]}}"#
-        StubURLProtocol.handler = { req in req.url?.path == "/library/sections" ? (200, Fixture.data("sections")) : (200, Data(empty.utf8)) }
+        StubURLProtocol.handler = answering { req in req.url?.path == "/library/sections" ? (200, Fixture.data("sections")) : (200, Data(empty.utf8)) }
         let m = AppModel(secrets: signedIn(), session: StubURLProtocol.session(), images: ImageStore(cache: CountingCache()))
         await m.start()
         let person = PersonModel()
@@ -298,7 +364,7 @@ final class FailurePathTests: XCTestCase {
 
 /// A Keychain that refuses every write.
 final class RefusingStore: SecretStore {
-    func get(_ key: String) -> String? { nil }
+    func read(_ key: String) -> SecretRead { .missing }
     func set(_ value: String, for key: String) -> Bool { false }
-    func remove(_ key: String) {}
+    func remove(_ key: String) -> Bool { false }
 }

@@ -65,7 +65,10 @@ struct SettingsView: View {
     }
 
     private func saveAndTestTV() async {
-        app.saveTV(host: tvHost, key: tvKey)
+        guard app.saveTV(host: tvHost, key: tvKey) else {
+            tvStatus = "This Apple TV would not save the TV settings. Try again."
+            return
+        }
         tvStatus = "Asking the TV..."
         do {
             let modes = try await app.tv.pictureModes()

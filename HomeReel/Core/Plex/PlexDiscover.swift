@@ -115,7 +115,7 @@ private struct OnlineTitle: Decodable {
 struct PlexDiscover: Sendable {
     let token: String
     let identity: PlexIdentity
-    var session: URLSession = .shared
+    var session: URLSession = .uncached
     var base = URL(string: "https://discover.provider.plex.tv")!
 
     func request(_ path: String) -> URLRequest {
@@ -135,7 +135,10 @@ struct PlexDiscover: Sendable {
         guard let http = resp as? HTTPURLResponse else { throw PlexError.badResponse(0) }
         guard (200..<300).contains(http.statusCode) else { throw PlexError.badResponse(http.statusCode) }
         do { return try JSONDecoder().decode(T.self, from: data) }
-        catch { throw PlexError.decoding("\(error)") }
+        catch {
+            debugLog("decode FAILED discover \(path): \(error)")
+            throw PlexError.decoding(path)
+        }
     }
 
     private struct Meta<T: Decodable>: Decodable {

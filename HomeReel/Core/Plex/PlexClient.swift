@@ -4,16 +4,59 @@ enum PlexError: Error, Equatable, LocalizedError {
     case unauthorized
     case unreachable(String)
     case badResponse(Int)
+    /// The text says what was being read, for the log. The viewer sees a plain sentence instead (see `errorDescription`).
     case decoding(String)
 
     var errorDescription: String? {
         switch self {
-        case .unauthorized: return "Plex did not accept the sign-in. Sign in again."
+        case .unauthorized: return "The server did not accept this request."
         case .unreachable(let w): return "Could not reach the server (\(w))."
         case .badResponse(let c): return "The server answered with error \(c)."
-        case .decoding(let w): return "The server sent something unexpected (\(w))."
+        case .decoding: return "The server sent an answer HomeReel could not read."
         }
     }
+}
+
+/// Keeps a request's headers (the Plex token, the TV key) on the host they were meant for. URLSession copies every
+/// custom header to the new address when a server answers with a redirect, so a redirect to another host would carry
+/// the token with it. This refuses any redirect that leaves the original host. The one exception is an upgrade from
+/// http to https on the same host, which is safer, not riskier.
+final class SameHostRedirects: NSObject, URLSessionTaskDelegate, @unchecked Sendable {
+    /// Whether a request to `original` may follow a redirect to `redirected`.
+    static func allows(from original: URL?, to redirected: URL?) -> Bool {
+        guard let a = original, let b = redirected,
+              let hostA = a.host()?.lowercased(), let hostB = b.host()?.lowercased(), hostA == hostB,
+              let schemeA = a.scheme?.lowercased(), let schemeB = b.scheme?.lowercased() else { return false }
+        if schemeA == schemeB { return a.port == b.port }
+        return schemeA == "http" && schemeB == "https"
+    }
+
+    func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse,
+                    newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+        // Always compared with the first address, so a chain of redirects cannot walk away one step at a time.
+        let ok = Self.allows(from: task.originalRequest?.url, to: request.url)
+        if !ok { debugLog("redirect refused: \(task.originalRequest?.url?.host() ?? "?") -> \(request.url?.host() ?? "?")") }
+        completionHandler(ok ? request : nil)       // nil: the redirect answer itself comes back, as an error status
+    }
+}
+
+extension URLSession {
+    /// A session with no cache that stays on its host. `protocolClasses` is for tests, which answer requests without a network.
+    /// `ignoreLocalCache` sets the request policy too. `ImageStore` leaves it off: with it on, a session made there made
+    /// `testClearingAlsoEmptiesTheAppsSharedCache` fail (seen twice, and gone when only that line was removed). The cache is
+    /// nil either way.
+    static func makeUncached(protocolClasses: [AnyClass]? = nil, ignoreLocalCache: Bool = true) -> URLSession {
+        let cfg = URLSessionConfiguration.ephemeral
+        cfg.urlCache = nil
+        if ignoreLocalCache { cfg.requestCachePolicy = .reloadIgnoringLocalCacheData }
+        if let protocolClasses { cfg.protocolClasses = protocolClasses }
+        return URLSession(configuration: cfg, delegate: SameHostRedirects(), delegateQueue: nil)
+    }
+
+    /// The session for every call that carries a token or key in a header. It keeps no cache: a URL cache saves
+    /// each request on disk with its headers, and that would put the Plex token (or the TV key) in a file.
+    /// It also refuses a redirect to another host, which would carry those headers along (see `SameHostRedirects`).
+    static let uncached: URLSession = makeUncached()
 }
 
 extension Error {
@@ -77,6 +120,8 @@ enum PlexSort: String, CaseIterable, Identifiable {
 struct PlexPage {
     var items: [PlexItem]
     var total: Int
+    /// Items on this page that could not be read and were left out.
+    var dropped = 0
 }
 
 /// Talks to one Plex Media Server. Always asks for original files:
@@ -86,12 +131,19 @@ struct PlexClient: Sendable {
     let token: String
     let identity: PlexIdentity
     let session: URLSession
+    /// The server's own id (what its /identity page reports). Tells apart choices saved for different servers.
+    let serverID: String?
+    /// Called when the server answers 401: the token was revoked or expired. One place handles it for every screen.
+    let onUnauthorized: (@Sendable () -> Void)?
 
-    init(baseURL: URL, token: String, identity: PlexIdentity, session: URLSession = .shared) {
+    init(baseURL: URL, token: String, identity: PlexIdentity, session: URLSession = .uncached,
+         serverID: String? = nil, onUnauthorized: (@Sendable () -> Void)? = nil) {
         self.baseURL = baseURL
         self.token = token
         self.identity = identity
         self.session = session
+        self.serverID = serverID
+        self.onUnauthorized = onUnauthorized
     }
 
     // MARK: Request plumbing
@@ -119,7 +171,7 @@ struct PlexClient: Sendable {
             throw PlexError.unreachable((error as? URLError)?.localizedDescription ?? "\(error)")
         }
         guard let http = resp as? HTTPURLResponse else { throw PlexError.badResponse(0) }
-        if http.statusCode == 401 { throw PlexError.unauthorized }
+        if http.statusCode == 401 { onUnauthorized?(); throw PlexError.unauthorized }
         guard (200..<300).contains(http.statusCode) else { throw PlexError.badResponse(http.statusCode) }
         return data
     }
@@ -127,7 +179,10 @@ struct PlexClient: Sendable {
     func container(_ path: String, _ query: [URLQueryItem] = []) async throws -> PlexContainer {
         let data = try await send(request(path, query))
         do { return try JSONDecoder().decode(PlexEnvelope<PlexContainer>.self, from: data).MediaContainer }
-        catch { throw PlexError.decoding("\(error)") }
+        catch {
+            debugLog("decode FAILED \(path): \(error)")
+            throw PlexError.decoding(path)
+        }
     }
 
     // MARK: Library
@@ -162,7 +217,9 @@ struct PlexClient: Sendable {
             q.append(URLQueryItem(name: String(filter[..<eq]), value: String(filter[filter.index(after: eq)...])))
         }
         let c = try await container("/library/sections/\(section.key)/all", q)
-        return PlexPage(items: c.items, total: c.totalSize ?? c.items.count)
+        // A page where nothing could be read is a failure, not an empty library.
+        if c.items.isEmpty, c.droppedMetadata > 0 { throw PlexError.decoding("every item on a library page") }
+        return PlexPage(items: c.items, total: c.totalSize ?? c.items.count, dropped: c.droppedMetadata)
     }
 
     /// Every movie and show in the given libraries, in a few big requests. Used to tell which online credits you own.
@@ -182,7 +239,7 @@ struct PlexClient: Sendable {
         return out
     }
 
-    /// Everything in your Movie and TV libraries that a person is in or worked on.
+    /// Up to 100 titles from each of your Movie and TV libraries that a person is in or worked on (the first page the server sends; there is no paging).
     func titles(withPerson filter: String, in sections: [PlexSection]) async throws -> [PlexItem] {
         var out: [PlexItem] = []
         for section in sections {
@@ -205,10 +262,17 @@ struct PlexClient: Sendable {
         return try await container("/library/sections/\(section.key)/recentlyAdded", q).items
     }
 
-    func continueWatching(limit: Int = 30) async throws -> [PlexItem] {
+    /// Like search, this row covers every library on the server (home videos, music videos...), so results are
+    /// limited to the given Movie and TV Show library keys. With no keys given, nothing is dropped.
+    func continueWatching(limit: Int = 30, inSections keys: Set<String>? = nil) async throws -> [PlexItem] {
         let q = [URLQueryItem(name: "count", value: String(limit))]
         let hubs = try await container("/hubs/continueWatching", q).Hub ?? []
-        return hubs.flatMap(\.items).filter { $0.type == .movie || $0.type == .episode }
+        return hubs.flatMap(\.items)
+            .filter { $0.type == .movie || $0.type == .episode }
+            .filter { item in
+                guard let keys else { return true }
+                return item.librarySectionID.map { keys.contains(String($0)) } ?? false
+            }
     }
 
     /// Takes an item off the Continue Watching row (a movie, or a next-up episode). Plex keeps the watch history.
@@ -245,7 +309,9 @@ struct PlexClient: Sendable {
     }
 
     func children(_ ratingKey: String) async throws -> [PlexItem] {
-        try await container("/library/metadata/\(ratingKey)/children").items
+        let c = try await container("/library/metadata/\(ratingKey)/children")
+        if c.items.isEmpty, c.droppedMetadata > 0 { throw PlexError.decoding("every entry in a children list") }
+        return c.items
     }
 
     /// Search covers every library on the server (music videos, home videos...), so results are
@@ -274,10 +340,8 @@ struct PlexClient: Sendable {
 
     enum TimelineState: String { case playing, paused, stopped }
 
-    /// Tells Plex where playback is. Plex stores the position (so Continue Watching works on every device)
-    /// and shows the session as "now playing".
-    func reportTimeline(_ item: PlexItem, state: TimelineState, time: Double, duration: Double) async {
-        let q = [
+    private func timelineRequest(_ item: PlexItem, state: TimelineState, time: Double, duration: Double) -> URLRequest {
+        request("/:/timeline", [
             URLQueryItem(name: "ratingKey", value: item.ratingKey),
             URLQueryItem(name: "key", value: "/library/metadata/\(item.ratingKey)"),
             URLQueryItem(name: "identifier", value: "com.plexapp.plugins.library"),
@@ -285,8 +349,19 @@ struct PlexClient: Sendable {
             URLQueryItem(name: "time", value: String(Int(max(0, time) * 1000))),
             URLQueryItem(name: "duration", value: String(Int(max(0, duration) * 1000))),
             URLQueryItem(name: "playbackTime", value: String(Int(max(0, time) * 1000))),
-        ]
-        _ = try? await send(request("/:/timeline", q))
+        ])
+    }
+
+    /// Tells Plex where playback is. Plex stores the position (so Continue Watching works on every device)
+    /// and shows the session as "now playing". A miss is fine here: the next report follows in seconds.
+    func reportTimeline(_ item: PlexItem, state: TimelineState, time: Double, duration: Double) async {
+        _ = try? await send(timelineRequest(item, state: state, time: time, duration: duration))
+    }
+
+    /// The last report of a session. It ends the "now playing" session, and it is the only thing that saves the
+    /// place if playback stopped early, so unlike the reports above it tells the caller when it fails.
+    func reportStopped(_ item: PlexItem, time: Double, duration: Double) async throws {
+        _ = try await send(timelineRequest(item, state: .stopped, time: time, duration: duration))
     }
 
     // MARK: Images
@@ -313,8 +388,14 @@ struct PlexClient: Sendable {
         return r
     }
 
-    /// The original file of a version, as one plain download. Not a transcode URL.
+    /// The original file of a version, as one plain download. Not a transcode URL. The address has no token in it:
+    /// the player sends the token as a header (`playbackHeaders`), so it is not in any address a log or a cache could keep.
     func directPlayURL(part: PlexPart) -> URL {
-        url(part.key, [URLQueryItem(name: "X-Plex-Token", value: token)])
+        url(part.key)
+    }
+
+    /// The headers the player sends with every request for the file and its sidecar subtitles.
+    var playbackHeaders: [String: String] {
+        ["X-Plex-Token": token]
     }
 }

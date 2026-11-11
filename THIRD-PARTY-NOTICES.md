@@ -13,7 +13,7 @@ The full license texts are in each package's repository (and in `FFmpegBuild/LIC
 
 ## What this means for you
 
-- **Building from source:** nothing extra. HomeReel is open source, so the LGPL "you can relink with a modified library" rule is met: change a package version in `project.yml` and rebuild.
+- **Building from source:** nothing extra. HomeReel is open source, so the LGPL "you can relink with a modified library" rule is met: change a package version in `project.yml` and rebuild. That relinks AetherEngine. Replacing the FFmpeg libraries is a different matter: AetherEngine links the FFmpegBuild package itself, so swapping FFmpeg needs your own fork of AetherEngine, not just a change in `project.yml`.
 - **Handing out a built app (an `.ipa`, TestFlight, the App Store):** keep these notices with it, show the license texts somewhere reasonable (for example a Licenses screen), and keep the FFmpeg frameworks dynamic. AetherEngine's exception covers store distribution. Check the package licenses again first.
 - **Patents:** some codecs that FFmpeg can decode are covered by patents in some countries. HomeReel is shared as source code only.
 

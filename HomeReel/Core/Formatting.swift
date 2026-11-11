@@ -54,10 +54,27 @@ enum Fmt {
         return parts.joined(separator: " · ")
     }
 
-    /// "2023 · R · 1h 52m"
-    static func metaLine(_ item: PlexItem) -> String {
+    /// "Oct 11, 2006" from Plex's "2006-10-11" (or "2006-10-11T00:00:00.000Z"). Nil when the date is missing or not a date.
+    /// The date is a calendar day, not a moment, so it is read and shown in UTC: in a time zone west of Greenwich
+    /// a midnight UTC would otherwise be shown as the day before.
+    static func airDate(_ raw: String?, locale: Locale = .current) -> String? {
+        guard let raw else { return nil }
+        let day = raw.prefix(10).split(separator: "-", omittingEmptySubsequences: false)
+        guard day.count == 3, day[0].count == 4, day[1].count == 2, day[2].count == 2,
+              let y = Int(day[0]), let m = Int(day[1]), let d = Int(day[2]), y > 0 else { return nil }
+        var calendar = Calendar(identifier: .gregorian)
+        let utc = TimeZone(identifier: "UTC") ?? .gmt
+        calendar.timeZone = utc
+        guard let date = calendar.date(from: DateComponents(year: y, month: m, day: d)),
+              calendar.dateComponents([.year, .month, .day], from: date) == DateComponents(year: y, month: m, day: d) else { return nil }   // 2006-02-31 is not a day
+        return date.formatted(Date.FormatStyle(date: .abbreviated, time: .omitted, locale: locale, calendar: calendar, timeZone: utc))
+    }
+
+    /// "2023 · R · 1h 52m". With `airDate`, an episode shows the day it first aired in place of the year: "Oct 11, 2006 · TV-14 · 47m".
+    static func metaLine(_ item: PlexItem, airDate: Bool = false) -> String {
         var p: [String] = []
-        if let y = item.year { p.append(String(y)) }
+        if airDate, item.type == .episode, let day = Self.airDate(item.originallyAvailableAt) { p.append(day) }
+        else if let y = item.year { p.append(String(y)) }
         if let c = item.contentRating { p.append(c) }
         if let r = runtime(ms: item.duration) { p.append(r) }
         return p.joined(separator: " · ")

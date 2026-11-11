@@ -22,7 +22,9 @@ enum Keychain {
         return SecItemAdd(base.merging(values) { $1 } as CFDictionary, nil) == errSecSuccess
     }
 
-    static func get(_ key: String) -> String? {
+    /// What reading one item found. "Missing" and "could not read" are different: the second must never be
+    /// taken for a signed-out Apple TV.
+    static func read(_ key: String) -> SecretRead {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
@@ -31,17 +33,28 @@ enum Keychain {
             kSecMatchLimit as String: kSecMatchLimitOne,
         ]
         var out: CFTypeRef?
-        guard SecItemCopyMatching(query as CFDictionary, &out) == errSecSuccess,
-              let data = out as? Data else { return nil }
-        return String(data: data, encoding: .utf8)
+        let status = SecItemCopyMatching(query as CFDictionary, &out)
+        if status == errSecItemNotFound { return .missing }
+        guard status == errSecSuccess else { return .failed(status) }
+        guard let data = out as? Data, let text = String(data: data, encoding: .utf8) else { return .failed(errSecDecode) }
+        return .value(text)
     }
 
-    static func remove(_ key: String) {
+    /// The value, or nil if it is missing or could not be read. Where the difference matters, use `read`.
+    static func get(_ key: String) -> String? {
+        if case .value(let v) = read(key) { return v }
+        return nil
+    }
+
+    /// True when the item is gone afterward: it was deleted, or was never there.
+    @discardableResult
+    static func remove(_ key: String) -> Bool {
         let q: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: key,
         ]
-        SecItemDelete(q as CFDictionary)
+        let status = SecItemDelete(q as CFDictionary)
+        return status == errSecSuccess || status == errSecItemNotFound
     }
 }

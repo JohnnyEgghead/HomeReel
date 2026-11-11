@@ -10,20 +10,24 @@ import json
 import os
 import sys
 import time
+import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 
 if len(sys.argv) < 2:
     sys.exit("Usage: plex_inventory.py http://<server address>:32400")
-BASE = sys.argv[1]
+BASE = sys.argv[1].rstrip("/")
+# Only a web address: urllib would also open file: and other schemes, and the token goes wherever this points.
+if urllib.parse.urlparse(BASE).scheme not in ("http", "https") or not urllib.parse.urlparse(BASE).hostname:
+    sys.exit("The server address must start with http:// or https://")
 CFG = os.path.expanduser("~/.config/homereel")
 with open(f"{CFG}/plex-token") as f:
     TOKEN = f.read().strip()
 
 def get(path):
-    sep = "&" if "?" in path else "?"
-    req = urllib.request.Request(f"{BASE}{path}{sep}X-Plex-Token={TOKEN}",
-                                 headers={"Accept": "application/json"})
+    # The token goes in a header, not the address, so it is in no log or history that keeps addresses.
+    req = urllib.request.Request(f"{BASE}{path}",
+                                 headers={"Accept": "application/json", "X-Plex-Token": TOKEN})
     for attempt in range(5):
         try:
             with urllib.request.urlopen(req, timeout=60) as r:
@@ -79,8 +83,11 @@ def main():
     print(f"items: {len(items)}", file=sys.stderr)
     with ThreadPoolExecutor(3) as ex:
         rows = [r for rs in ex.map(detail, items) for r in rs]
-    with open(f"{CFG}/inventory.json", "w") as f:
+    # The table lists your whole library, so only you may read it (mode 600, also if the file already existed).
+    out = f"{CFG}/inventory.json"
+    with open(os.open(out, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600), "w") as f:
         json.dump(rows, f)
+    os.chmod(out, 0o600)
     for kind in ("movie", "episode"):
         R = [r for r in rows if r["kind"] == kind]
         print(f"\n## {kind}s: {len(R)} files")

@@ -4,7 +4,7 @@ import XCTest
 final class PlexModelsTests: XCTestCase {
     func testSectionsKeepOnlyMoviesAndShows() throws {
         let dirs = try Fixture.container("sections").Directory ?? []
-        XCTAssertEqual(dirs.count, 5)
+        XCTAssertEqual(dirs.count, 6)
         XCTAssertEqual(dirs.filter(\.isMovieLibrary).map(\.title), ["Movies"])
         XCTAssertEqual(dirs.filter(\.isShowLibrary).map(\.title), ["TV Shows"])
     }

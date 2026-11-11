@@ -1,6 +1,6 @@
 {
   "MediaContainer": {
-    "size": 5,
+    "size": 6,
     "allowSync": false,
     "title1": "Plex Library",
     "Directory": [
@@ -97,6 +97,25 @@
         "content": true,
         "directory": true,
         "contentChangedAt": 1644688,
+        "hidden": 0
+      },
+      {
+        "allowSync": true,
+        "filters": true,
+        "refreshing": false,
+        "key": "6",
+        "type": "movie",
+        "title": "Home Videos",
+        "agent": "tv.plex.agents.none",
+        "scanner": "Plex Video Files Scanner",
+        "language": "xn",
+        "uuid": "0b5f8f0e-6a0a-4d0a-9a59-3c7a3c8f6e21",
+        "updatedAt": 1697357213,
+        "createdAt": 1697357213,
+        "scannedAt": 1715498473,
+        "content": true,
+        "directory": true,
+        "contentChangedAt": 557558,
         "hidden": 0
       }
     ]

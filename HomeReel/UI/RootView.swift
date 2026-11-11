@@ -17,11 +17,7 @@ struct RootView: View {
             }
         }
         .overlay(alignment: .bottom) {
-            if let banner = app.banner {
-                Text(banner).font(.callout).padding(.horizontal, 30).padding(.vertical, 16)
-                    .background(.black.opacity(0.8), in: Capsule())
-                    .padding(.bottom, 60)
-            }
+            if let banner = app.banner { BannerView(text: banner) }
         }
         .preferredColorScheme(.dark)
         .task { await app.start() }
@@ -100,7 +96,8 @@ struct MainTabView: View {
         let key = tab
         Task {
             guard let show = try? await c.metadata(showKey), let season = try? await c.metadata(seasonKey) else {
-                // Could not reach the server: do what Menu normally does, so the remote never feels stuck.
+                // Could not reach the server: say so, and do what Menu normally does so the remote never feels stuck.
+                app.show(banner: "Could not open the season. Check the server and try again.")
                 if var p = paths[key], !p.isEmpty { p.removeLast(); paths[key] = p }
                 return
             }
@@ -113,7 +110,10 @@ struct MainTabView: View {
         guard let c = app.client, let showKey = item.grandparentRatingKey ?? item.parentRatingKey else { return }
         let key = tab
         Task {
-            guard let show = try? await c.metadata(showKey) else { return }
+            guard let show = try? await c.metadata(showKey) else {
+                app.show(banner: "Could not open the series. Check the server and try again.")
+                return
+            }
             paths[key] = NavigationPath([show])
         }
     }

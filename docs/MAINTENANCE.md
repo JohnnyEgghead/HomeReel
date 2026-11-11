@@ -37,8 +37,10 @@ Check for updates about every 3 months, and soon after any FFmpeg security relea
 
 ## Making a version
 
-1. Set `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in `project.yml`. Nothing else holds the version.
+1. Set `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in `project.yml`, then run `xcodegen generate`: the tracked `HomeReel.xcodeproj` holds a copy of both. (The app shows 0.1 if it cannot read its own version, which a normal build never does.)
 2. Move the `Unreleased` notes in `CHANGELOG.md` under the new version.
-3. Run `scripts/test.sh` and `scripts/check_test_script.sh`.
+3. Run `scripts/test.sh` and `scripts/check_test_script.sh`. `scripts/test.sh` also builds the Release configuration for the Apple TV, unsigned.
+4. Build Release for the Apple TV (the command in `README.md`), and play one real file of each kind: Dolby Vision, plain MKV, and a file with a sidecar subtitle. Install the Release build, not Debug.
+5. On the Apple TV, press the TV button during a movie, come back, and press Play. The picture should return at the same place, paused, and play on Play. A unit test covers the rebuild call, but only the device shows the picture.
 
 Handing out a built app has extra license duties. See `THIRD-PARTY-NOTICES.md`.

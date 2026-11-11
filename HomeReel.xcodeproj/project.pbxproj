@@ -20,17 +20,22 @@
 		20CFE3CCC256F14552139138 /* HomeScreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 865296836AF0E96ECD934E29 /* HomeScreenTests.swift */; };
 		20F2C31A3CE803C4AEF4B60D /* seasons.json in Resources */ = {isa = PBXBuildFile; fileRef = B98FD19D1C995AB1EDB804F3 /* seasons.json */; };
 		28AF1D6F2FF5D24EDF01152C /* DetailViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEF25632C6FEB94E0BC6B7E0 /* DetailViews.swift */; };
+		292FF02DE3548B8E1B738367 /* SecretFailureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBEFB0AFCA49932715B65E2 /* SecretFailureTests.swift */; };
 		2BE8F135C81E1C6CAF00A2AB /* AlphaIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4D79A279418981684CDF41 /* AlphaIndex.swift */; };
 		2E19CD27B9B146A396B2214C /* SecretStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4436371392FA9A038D418A54 /* SecretStore.swift */; };
 		31B49011141AFEC779744636 /* HomeReelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EAB3C2C73CC43BF7CEDDED4 /* HomeReelApp.swift */; };
+		35CDAB4A3D51D91B6C1F45D1 /* TokenSafetyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40272E149884D6F362A81E82 /* TokenSafetyTests.swift */; };
 		35D47CF225533D5A087125E2 /* Bravia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47634774A53A2EE10672828F /* Bravia.swift */; };
+		3D93560CDF9C7870106377AE /* TokenStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB107E035E606E65202BF1DF /* TokenStorageTests.swift */; };
 		3F75AAF8270B8D0C4D8A9927 /* PlaybackPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08D1D9E4DE1B66C98F764507 /* PlaybackPolicyTests.swift */; };
 		3FA59D0917C2DA979A2EB3D1 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F60BA6B49E9E7DD702DEF7 /* RootView.swift */; };
+		3FC341B906DBDCF569F3452C /* SessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C916D8491E7E68097C36A58 /* SessionTests.swift */; };
 		4272F6EBB41E5A399BF2AFB9 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF6FB53A928DDF6135DE84C /* SearchView.swift */; };
 		4912A36DD1B57820AB0C516F /* PlexAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2594754324760A7EDA1B33 /* PlexAuth.swift */; };
 		512D78A83F944587D1291107 /* discover_detail.json in Resources */ = {isa = PBXBuildFile; fileRef = 8AF6CAAD8AD8C71C275CF497 /* discover_detail.json */; };
 		54468B5E10626CD081A470DD /* PlayerPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70A88467AD9EBF5181B1D14A /* PlayerPanel.swift */; };
 		5B4A5EAE601343BC5BF2313B /* movie_detail.json in Resources */ = {isa = PBXBuildFile; fileRef = 327B1CAF03FAF089FABA5F52 /* movie_detail.json */; };
+		5FFD62FDC0D0A8F42EB11E2D /* ForegroundRestoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023CF5692115FBA804CD8117 /* ForegroundRestoreTests.swift */; };
 		66829D1B62E71F544A3DD2BA /* shows.json in Resources */ = {isa = PBXBuildFile; fileRef = FF4249FE4C99F4DFB0D52502 /* shows.json */; };
 		687031255F6A96E994304B04 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F0141DB1936EABAD71E728 /* SignInView.swift */; };
 		6DFA0F630CE087CD9C60CD5F /* search.json in Resources */ = {isa = PBXBuildFile; fileRef = CDC4A7868B7CCFE92083677A /* search.json */; };
@@ -89,6 +94,7 @@
 
 /* Begin PBXFileReference section */
 		02173A2F7968E99E31DB0960 /* AppFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFlowTests.swift; sourceTree = "<group>"; };
+		023CF5692115FBA804CD8117 /* ForegroundRestoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForegroundRestoreTests.swift; sourceTree = "<group>"; };
 		031581B8479003B5C2C3BE22 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		05F6606E6E757E9DFD8D6CEC /* NotInLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotInLibraryView.swift; sourceTree = "<group>"; };
 		08D1D9E4DE1B66C98F764507 /* PlaybackPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackPolicyTests.swift; sourceTree = "<group>"; };
@@ -96,6 +102,7 @@
 		15D786EE62F802DAD19D34EF /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		1C52A9F5AA2354A4303704A9 /* show_detail.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = show_detail.json; sourceTree = "<group>"; };
 		21F60BA6B49E9E7DD702DEF7 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		2C916D8491E7E68097C36A58 /* SessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionTests.swift; sourceTree = "<group>"; };
 		2DA31FA0C6113E92B605E770 /* TestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSupport.swift; sourceTree = "<group>"; };
 		327B1CAF03FAF089FABA5F52 /* movie_detail.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = movie_detail.json; sourceTree = "<group>"; };
 		32A012C98CCBE7E37A904F72 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
@@ -106,6 +113,7 @@
 		3B2594754324760A7EDA1B33 /* PlexAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlexAuth.swift; sourceTree = "<group>"; };
 		3BA4A00BC81BAB5C11917F9F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3D49286E4E77943248AAD111 /* episode_detail.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = episode_detail.json; sourceTree = "<group>"; };
+		40272E149884D6F362A81E82 /* TokenSafetyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSafetyTests.swift; sourceTree = "<group>"; };
 		4436371392FA9A038D418A54 /* SecretStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecretStore.swift; sourceTree = "<group>"; };
 		47634774A53A2EE10672828F /* Bravia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bravia.swift; sourceTree = "<group>"; };
 		4AABF4EC3C5C37C968A96A73 /* PlexClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlexClient.swift; sourceTree = "<group>"; };
@@ -139,7 +147,9 @@
 		C4D0CF774ED710CAE688994D /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
 		CDC4A7868B7CCFE92083677A /* search.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = search.json; sourceTree = "<group>"; };
 		D45022BAA44216DAE38CC5B1 /* SubtitleOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleOverlay.swift; sourceTree = "<group>"; };
+		DB107E035E606E65202BF1DF /* TokenStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenStorageTests.swift; sourceTree = "<group>"; };
 		DD3319061A1CA2B0CBC71318 /* continue.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = continue.json; sourceTree = "<group>"; };
+		DDBEFB0AFCA49932715B65E2 /* SecretFailureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecretFailureTests.swift; sourceTree = "<group>"; };
 		DEF25632C6FEB94E0BC6B7E0 /* DetailViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViews.swift; sourceTree = "<group>"; };
 		DF4D79A279418981684CDF41 /* AlphaIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlphaIndex.swift; sourceTree = "<group>"; };
 		E1F5C48B0477CC301315DD47 /* LibraryScanTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryScanTests.swift; sourceTree = "<group>"; };
@@ -321,6 +331,7 @@
 				5DAB306F6BC325AB4C732857 /* AuthAndAppModelTests.swift */,
 				A7F4D9D03A99968166566089 /* BraviaTests.swift */,
 				833C42F273817DE9B437F9DF /* FailurePathTests.swift */,
+				023CF5692115FBA804CD8117 /* ForegroundRestoreTests.swift */,
 				6416B2AA956011FFD99787C3 /* FormattingTests.swift */,
 				865296836AF0E96ECD934E29 /* HomeScreenTests.swift */,
 				E1F5C48B0477CC301315DD47 /* LibraryScanTests.swift */,
@@ -328,8 +339,12 @@
 				08D1D9E4DE1B66C98F764507 /* PlaybackPolicyTests.swift */,
 				FD6E561092C630CDF9C22937 /* PlexClientTests.swift */,
 				910508DB0A18F1BC3F20339C /* PlexModelsTests.swift */,
+				DDBEFB0AFCA49932715B65E2 /* SecretFailureTests.swift */,
+				2C916D8491E7E68097C36A58 /* SessionTests.swift */,
 				2DA31FA0C6113E92B605E770 /* TestSupport.swift */,
 				E70AA178DBBDC9758C4F6354 /* TitlePageRoleFilterScrubTests.swift */,
+				40272E149884D6F362A81E82 /* TokenSafetyTests.swift */,
+				DB107E035E606E65202BF1DF /* TokenStorageTests.swift */,
 			);
 			path = HomeReelTests;
 			sourceTree = "<group>";
@@ -518,6 +533,7 @@
 				D10F52152AF4D4F029BD177B /* AuthAndAppModelTests.swift in Sources */,
 				165BBC0B8D0CB9BA92D4F13A /* BraviaTests.swift in Sources */,
 				D65FC98DB9DA12E0DE205085 /* FailurePathTests.swift in Sources */,
+				5FFD62FDC0D0A8F42EB11E2D /* ForegroundRestoreTests.swift in Sources */,
 				134D5B470A664D7785C0D5FD /* FormattingTests.swift in Sources */,
 				20CFE3CCC256F14552139138 /* HomeScreenTests.swift in Sources */,
 				EAAF00681BFFC42909747F08 /* LibraryScanTests.swift in Sources */,
@@ -525,8 +541,12 @@
 				3F75AAF8270B8D0C4D8A9927 /* PlaybackPolicyTests.swift in Sources */,
 				C6ECF6B2E9C0F13E92C50211 /* PlexClientTests.swift in Sources */,
 				816A578139D5CA835D4AB453 /* PlexModelsTests.swift in Sources */,
+				292FF02DE3548B8E1B738367 /* SecretFailureTests.swift in Sources */,
+				3FC341B906DBDCF569F3452C /* SessionTests.swift in Sources */,
 				C566500792445821DC6B5CCE /* TestSupport.swift in Sources */,
 				B29DC0862643EC9CFB82C9C9 /* TitlePageRoleFilterScrubTests.swift in Sources */,
+				35CDAB4A3D51D91B6C1F45D1 /* TokenSafetyTests.swift in Sources */,
+				3D93560CDF9C7870106377AE /* TokenStorageTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -820,8 +840,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/superuser404notfound/AetherEngine";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 7.58.0;
+				kind = exactVersion;
+				version = 7.58.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

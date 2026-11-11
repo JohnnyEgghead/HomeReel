@@ -126,16 +126,16 @@ final class SubtitleChoiceTests: XCTestCase {
     ]
 
     func testSavedOffWins() {
-        XCTAssertEqual(SubtitleChooser.decide(tracks: tracks, saved: .init(off: true, language: nil), defaultLanguage: "en"), .off)
+        XCTAssertEqual(SubtitleChooser.decide(tracks: tracks, saved: .off, defaultLanguage: "en"), .off)
     }
 
     func testSavedLanguagePicksFullDialogueTrack() {
-        XCTAssertEqual(SubtitleChooser.decide(tracks: tracks, saved: .init(off: false, language: "eng"), defaultLanguage: nil), .track(3))
-        XCTAssertEqual(SubtitleChooser.decide(tracks: tracks, saved: .init(off: false, language: "spa"), defaultLanguage: nil), .track(5))
+        XCTAssertEqual(SubtitleChooser.decide(tracks: tracks, saved: .language("eng"), defaultLanguage: nil), .track(3))
+        XCTAssertEqual(SubtitleChooser.decide(tracks: tracks, saved: .language("spa"), defaultLanguage: nil), .track(5))
     }
 
     func testSavedLanguageMissingFallsBackToOff() {
-        XCTAssertEqual(SubtitleChooser.decide(tracks: tracks, saved: .init(off: false, language: "fra"), defaultLanguage: nil), .off)
+        XCTAssertEqual(SubtitleChooser.decide(tracks: tracks, saved: .language("fra"), defaultLanguage: nil), .off)
     }
 
     func testDefaultLanguageUsedWhenNothingSaved() {
@@ -155,14 +155,46 @@ final class SubtitleChoiceTests: XCTestCase {
         let suite = UserDefaults(suiteName: "HomeReelTests-\(UUID().uuidString)")!
         let prefs = SubtitlePreferences(defaults: suite)
         XCTAssertNil(prefs.record(for: "show1"))
-        prefs.save(.init(off: false, language: "eng"), for: "show1")
-        XCTAssertEqual(prefs.record(for: "show1"), .init(off: false, language: "eng"))
+        prefs.save(.language("eng"), for: "show1")
+        XCTAssertEqual(prefs.record(for: "show1"), .language("eng"))
         XCTAssertNil(prefs.record(for: "show2"))
         XCTAssertNil(prefs.defaultLanguage)
         suite.set("es", forKey: SubtitlePreferences.defaultLanguageKey)
         XCTAssertEqual(prefs.defaultLanguage, "es")
         suite.set("off", forKey: SubtitlePreferences.defaultLanguageKey)
         XCTAssertNil(prefs.defaultLanguage)
+    }
+}
+
+extension SubtitleChoiceTests {
+    func testPickingATrackWithoutALanguageRemembersNothing() {
+        XCTAssertNil(SubtitleChoiceRecord.remembered(afterPicking: TrackDescriptor(id: 7, name: "Signs")))
+        XCTAssertNil(SubtitleChoiceRecord.remembered(afterPicking: TrackDescriptor(id: 7, language: "und")))
+        XCTAssertNil(SubtitleChoiceRecord.remembered(afterPicking: TrackDescriptor(id: 7, language: "")))
+        XCTAssertEqual(SubtitleChoiceRecord.remembered(afterPicking: TrackDescriptor(id: 7, language: "eng")), .language("eng"))
+    }
+
+    func testForgettingAChoiceLetsTheSettingsDefaultApply() {
+        let suite = UserDefaults(suiteName: "HomeReelTests-\(UUID().uuidString)")!
+        let prefs = SubtitlePreferences(defaults: suite)
+        prefs.save(.off, for: "show1")
+        prefs.save(nil, for: "show1")
+        XCTAssertNil(prefs.record(for: "show1"))
+        XCTAssertEqual(SubtitleChooser.decide(tracks: tracks, saved: prefs.record(for: "show1"), defaultLanguage: "en"), .track(3),
+                       "an unlabeled pick is not read as Off")
+    }
+
+    func testChoicesSavedByEarlierVersionsStillRead() {
+        let suite = UserDefaults(suiteName: "HomeReelTests-\(UUID().uuidString)")!
+        let prefs = SubtitlePreferences(defaults: suite)
+        suite.set(Data(#"{"off":true}"#.utf8), forKey: "subtitleChoice.a")
+        suite.set(Data(#"{"off":false,"language":"eng"}"#.utf8), forKey: "subtitleChoice.b")
+        suite.set(Data(#"{"off":false,"language":null}"#.utf8), forKey: "subtitleChoice.c")   // what an unlabeled pick used to save
+        suite.set(Data(#"{"off":false}"#.utf8), forKey: "subtitleChoice.d")
+        XCTAssertEqual(prefs.record(for: "a"), .off)
+        XCTAssertEqual(prefs.record(for: "b"), .language("eng"))
+        XCTAssertNil(prefs.record(for: "c"), "the old unlabeled pick means no choice, not Off")
+        XCTAssertNil(prefs.record(for: "d"))
     }
 }
 
@@ -182,7 +214,7 @@ final class ExternalSubtitleTests: XCTestCase {
         XCTAssertEqual(specs.count, 2, "no vobsub, no embedded (no key), no audio")
         XCTAssertEqual(specs[0].language, "eng")
         XCTAssertEqual(specs[0].url.path, "/library/streams/10")
-        XCTAssertTrue(specs[0].url.absoluteString.contains("X-Plex-Token=SECRET"))
+        XCTAssertFalse(specs[0].url.absoluteString.contains("SECRET"), "the player sends the token as a header")
         XCTAssertTrue(specs[1].isHearingImpaired)
         XCTAssertEqual(specs[1].format, "srt")
     }

@@ -232,6 +232,17 @@ final class AppFlowTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(app.buttons.matching(NSPredicate(format: "label CONTAINS 'TMDB'")).count, 2, "every episode shows a TMDB score")
     }
 
+    func testEpisodeListShowsAirDates() {
+        let app = launch("normal", ["-open", "1003"])
+        wait(text(app, containing: "Oct 11, 2006"), 20, "the first episode's air date is in its row")
+        wait(text(app, containing: "Oct 18, 2006"), 5, "and the second's")
+    }
+
+    func testEpisodePageShowsTheAirDate() {
+        let app = launch("normal", ["-open", "1004"])
+        wait(text(app, containing: "Oct 11, 2006"), 20, "the episode page shows when it first aired")
+    }
+
     func testEndOfEpisodeOffersTheNextEpisode() {
         let app = launch("normal", ["-open", "1003", "-autoepisode", "1", "-autoplay", "1", "-showend", "1"])
         wait(app.staticTexts["Up Next"], 20)
@@ -262,6 +273,45 @@ final class AppFlowTests: XCTestCase {
         XCUIRemote.shared.press(.menu)
         wait(app.staticTexts["Season 1"], 10, "leaving never waits on the network")
         wait(text(app, containing: "as watched"), 20, "after the tries run out, a message says what happened")
+    }
+
+    func testAMessageThatArrivesWhileThePlayerIsOpenIsSeen() {
+        // Play Next Episode saves the first episode in the background. When that fails, the message arrives while the
+        // next player covers the screen, so the player has to show it itself.
+        let app = launch("watcherror", ["-open", "1003", "-autoepisode", "1", "-autoplay", "1", "-showend", "1"])
+        wait(app.buttons["Play Next Episode"], 20)
+        XCUIRemote.shared.press(.select)
+        wait(text(app, containing: "as watched"), 40, "the message shows over the player")
+    }
+
+    /// The brightest pixel inside an element's frame, from 0 to 1. A message hidden under a dark layer still exists and
+    /// still answers `isHittable`, so only the picture tells whether anyone can read it.
+    private func brightest(in element: XCUIElement, of app: XCUIApplication) -> Double {
+        guard let image = app.screenshot().image.cgImage, app.frame.width > 0, app.frame.height > 0 else { return 0 }
+        let sx = CGFloat(image.width) / app.frame.width, sy = CGFloat(image.height) / app.frame.height
+        let f = element.frame
+        let rect = CGRect(x: f.minX * sx, y: f.minY * sy, width: f.width * sx, height: f.height * sy).integral
+            .intersection(CGRect(x: 0, y: 0, width: image.width, height: image.height))
+        guard !rect.isNull, rect.width >= 1, rect.height >= 1, let crop = image.cropping(to: rect) else { return 0 }
+        var gray = [UInt8](repeating: 0, count: crop.width * crop.height)
+        gray.withUnsafeMutableBytes { buffer in
+            let context = CGContext(data: buffer.baseAddress, width: crop.width, height: crop.height, bitsPerComponent: 8,
+                                    bytesPerRow: crop.width, space: CGColorSpaceCreateDeviceGray(), bitmapInfo: CGImageAlphaInfo.none.rawValue)
+            context?.draw(crop, in: CGRect(x: 0, y: 0, width: crop.width, height: crop.height))
+        }
+        return Double(gray.max() ?? 0) / 255
+    }
+
+    func testAMessageIsReadableOverTheEndScreen() {
+        // The end screen is a 92 percent black layer. A message drawn under it exists, but its white text comes out
+        // near black, so the check is how bright the message looks on screen, not only that it is there.
+        let app = launch("normal", ["-open", "1003", "-autoepisode", "1", "-autoplay", "1", "-showend", "1",
+                                    "-banner", "Could not mark this episode as watched"])
+        wait(app.staticTexts["Up Next"], 20)
+        let banner = text(app, containing: "Could not mark this episode")
+        wait(banner, 10, "the message is on screen")
+        let level = brightest(in: banner, of: app)
+        XCTAssertGreaterThan(level, 0.6, "the message text is bright (a covered one measures about 0.1), got \(level)")
     }
 
     func testPersonPageSaysWhenItCouldNotReadYourLibrary() {

@@ -53,15 +53,15 @@ final class AuthTests: XCTestCase {
     }
 
     func testFirstReachableSkipsDeadAddresses() async {
-        StubURLProtocol.handler = { req in req.url!.host == "10.0.0.9" ? (200, Data()) : (500, Data()) }
+        StubURLProtocol.handler = { req in req.url!.host == "10.0.0.9" ? (200, Data(#"{"MediaContainer":{"machineIdentifier":"m1"}}"#.utf8)) : (500, Data()) }
         let r = await PlexConnectionPicker.firstReachable(
-            [URL(string: "http://10.0.0.8:32400")!, URL(string: "http://10.0.0.9:32400")!], session: StubURLProtocol.session())
+            [URL(string: "http://10.0.0.8:32400")!, URL(string: "http://10.0.0.9:32400")!], machineID: "m1", session: StubURLProtocol.session())
         XCTAssertEqual(r?.host, "10.0.0.9")
     }
 
     func testFirstReachableReturnsNilWhenNothingAnswers() async {
         StubURLProtocol.handler = { _ in (500, Data()) }
-        let r = await PlexConnectionPicker.firstReachable([URL(string: "http://10.0.0.8:32400")!], session: StubURLProtocol.session())
+        let r = await PlexConnectionPicker.firstReachable([URL(string: "http://10.0.0.8:32400")!], machineID: "m1", session: StubURLProtocol.session())
         XCTAssertNil(r)
     }
 }
@@ -77,7 +77,7 @@ final class AppModelTests: XCTestCase {
     }
 
     func testStartWithSavedLoginBecomesReady() async {
-        StubURLProtocol.handler = { _ in (200, Fixture.data("sections")) }
+        StubURLProtocol.handler = answering { _ in (200, Fixture.data("sections")) }
         let store = InMemorySecretStore([AppModel.Key.token: "t", AppModel.Key.server: "http://10.0.0.5:32400", AppModel.Key.serverName: "NAS"])
         let m = AppModel(secrets: store, session: StubURLProtocol.session())
         await m.start()
@@ -88,7 +88,7 @@ final class AppModelTests: XCTestCase {
     }
 
     func testRejectedTokenIsForgottenAndSignsOut() async {
-        StubURLProtocol.handler = { _ in (401, Data()) }
+        StubURLProtocol.handler = answering { _ in (401, Data()) }
         let store = InMemorySecretStore([AppModel.Key.token: "old", AppModel.Key.server: "http://10.0.0.5:32400"])
         let m = AppModel(secrets: store, session: StubURLProtocol.session())
         await m.start()
@@ -97,7 +97,7 @@ final class AppModelTests: XCTestCase {
     }
 
     func testUnreachableServerShowsFailureAndKeepsLogin() async {
-        StubURLProtocol.handler = { _ in (503, Data()) }
+        StubURLProtocol.handler = answering { _ in (503, Data()) }
         let store = InMemorySecretStore([AppModel.Key.token: "t", AppModel.Key.server: "http://10.0.0.5:32400"])
         let m = AppModel(secrets: store, session: StubURLProtocol.session())
         await m.start()
@@ -106,7 +106,7 @@ final class AppModelTests: XCTestCase {
     }
 
     func testSignOutClearsEverything() async {
-        StubURLProtocol.handler = { _ in (200, Fixture.data("sections")) }
+        StubURLProtocol.handler = answering { _ in (200, Fixture.data("sections")) }
         let store = InMemorySecretStore([AppModel.Key.token: "t", AppModel.Key.server: "http://10.0.0.5:32400"])
         let m = AppModel(secrets: store, session: StubURLProtocol.session())
         await m.start()
@@ -118,7 +118,7 @@ final class AppModelTests: XCTestCase {
     }
 
     func testSignOutClearsThePictureCache() async {
-        StubURLProtocol.handler = { _ in (200, Fixture.data("sections")) }
+        StubURLProtocol.handler = answering { _ in (200, Fixture.data("sections")) }
         let store = InMemorySecretStore([AppModel.Key.token: "t", AppModel.Key.server: "http://10.0.0.5:32400"])
         let cache = CountingCache()
         let m = AppModel(secrets: store, session: StubURLProtocol.session(), images: ImageStore(cache: cache))
@@ -127,7 +127,7 @@ final class AppModelTests: XCTestCase {
     }
 
     func testPersonPhotosSendTheTokenOnlyToTheServer() async throws {
-        StubURLProtocol.handler = { _ in (200, Fixture.data("sections")) }
+        StubURLProtocol.handler = answering { _ in (200, Fixture.data("sections")) }
         let store = InMemorySecretStore([AppModel.Key.token: "t", AppModel.Key.server: "http://10.0.0.5:32400"])
         let m = AppModel(secrets: store, session: StubURLProtocol.session())
         await m.start()
@@ -165,7 +165,7 @@ final class AppModelTests: XCTestCase {
     }
 
     func testManualSignInAddsSchemeAndDefaultPort() async {
-        StubURLProtocol.handler = { _ in (200, Fixture.data("sections")) }
+        StubURLProtocol.handler = answering { _ in (200, Fixture.data("sections")) }
         let store = InMemorySecretStore()
         let m = AppModel(secrets: store, session: StubURLProtocol.session())
         await m.signInManually(address: "10.0.0.5", token: " tok ")
@@ -175,7 +175,7 @@ final class AppModelTests: XCTestCase {
     }
 
     func testLoadDetailKeepsFullCastInTheAppModel() async throws {
-        StubURLProtocol.handler = { req in
+        StubURLProtocol.handler = answering { req in
             req.url!.path.hasPrefix("/library/metadata/") ? (200, Fixture.data("movie_detail")) : (200, Fixture.data("sections"))
         }
         let store = InMemorySecretStore([AppModel.Key.token: "t", AppModel.Key.server: "http://10.0.0.5:32400"])
@@ -190,7 +190,7 @@ final class AppModelTests: XCTestCase {
     }
 
     func testCurrentPrefersLoadedDetailOverListCopy() async throws {
-        StubURLProtocol.handler = { req in
+        StubURLProtocol.handler = answering { req in
             req.url!.path.hasPrefix("/library/metadata/") ? (200, Fixture.data("movie_detail")) : (200, Fixture.data("sections"))
         }
         let store = InMemorySecretStore([AppModel.Key.token: "t", AppModel.Key.server: "http://10.0.0.5:32400"])
@@ -205,7 +205,7 @@ final class AppModelTests: XCTestCase {
     }
 
     func testEpisodeChangeAlsoReloadsSeasonAndShow() async throws {
-        StubURLProtocol.handler = { req in
+        StubURLProtocol.handler = answering { req in
             req.url!.path.hasPrefix("/library/metadata/") ? (200, Fixture.data("movie_detail")) : (200, Fixture.data("sections"))
         }
         let store = InMemorySecretStore([AppModel.Key.token: "t", AppModel.Key.server: "http://10.0.0.5:32400"])
@@ -219,12 +219,76 @@ final class AppModelTests: XCTestCase {
         XCTAssertEqual(paths, ["/library/metadata/\(ep.ratingKey)", "/library/metadata/P1", "/library/metadata/G1"])
     }
 
+    func testALoadThatFailsReturnsWhyAndOneThatWorksReturnsNothing() async {
+        StubURLProtocol.handler = answering { r in r.url!.path.hasPrefix("/library/metadata/") ? (500, Data()) : (200, Fixture.data("sections")) }
+        let m = AppModel(secrets: InMemorySecretStore([AppModel.Key.token: "t", AppModel.Key.server: "http://10.0.0.5:32400"]), session: StubURLProtocol.session())
+        await m.start()
+        let problem = await m.loadDetail("1")
+        XCTAssertEqual(problem, PlexError.badResponse(500).errorDescription, "the page can say why")
+        StubURLProtocol.handler = answering { r in r.url!.path.hasPrefix("/library/metadata/") ? (200, Fixture.data("movie_detail")) : (200, Fixture.data("sections")) }
+        let ok = await m.loadDetail("16218")
+        XCTAssertNil(ok)
+    }
+
+    // MARK: Typed sign-in (J-19) and the code sign-in's poll (J-18)
+
+    func testOnlyARealAddressIsAccepted() {
+        XCTAssertEqual(AppModel.validServerAddress("10.0.0.5"), "http://10.0.0.5:32400")
+        XCTAssertEqual(AppModel.validServerAddress("https://nas.example:443"), "https://nas.example:443")
+        for bad in ["", "   ", "http://", "ftp://nas", "my server", "http://bad host", "://"] {
+            XCTAssertNil(AppModel.validServerAddress(bad), "\"\(bad)\" is not an address")
+        }
+    }
+
+    func testATypoInTheAddressSaysSoAndSavesNothing() async {
+        let store = InMemorySecretStore()
+        let m = AppModel(secrets: store, session: StubURLProtocol.session())
+        await m.signInManually(address: "my server", token: "tok")
+        XCTAssertEqual(m.phase, .signedOut)
+        XCTAssertNotNil(m.signInNotice)
+        XCTAssertNil(store.get(AppModel.Key.token))
+        XCTAssertNil(store.get(AppModel.Key.server))
+        await m.signInManually(address: "10.0.0.5", token: "   ")
+        XCTAssertEqual(m.signInNotice, "Enter your Plex token.")
+        XCTAssertNil(store.get(AppModel.Key.server))
+    }
+
+    func testADroppedCodeCheckDoesNotEndTheSignIn() async throws {
+        let checks = CheckCounter()
+        let resources = #"[{"name":"NAS","provides":"server","owned":true,"clientIdentifier":"m1","connections":[{"uri":"http://10.0.0.5:32400","address":"10.0.0.5","port":32400,"local":true,"relay":false}]}]"#
+        StubURLProtocol.handler = answering { r in
+            if r.url?.host == "plex.tv" {
+                if r.url!.path.hasSuffix("/pins") { return (201, Data(#"{"id":1,"code":"ABCD","authToken":null}"#.utf8)) }
+                if r.url!.path.contains("/pins/") {
+                    let n = checks.next()
+                    return n == 1 ? (200, Data(#"{"id":1,"code":"ABCD","authToken":null}"#.utf8))
+                        : n == 2 ? (500, Data())                                                  // one check is lost
+                        : (200, Data(#"{"id":1,"code":"ABCD","authToken":"tok"}"#.utf8))
+                }
+                return (200, Data(resources.utf8))
+            }
+            return (200, Fixture.data("sections"))
+        }
+        let m = AppModel(secrets: InMemorySecretStore(), session: StubURLProtocol.session())
+        m.linkPollInterval = .milliseconds(10)
+        m.signInWithCode()
+        for _ in 0..<300 where m.phase != .ready { try await Task.sleep(for: .milliseconds(10)) }
+        XCTAssertEqual(m.phase, .ready, "the lost check was tried again")
+    }
+
     func testClientIDIsStable() {
         let store = InMemorySecretStore()
         let m = AppModel(secrets: store, session: StubURLProtocol.session())
         XCTAssertEqual(m.identity.clientID, m.identity.clientID)
         XCTAssertNotNil(store.get(AppModel.Key.clientID))
     }
+}
+
+/// Counts calls, safely from any thread.
+final class CheckCounter: @unchecked Sendable {
+    private let lock = NSLock()
+    private var n = 0
+    func next() -> Int { lock.lock(); defer { lock.unlock() }; n += 1; return n }
 }
 
 /// Counts how often the picture cache is emptied.

@@ -14,6 +14,8 @@ struct PlexContainer: Decodable {
     var Metadata: [PlexItem]?
     var Directory: [PlexSection]?
     var Hub: [PlexHub]?
+    /// How many entries in `Metadata` could not be read and were left out.
+    var droppedMetadata = 0
     var items: [PlexItem] { Metadata ?? [] }
 
     private enum CodingKeys: String, CodingKey { case size, totalSize, offset, Metadata, Directory, Hub }
@@ -24,7 +26,10 @@ struct PlexContainer: Decodable {
         totalSize = try c.decodeIfPresent(Int.self, forKey: .totalSize)
         offset = try c.decodeIfPresent(Int.self, forKey: .offset)
         // One odd item should cost that item, not the whole page.
-        Metadata = try c.decodeIfPresent([Lossy<PlexItem>].self, forKey: .Metadata)?.compactMap(\.value)
+        let rawItems = try c.decodeIfPresent([Lossy<PlexItem>].self, forKey: .Metadata)
+        let now = Date()
+        Metadata = rawItems?.compactMap(\.value).map { var i = $0; i.fetchedAt = now; return i }
+        droppedMetadata = (rawItems?.count ?? 0) - (Metadata?.count ?? 0)
         Hub = try c.decodeIfPresent([Lossy<PlexHub>].self, forKey: .Hub)?.compactMap(\.value)
         // "Directory" means library sections on /library/sections, but a show's children list also uses
         // it for an "All episodes" entry that is not a section. Keep only what decodes as a section.
@@ -50,8 +55,9 @@ struct PlexSection: Decodable, Identifiable, Hashable {
     var id: String { key }
 
     /// Movies and TV Shows only. Plex also files home videos, music videos and live feeds
-    /// under type "movie", but those use the "none" agent, so they are left out.
-    var isMovieLibrary: Bool { type == "movie" && agent != "com.plexapp.agents.none" }
+    /// under type "movie", but those use a "none" agent (the older `com.plexapp.agents.none` or the newer
+    /// `tv.plex.agents.none`), so they are left out.
+    var isMovieLibrary: Bool { type == "movie" && !(agent?.hasSuffix(".agents.none") ?? false) }
     var isShowLibrary: Bool { type == "show" }
 }
 
@@ -157,6 +163,9 @@ struct PlexItem: Decodable, Identifiable, Hashable {
     var Rating: [PlexRating]?
     var audienceRatingImage: String?
     var ratingImage: String?
+    /// When this copy came from the server. Set as it is read, not by Plex. Where two copies of one item disagree,
+    /// the newer is right.
+    var fetchedAt: Date?
 
     var id: String { ratingKey }
 
@@ -284,6 +293,7 @@ struct PlexHub: Decodable, Identifiable, Hashable {
         hubIdentifier = try c.decodeIfPresent(String.self, forKey: .hubIdentifier)
         title = try c.decode(String.self, forKey: .title)
         type = try c.decodeIfPresent(String.self, forKey: .type)
-        Metadata = try c.decodeIfPresent([Lossy<PlexItem>].self, forKey: .Metadata)?.compactMap(\.value)
+        let now = Date()
+        Metadata = try c.decodeIfPresent([Lossy<PlexItem>].self, forKey: .Metadata)?.compactMap(\.value).map { var i = $0; i.fetchedAt = now; return i }
     }
 }

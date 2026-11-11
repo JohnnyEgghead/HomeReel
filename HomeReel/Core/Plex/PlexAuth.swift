@@ -28,7 +28,7 @@ struct PlexResource: Decodable, Sendable {
 /// Sign in with the plex.tv "link" flow: show a 4-letter code, the user types it at plex.tv/link on a phone.
 struct PlexAuth: Sendable {
     let identity: PlexIdentity
-    var session: URLSession = .shared
+    var session: URLSession = .uncached
     var tvBase = URL(string: "https://plex.tv")!
 
     private func request(_ path: String, method: String = "GET", token: String? = nil, query: [URLQueryItem] = []) -> URLRequest {
@@ -48,11 +48,15 @@ struct PlexAuth: Sendable {
             if error.isCancellation { throw CancellationError() }
             throw error
         }
+        if (resp as? HTTPURLResponse)?.statusCode == 401 { throw PlexError.unauthorized }
         guard let http = resp as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
             throw PlexError.badResponse((resp as? HTTPURLResponse)?.statusCode ?? 0)
         }
         do { return try JSONDecoder().decode(T.self, from: data) }
-        catch { throw PlexError.decoding("\(error)") }
+        catch {
+            debugLog("decode FAILED plex.tv \(req.url?.path ?? ""): \(error)")
+            throw PlexError.decoding("plex.tv")
+        }
     }
 
     func createPin() async throws -> PlexPin {
@@ -62,6 +66,27 @@ struct PlexAuth: Sendable {
     /// nil until the user has entered the code.
     func checkPin(_ id: Int) async throws -> String? {
         try await fetch(request("api/v2/pins/\(id)"), as: PlexPin.self).authToken
+    }
+
+    /// What plex.tv says about a token.
+    enum TokenStatus: Equatable, Sendable {
+        case valid
+        /// plex.tv itself answered 401: the token is revoked or wrong.
+        case refused
+        /// No clear answer (no network, a server error). Says nothing about the token.
+        case unknown
+    }
+
+    /// Asks plex.tv, which issued the token, whether it still works. A Plex server answering 401 is not proof: it
+    /// can fail to reach plex.tv itself, or be restarting. Only plex.tv's own refusal counts.
+    func tokenStatus(_ token: String) async -> TokenStatus {
+        guard let (_, resp) = try? await session.data(for: request("api/v2/user", token: token)),
+              let http = resp as? HTTPURLResponse else { return .unknown }
+        switch http.statusCode {
+        case 200..<300: return .valid
+        case 401: return .refused
+        default: return .unknown
+        }
     }
 
     func servers(token: String) async throws -> [PlexResource] {
@@ -90,16 +115,21 @@ enum PlexConnectionPicker {
         return out.filter { seen.insert($0).inserted }
     }
 
-    /// First address that answers /identity within a few seconds. With `machineID`, it must also be that server:
-    /// a local address from plex.tv can belong to some other device on the network you are on, and the token
-    /// goes to whatever address is picked here. The check itself sends no token.
-    static func firstReachable(_ urls: [URL], machineID: String? = nil, session: URLSession = .shared) async -> URL? {
+    /// The id a server reports at /identity, or nil if nothing answers there or the answer has none.
+    /// The request carries no token.
+    static func machineID(at url: URL, session: URLSession = .uncached) async -> String? {
+        var r = URLRequest(url: url.appendingPathComponent("identity"), timeoutInterval: 3)
+        r.setValue("application/json", forHTTPHeaderField: "Accept")
+        guard let (data, resp) = try? await session.data(for: r), (resp as? HTTPURLResponse)?.statusCode == 200 else { return nil }
+        return reportedID(in: data)
+    }
+
+    /// First address that answers /identity within a few seconds AS the server with this id: a local address
+    /// from plex.tv can belong to some other device on the network you are on, and the token goes to whatever
+    /// address is picked here. An answer with a different id, or none, is skipped. The check itself sends no token.
+    static func firstReachable(_ urls: [URL], machineID: String, session: URLSession = .uncached) async -> URL? {
         for u in urls {
-            var r = URLRequest(url: u.appendingPathComponent("identity"), timeoutInterval: 3)
-            r.setValue("application/json", forHTTPHeaderField: "Accept")
-            guard let (data, resp) = try? await session.data(for: r), (resp as? HTTPURLResponse)?.statusCode == 200 else { continue }
-            if let machineID, reportedID(in: data) != machineID { continue }
-            return u
+            if await Self.machineID(at: u, session: session) == machineID { return u }
         }
         return nil
     }

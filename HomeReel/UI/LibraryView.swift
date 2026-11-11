@@ -12,10 +12,14 @@ final class LibraryModel: ObservableObject {
     @Published var unwatchedOnly = false { didSet { if oldValue != unwatchedOnly { Task { await reload() } } } }
 
     /// Where a library scan stands, for the button and the line beside it.
-    enum ScanState: Equatable { case idle, scanning, finished, failed(String) }
+    enum ScanState: Equatable { case idle, scanning, finished, stillRunning, failed(String) }
     @Published private(set) var scan: ScanState = .idle
     /// How often to ask the server whether the scan is done. Short in test runs.
     var scanPollInterval: Duration = LaunchOptions.value("-fixture") != nil ? .milliseconds(300) : .seconds(2)
+    /// How many times to ask before giving up on waiting (10 minutes at the normal interval).
+    var maxScanPolls = 300
+    /// Items the server listed that could not be read, so the list says it is not showing everything.
+    @Published private(set) var dropped = 0
 
     private var client: PlexClient?
     private var section: PlexSection?
@@ -30,26 +34,43 @@ final class LibraryModel: ObservableObject {
         await reload()
     }
 
+    /// Goes up with every reload. A page that was asked for under an older number is out of date (the sort, the
+    /// filter, or the library changed while it was on its way), so it is dropped instead of added to the new list.
+    private var generation = 0
+
+    /// Starts the list again. A reload always asks, even when an older request is still running.
     func reload() async {
+        generation += 1
         items = []
         total = 0
         nextStart = 0
-        await loadMore()
+        dropped = 0
+        error = nil
+        await fetchPage()
     }
 
     func loadMore() async {
-        guard let client, let section, !loading, items.isEmpty || nextStart < total else { return }
+        guard !loading, items.isEmpty || nextStart < total else { return }
+        await fetchPage()
+    }
+
+    private func fetchPage() async {
+        guard let client, let section else { return }
+        let mine = generation
         loading = true
-        defer { loading = false }
+        defer { if mine == generation { loading = false } }
         do {
             let page = try await client.items(section: section, sort: sort, unwatchedOnly: unwatchedOnly, start: nextStart, size: pageSize)
+            guard mine == generation else { return }
             items += page.items
+            dropped += page.dropped
             total = page.total
             nextStart += pageSize
             error = nil
         } catch is CancellationError {
             return
         } catch {
+            guard mine == generation else { return }
             self.error = error.localizedDescription
         }
     }
@@ -61,17 +82,31 @@ final class LibraryModel: ObservableObject {
         do {
             try await client.scanLibrary(section)
             // The server may not report "scanning" the instant it accepts the request, so give it a few polls to start.
-            var sawScanning = false, polls = 0
-            while polls < 300 {
+            var sawScanning = false, polls = 0, missed = 0, busy = false
+            while polls < maxScanPolls {
                 try await Task.sleep(for: scanPollInterval)
                 polls += 1
-                if try await client.isScanning(section) { sawScanning = true }
+                do {
+                    busy = try await client.isScanning(section)
+                    missed = 0
+                } catch {
+                    if error.isCancellation { throw error }
+                    // One or two dropped answers are not the end of the scan. A third in a row is.
+                    missed += 1
+                    if missed > 2 { throw error }
+                    continue
+                }
+                if busy { sawScanning = true }
                 else if sawScanning || polls >= 3 { break }
             }
             await reload()
-            scan = .finished
-            try? await Task.sleep(for: .seconds(5))
-            if scan == .finished { scan = .idle }
+            if busy {
+                scan = .stillRunning       // the wait ran out while the server was still at it
+            } else {
+                scan = .finished
+                try? await Task.sleep(for: .seconds(5))
+                if scan == .finished { scan = .idle }
+            }
         } catch is CancellationError {
             scan = .idle
         } catch {
@@ -112,6 +147,7 @@ struct LibraryView: View {
         case .idle: EmptyView()
         case .scanning: Text("Looking for new files. This can take a few minutes.").font(.callout).foregroundStyle(Theme.secondaryText)
         case .finished: Text("Scan finished").font(.callout).foregroundStyle(Theme.secondaryText)
+        case .stillRunning: Text("The server is still scanning. New titles will appear when it finishes.").font(.callout).foregroundStyle(Theme.secondaryText)
         case .failed(let m): Text("Scan failed: \(m)").font(.callout).foregroundStyle(.orange)
         }
     }
@@ -170,6 +206,10 @@ struct LibraryView: View {
                     .scrollTargetLayout()
                     .padding(.leading, 80)
                     if model.loading { ProgressView().frame(maxWidth: .infinity) }
+                    if model.dropped > 0 {
+                        Text("\(model.dropped) \(model.dropped == 1 ? "item" : "items") from the server could not be read, so \(model.dropped == 1 ? "it is" : "they are") not shown.")
+                            .font(.callout).foregroundStyle(.orange).padding(.horizontal, 80)
+                    }
                     if let error = model.error {
                         HStack(spacing: 30) {
                             Text("Could not load more: \(error)").font(.callout).foregroundStyle(.orange)

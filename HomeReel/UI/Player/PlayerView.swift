@@ -43,6 +43,8 @@ struct PlayerSession: View {
     @State private var closing = false
     /// Set while the next episode's details load.
     @State private var movingOn = false
+    /// Set once this episode has been saved, so a second try at the next episode does not save it again.
+    @State private var saved = false
 
     init(item: PlexItem, client: PlexClient, startAt: Double?, onNext: @escaping (PlexItem) -> Void, onClose: @escaping (PlayerExit) -> Void) {
         _model = StateObject(wrappedValue: PlayerModel(item: item, client: client))
@@ -76,17 +78,25 @@ struct PlayerSession: View {
 
             SubtitleOverlay(feed: model.feed, liftForControls: model.overlayVisible)
 
-            if (model.isBuffering && !model.isScrubbing) || model.phase == .loading || movingOn { ProgressView().scaleEffect(2) }
+            if (model.isBuffering && !model.isScrubbing) || model.phase == .loading || model.isRestoring || movingOn { ProgressView().scaleEffect(2) }
             if case .failed(let msg) = model.phase { FailureOverlay(message: msg, onClose: { close(.back) }) }
             if model.overlayVisible, model.phase != .loading, !model.panelOpen, !showsEnd { TransportOverlay(model: model) }
             if model.panelOpen { PlayerPanel(model: model) }
             if showsEnd {
                 EpisodeEndedOverlay(model: model, onNext: { playNext($0) }, onList: { close(.episodeList(model.item)) })
             }
+            // Drawn last, so nothing covers it: the end screen is a 92 percent black layer, and a message under it
+            // (such as "could not mark as watched", which is shown right as an episode ends) cannot be read.
+            // The player covers the screen the banner normally sits on, so it shows its own copy.
+            if let banner = app.banner { BannerView(text: banner).frame(maxHeight: .infinity, alignment: .bottom) }
         }
         .task {
             #if DEBUG
-            if LaunchOptions.value("-showend") != nil { await model.showEndForTesting(); return }
+            if LaunchOptions.value("-showend") != nil {
+                await model.showEndForTesting()
+                if let text = LaunchOptions.value("-banner") { app.show(banner: text) }     // a message while the end screen is up
+                return
+            }
             if let v = LaunchOptions.value("-showpanel") {
                 model.openPanel(PanelTab.allCases.first { $0.rawValue.lowercased() == v } ?? .info)
                 return
@@ -101,7 +111,11 @@ struct PlayerSession: View {
             if model.item.type != .episode { close(.back) }     // a movie returns to its page; an episode offers what is next
             else if model.nextLookupFailed { Task { await model.loadNextEpisode() } }   // the first try was at the start
         }
-        .onAppear { UIApplication.shared.isIdleTimerDisabled = true }
+        // Keep the screen saver off while something is playing or loading. Paused and on the end screen it may start,
+        // as it does in other players, so a still picture does not stay on the TV all night.
+        .onChange(of: model.phase, initial: true) { _, p in
+            UIApplication.shared.isIdleTimerDisabled = (p == .playing || p == .loading)
+        }
         .onDisappear { UIApplication.shared.isIdleTimerDisabled = false }
     }
 
@@ -122,12 +136,19 @@ struct PlayerSession: View {
         guard !closing, !movingOn else { return }
         movingOn = true
         let model = self.model, app = self.app
-        Task { await app.finishPlayback(model) }
+        if !saved { saved = true; Task { await app.finishPlayback(model) } }
         Task {
-            let full = try? await model.client.metadata(next.ratingKey)
-            movingOn = false
-            guard !closing else { return }
-            if let full { onNext(full) } else { close(.episodeList(model.item)) }
+            do {
+                let full = try await model.client.metadata(next.ratingKey)
+                movingOn = false
+                guard !closing else { return }
+                onNext(full)
+            } catch {
+                movingOn = false
+                guard !closing, !error.isCancellation else { return }
+                // Stay on the end screen: its Play Next Episode button is the way to try again.
+                app.show(banner: "Could not load the next episode. Press Play Next Episode to try again.")
+            }
         }
     }
 }

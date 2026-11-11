@@ -34,6 +34,46 @@ final class FormattingTests: XCTestCase {
         XCTAssertTrue(line.uppercased().contains(m.primaryMedia?.container?.uppercased() ?? "?"))
     }
 
+    // MARK: Air dates
+
+    private let us = Locale(identifier: "en_US")
+
+    func testAirDateIsTheCalendarDayWhateverTheTimeZone() {
+        XCTAssertEqual(Fmt.airDate("2006-10-11", locale: us), "Oct 11, 2006")
+        XCTAssertEqual(Fmt.airDate("2025-05-01T00:00:00.000Z", locale: us), "May 1, 2025", "a midnight UTC is still that day")
+        XCTAssertEqual(Fmt.airDate("2024-02-29", locale: us), "Feb 29, 2024")
+    }
+
+    func testAirDateFollowsTheLocale() {
+        XCTAssertEqual(Fmt.airDate("2006-10-11", locale: Locale(identifier: "de_DE")), "11. Okt. 2006")
+    }
+
+    func testAMissingOrBadAirDateShowsNothing() {
+        for bad in [nil, "", "2006", "2006-10", "0000-00-00", "2006-13-01", "2006-02-31", "yesterday", "10-11-2006", "2006/10/11"] as [String?] {
+            XCTAssertNil(Fmt.airDate(bad, locale: us), "\(bad ?? "nil")")
+        }
+    }
+
+    func testEpisodesShowTheirAirDateInPlaceOfTheYear() throws {
+        let ep = try XCTUnwrap(Fixture.container("episode_detail").items.first)
+        XCTAssertEqual(ep.type, .episode)
+        XCTAssertTrue(Fmt.metaLine(ep, airDate: true).hasPrefix(Fmt.airDate("2006-10-11") ?? "?"))
+        XCTAssertFalse(Fmt.metaLine(ep, airDate: true).hasPrefix(String(ep.year ?? 0)), "the date replaces the year")
+        XCTAssertTrue(Fmt.metaLine(ep).hasPrefix(String(ep.year ?? 0)), "the default line is unchanged (the player panel uses it)")
+    }
+
+    func testAnEpisodeWithNoAirDateKeepsItsYear() throws {
+        var ep = try XCTUnwrap(Fixture.container("episode_detail").items.first)
+        ep.originallyAvailableAt = nil
+        XCTAssertTrue(Fmt.metaLine(ep, airDate: true).hasPrefix(String(ep.year ?? 0)))
+    }
+
+    func testAMovieNeverShowsAnAirDate() throws {
+        var m = try XCTUnwrap(Fixture.container("movie_detail").items.first)
+        m.originallyAvailableAt = "2020-01-02"
+        XCTAssertTrue(Fmt.metaLine(m, airDate: true).hasPrefix(String(m.year ?? 0)))
+    }
+
     func testMetaLine() throws {
         let m = try Fixture.container("movie_detail").items[0]
         XCTAssertTrue(Fmt.metaLine(m).contains(String(m.year ?? 0)))

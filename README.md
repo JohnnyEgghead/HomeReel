@@ -15,7 +15,7 @@ Personal project, shared as open source. Works with Plex. Not affiliated with or
 - **Info panel while playing:** description and cast, subtitle menu (text, picture, and sidecar files), audio menu. Your subtitle choice is remembered per show, with a default language in Settings.
 - **Progress sync:** position and watched state go back to Plex.
 - **Ratings and people:** critic and audience scores (Rotten Tomatoes, TMDB, IMDb) on movies, shows and episodes. Cast and crew open a page with a biography, what you own with them, and their full filmography from Plex's online database, with a role filter (Actor, Director, Writer...). A title you do not own opens a page with its description, scores, and cast.
-- **TV episodes:** episode scores in the season list, an "Up Next" screen when an episode ends, and Menu goes to the season's episode list.
+- **TV episodes:** episode scores and air dates in the season list, the air date on each episode page, an "Up Next" screen when an episode ends, and Menu goes to the season's episode list.
 - **Home:** Continue Watching has a press-and-hold menu. Movies offer resume, start over, and mark watched or unwatched. Episodes offer resume or play, open series, open season, and remove. Recently Added TV Shows is one poster per series.
 - **Scan Library** button on Movies and TV Shows.
 - **Optional, off by default:** a Picture tab in the player panel that switches a Sony BRAVIA TV between Dolby Vision picture modes over your home network (Settings > TV Picture).
@@ -40,11 +40,13 @@ Then build and install:
 
     xcodegen generate
     # find your Apple TV with: xcrun devicectl list devices
-    xcodebuild -project HomeReel.xcodeproj -scheme HomeReel -destination "platform=tvOS,id=<udid>" \
+    xcodebuild -project HomeReel.xcodeproj -scheme HomeReel -configuration Release -destination "platform=tvOS,id=<udid>" \
       -derivedDataPath build-device -allowProvisioningUpdates -allowProvisioningDeviceRegistration build
-    xcrun devicectl device install app --device <udid> build-device/Build/Products/Debug-appletvos/HomeReel.app
+    xcrun devicectl device install app --device <udid> build-device/Build/Products/Release-appletvos/HomeReel.app
 
 The Apple TV must be awake and in developer mode.
+
+This installs the Release build, which is the one to use day to day. It leaves out the pretend server and the developer switches listed in `docs/DESIGN.md`. For development, leave out `-configuration Release` and install from `Debug-appletvos` instead: a Debug build adds those switches and writes extra lines to the console.
 
 ## Tests
 
@@ -65,7 +67,8 @@ Every pretend-server mode, launch argument, and environment variable is listed i
 ## Privacy and security
 
 - Your Plex token is stored only in the Apple TV's Keychain. It is never in this repo, and the app sends it only to your own server and to plex.tv.
-- At sign-in the app tries your server's HTTPS address first. Some home routers block those addresses, and then it uses plain HTTP on your home network (an App Transport Security exception for local networking). The address you type by hand is used as typed. Do not expose your server over plain HTTP on the internet.
+- At sign-in the app tries your server's HTTPS address first. Some home routers block those addresses, and then it uses plain HTTP on your home network (an App Transport Security exception for local networking). Every launch checks that the saved address still answers as your server before the token is sent, and finds the server again through plex.tv if its address changed. The address you type by hand is used as typed, and the first connection records which server answers there. Do not expose your server over plain HTTP on the internet.
+- A redirect to another address is refused (except an upgrade from http to https on the same host), so the token is never carried to a different host. The one gap is the video file itself, which the player engine requests and follows on its own. A code sign-in uses only a server your account owns. One refused request does not delete your token: plex.tv is asked, and only its own refusal signs you out.
 - To scan for secrets before you commit: `gitleaks git --no-banner .` (settings in `.gitleaks.toml`).
 - Found a security problem? See `SECURITY.md`.
 

@@ -117,6 +117,8 @@ struct MediaDetailView: View {
     /// What the list handed us. The full details arrive through `app.details`.
     let initial: PlexItem
     @State private var error: String?
+    /// Why the full details could not be loaded. The page still shows what the list gave it.
+    @State private var loadError: String?
     @State private var playing: PlayRequest?
     @Environment(\.openEpisodeList) private var openEpisodeList
     /// True when this page was opened from the season's own episode list.
@@ -155,7 +157,7 @@ struct MediaDetailView: View {
                             if let code = item.episodeCode {
                                 Text([code, item.parentTitle].compactMap { $0 }.joined(separator: " · ")).font(.system(size: 30))
                             }
-                            Text(Fmt.metaLine(item)).font(isEpisode ? .system(size: 30) : .title3).foregroundStyle(Theme.secondaryText)
+                            Text(Fmt.metaLine(item, airDate: true)).font(isEpisode ? .system(size: 30) : .title3).foregroundStyle(Theme.secondaryText)
                             RatingsRow(item: item)
                             if let tag = item.tagline { Text(tag).font(.headline).italic() }
                             if let s = item.summary { Text(s).font(.body).lineLimit(8) }
@@ -181,6 +183,10 @@ struct MediaDetailView: View {
                                 }
                             }
                             if let error { Text(error).foregroundStyle(.red).font(.callout) }
+                            if let loadError {
+                                Text("Could not load all the details: \(loadError)").foregroundStyle(.orange).font(.callout)
+                                Button("Try Again") { Task { await reloadDetail() } }
+                            }
                         }
                         .shadow(color: .black.opacity(0.7), radius: 8, y: 2)
                     }
@@ -201,10 +207,14 @@ struct MediaDetailView: View {
             }
         }
         .task(id: initial.ratingKey) {
-            await app.loadDetail(initial.ratingKey)
+            await reloadDetail()
             // Developer check: `-autoplay` starts playback as soon as the page opens.
             if LaunchOptions.value("-autoplay") != nil, playing == nil { playing = PlayRequest(startAt: nil) }
         }
+    }
+
+    private func reloadDetail() async {
+        loadError = await app.loadDetail(initial.ratingKey)
     }
 
     private func toggleWatched() {
@@ -329,7 +339,8 @@ struct EpisodeRow: View {
                 Text("\(episode.index.map { "\($0). " } ?? "")\(episode.title)").font(.headline).lineLimit(1)
                 if let s = episode.summary { Text(s).font(.callout).foregroundStyle(Theme.secondaryText).lineLimit(3) }
                 HStack(spacing: 16) {
-                    if let r = Fmt.runtime(ms: episode.duration) { Text(r).font(.caption).foregroundStyle(Theme.secondaryText) }
+                    let facts = [Fmt.airDate(episode.originallyAvailableAt), Fmt.runtime(ms: episode.duration)].compactMap { $0 }
+                    if !facts.isEmpty { Text(facts.joined(separator: " · ")).font(.caption).foregroundStyle(Theme.secondaryText) }
                     RatingsRow(item: scored ?? episode, compact: true)
                 }
             }

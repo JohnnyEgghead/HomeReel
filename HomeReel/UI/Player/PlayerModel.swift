@@ -1,6 +1,24 @@
 import Foundation
 import Combine
+import UIKit
 import AetherEngine
+
+/// What the player needs from the engine to come back after the app was left. A seam, so tests need no engine.
+@MainActor
+protocol ForegroundRestorable: AnyObject {
+    /// True when leaving the app took the video apart, so the picture must be rebuilt before anything plays.
+    var needsForegroundVideoRestore: Bool { get }
+    /// Rebuilds the video at the place it stopped, and comes back paused so the viewer chooses when to go on.
+    func rebuildPaused() async throws
+}
+
+extension AetherEngine: ForegroundRestorable {
+    func rebuildPaused() async throws {
+        // autoplay is the engine's "start playing after a rebuild" switch for exactly this case: after a background
+        // teardown the host decides, and the HomeReel viewer presses Play.
+        try await reloadAtCurrentPosition { $0.autoplay = false }
+    }
+}
 
 /// What the subtitle layer needs, kept apart from the player model so the picture does not redraw 10 times a second.
 @MainActor
@@ -41,6 +59,8 @@ final class PlayerModel: ObservableObject {
     @Published private(set) var time: Double = 0
     @Published private(set) var duration: Double = 0
     @Published private(set) var isBuffering = false
+    /// True while the picture is rebuilt after the app was left and opened again.
+    @Published private(set) var isRestoring = false
     @Published private(set) var routeText = ""
     @Published private(set) var formatText = ""
     @Published var overlayVisible = true
@@ -88,22 +108,58 @@ final class PlayerModel: ObservableObject {
     private var hideTask: Task<Void, Never>?
     private var finished = false
     private var started = false
+    /// Set once a progress report has gone out, so closing knows Plex has a session to end.
+    private var didReport = false
     /// The wait between tries at saving a watched mark. Zero in tests.
     var watchedRetryDelay: Duration = .seconds(2)
 
-    /// Subtitle choices are remembered per show (episodes) or per movie.
-    private var prefKey: String { item.grandparentRatingKey ?? item.ratingKey }
+    /// Subtitle choices are remembered per show (episodes) or per movie, and per server: two servers can use the
+    /// same rating key for different titles.
+    var prefKey: String { [client.serverID, item.grandparentRatingKey ?? item.ratingKey].compactMap { $0 }.joined(separator: ".") }
+    /// How choices were keyed before servers were told apart. Still read, so an earlier choice is not lost.
+    private var legacyPrefKey: String { item.grandparentRatingKey ?? item.ratingKey }
+
+    /// The engine, seen only as far as coming back from the background needs. Tests put a stand-in here.
+    var restorer: (any ForegroundRestorable)?
 
     init(item: PlexItem, client: PlexClient, prefs: SubtitlePreferences = SubtitlePreferences()) {
         self.item = item
         self.client = client
         self.prefs = prefs
+        // Leaving the app (the TV button) takes the video apart and reports "paused". The way back is the app becoming
+        // active again, not this screen appearing: a person's page can open over the player and close again with the
+        // player still in use, so `onDisappear` fires at the wrong times.
+        NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)
+            .sink { [weak self] _ in Task { @MainActor in await self?.restoreAfterForeground() } }
+            .store(in: &bag)
+    }
+
+    /// After the app was left and opened again, rebuilds the picture where it stopped and leaves it paused.
+    /// Without this, Play after returning drives a video that was taken apart: a black, frozen screen with no message.
+    /// Nothing the remote does counts while this runs (`canControl`). If the rebuild fails, the player says so.
+    func restoreAfterForeground() async {
+        guard let restorer, restorer.needsForegroundVideoRestore, !isRestoring, !finished else { return }
+        guard phase == .playing || phase == .paused else { return }
+        isRestoring = true
+        defer { isRestoring = false }
+        do {
+            try await restorer.rebuildPaused()
+        } catch {
+            guard !finished else { return }         // the viewer left meanwhile; there is nothing to tell
+            debugLog("restore after background FAILED \(error.localizedDescription)")
+            phase = .failed("HomeReel could not pick up where you left off. Press Menu to go back, then start it again.")
+        }
     }
 
     // MARK: Start and stop
 
+    private var lookingUpNext = false
+
     func loadNextEpisode() async {
         guard item.type == .episode else { nextChecked = true; return }
+        guard !lookingUpNext else { return }        // a Try Again pressed during a look-up changes nothing
+        lookingUpNext = true
+        defer { lookingUpNext = false }
         #if DEBUG
         if simulatedLookupFailures > 0 {
             simulatedLookupFailures -= 1
@@ -159,11 +215,13 @@ final class PlayerModel: ObservableObject {
         do {
             let engine = try AetherEngine()
             self.engine = engine
+            restorer = engine
             // Screenshot and test runs on the Mac pass `-mute 1` so a movie does not play through the Mac's speakers.
             if LaunchOptions.value("-mute") != nil { engine.volume = 0 }
             observe(engine)
             let url = client.directPlayURL(part: part)
             var options = LoadOptions()
+            options.httpHeaders = client.playbackHeaders
             options.externalSubtitles = ExternalSubtitles.specs(for: part, client: client).map {
                 ExternalSubtitleTrack(url: $0.url, name: $0.name, language: $0.language,
                                       isForced: $0.isForced, isHearingImpaired: $0.isHearingImpaired, formatHint: $0.format)
@@ -179,13 +237,14 @@ final class PlayerModel: ObservableObject {
             scheduleHide()
             Task { await loadNextEpisode() }
         } catch {
-            debugLog("play FAILED \(error)")
+            debugLog("play FAILED \(error.localizedDescription)")
             phase = .failed(error.localizedDescription)
         }
     }
 
-    /// Call when the player screen goes away. Saves the position and marks watched when due.
-    /// Returns a message for the viewer if the watched mark could not be saved.
+    /// Call when the player screen goes away. Every exit ends with a "stopped" report, so Plex drops the session
+    /// and keeps the place. Marks watched when due, before that report so the report cannot undo the mark.
+    /// Returns a message for the viewer if something could not be saved.
     @discardableResult
     func finish() async -> String? {
         guard !finished else { return nil }
@@ -194,20 +253,26 @@ final class PlayerModel: ObservableObject {
         hideTask?.cancel()
         let t = time, d = duration > 0 ? duration : (item.durationSeconds ?? 0)
         engine?.stop()
+        let sessionStarted = didReport || t > 0 || phase == .ended
         guard PlaybackPolicy.countsAsWatched(time: t, duration: d) || phase == .ended else {
-            if t > 0 { await client.reportTimeline(item, state: .stopped, time: t, duration: d) }   // nothing played: nothing to save
-            return nil
+            guard sessionStarted else { return nil }     // nothing played: nothing to save
+            // Stopped early: this report is what keeps the place for Continue Watching.
+            do { try await client.reportStopped(item, time: t, duration: d); return nil }
+            catch { return "Could not save your place in \"\(item.title)\". It may start from an earlier spot next time." }
         }
+        var marked = false
         for attempt in 1...PlaybackPolicy.watchedAttempts {
             do {
                 try await client.setWatched(true, ratingKey: item.ratingKey)
-                return nil
+                marked = true
+                break
             } catch {
                 if attempt < PlaybackPolicy.watchedAttempts { try? await Task.sleep(for: watchedRetryDelay) }
             }
         }
-        await client.reportTimeline(item, state: .stopped, time: t, duration: d)
-        return "Could not mark \"\(item.title)\" as watched. Check the server, then mark it on its page."
+        // The item is finished, so a missed report only leaves the session to time out on the server.
+        try? await client.reportStopped(item, time: t, duration: d)
+        return marked ? nil : "Could not mark \"\(item.title)\" as watched. Check the server, then mark it on its page."
     }
 
     // MARK: Remote actions
@@ -217,15 +282,16 @@ final class PlayerModel: ObservableObject {
         if phase == .playing { engine?.pause() }
     }
 
+    /// Nothing the remote does means anything until the picture is playing: the engine is not ready to seek or play.
+    /// It also waits out a rebuild after the app was left, so a press cannot reach a video that is not there yet.
+    var canControl: Bool { phase != .loading && !isRestoring }
+
     func togglePlayPause() {
         if isScrubbing { scrubCommit(); return }
-        guard let engine else { return }
+        guard let engine, canControl else { return }
         if phase == .playing { engine.pause() } else { engine.play() }
         showOverlay()
     }
-
-    /// Nothing the remote does means anything until the picture is playing: the engine is not ready to seek or play.
-    private var canControl: Bool { phase != .loading }
 
     func skip(_ seconds: Double) {
         guard canControl else { return }
@@ -379,18 +445,19 @@ final class PlayerModel: ObservableObject {
 
     /// nil means subtitles off.
     func selectSubtitle(_ id: Int?) {
-        guard let engine else { return }
+        guard let engine, !isRestoring else { return }
         if let id {
             engine.selectSubtitleTrack(index: id)
-            let lang = subtitleTracks.first { $0.id == id }?.language
-            prefs.save(.init(off: false, language: lang), for: prefKey)
+            // A track with no language saves nothing, so the next start uses the Settings default.
+            prefs.save(subtitleTracks.first { $0.id == id }.flatMap(SubtitleChoiceRecord.remembered(afterPicking:)), for: prefKey)
         } else {
             engine.clearSubtitle()
-            prefs.save(.init(off: true, language: nil), for: prefKey)
+            prefs.save(.off, for: prefKey)
         }
     }
 
     func selectAudio(_ id: Int) {
+        guard !isRestoring else { return }
         engine?.selectAudioTrack(index: id)
     }
 
@@ -398,7 +465,7 @@ final class PlayerModel: ObservableObject {
     private func applyStartingSubtitles() {
         guard let engine else { return }
         subtitleTracks = engine.subtitleTracks.map(TrackDescriptor.init)
-        switch SubtitleChooser.decide(tracks: subtitleTracks, saved: prefs.record(for: prefKey), defaultLanguage: prefs.defaultLanguage) {
+        switch SubtitleChooser.decide(tracks: subtitleTracks, saved: prefs.record(for: prefKey) ?? prefs.record(for: legacyPrefKey), defaultLanguage: prefs.defaultLanguage) {
         case .off: engine.clearSubtitle()
         case .track(let id): engine.selectSubtitleTrack(index: id)
         case .leaveAsIs: break
@@ -473,6 +540,7 @@ final class PlayerModel: ObservableObject {
                 guard let self else { return }
                 // Only while something is on screen, so Plex never shows a session that is not really playing.
                 if self.phase == .playing || self.phase == .paused {
+                    self.didReport = true
                     await self.client.reportTimeline(self.item, state: self.phase == .paused ? .paused : .playing, time: self.time, duration: self.duration)
                 }
                 try? await Task.sleep(for: .seconds(PlaybackPolicy.reportInterval))

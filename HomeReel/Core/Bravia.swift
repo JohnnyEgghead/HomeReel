@@ -63,7 +63,7 @@ struct BraviaClient: Sendable {
     /// The TV can take a moment to apply a change before it reports it.
     var settleDelay: Duration = .seconds(1.5)
 
-    init(host: String, psk: String?, session: URLSession = .shared) {
+    init(host: String, psk: String?, session: URLSession = .uncached) {
         self.host = host.trimmingCharacters(in: .whitespaces)
         self.psk = psk.flatMap { $0.isEmpty ? nil : $0 }
         self.session = session

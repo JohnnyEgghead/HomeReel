@@ -52,6 +52,24 @@ final class PlexClientTests: XCTestCase {
         XCTAssertTrue(items.allSatisfy { $0.type == .movie || $0.type == .episode })
     }
 
+    func testContinueWatchingDropsItemsFromOtherLibraries() async throws {
+        let json = #"""
+        {"MediaContainer":{"Hub":[{"title":"Continue Watching","type":"mixed","Metadata":[
+          {"ratingKey":"1","type":"movie","title":"Real Movie","librarySectionID":1},
+          {"ratingKey":"2","type":"episode","title":"Real Episode","librarySectionID":2},
+          {"ratingKey":"3","type":"movie","title":"Home Video","librarySectionID":3},
+          {"ratingKey":"4","type":"movie","title":"No Library Given"}
+        ]}]}}
+        """#
+        StubURLProtocol.handler = { _ in (200, Data(json.utf8)) }
+        let kept = try await makeClient().continueWatching(inSections: ["1", "2"])
+        XCTAssertEqual(kept.map(\.title), ["Real Movie", "Real Episode"], "a home video library and an item with no library are left out")
+        let none = try await makeClient().continueWatching(inSections: [])
+        XCTAssertTrue(none.isEmpty)
+        let all = try await makeClient().continueWatching()
+        XCTAssertEqual(all.count, 4, "with no limit given, nothing is dropped")
+    }
+
     func testSearchSplitsMoviesAndShows() async throws {
         StubURLProtocol.handler = { _ in (200, Fixture.data("search")) }
         let r = try await makeClient().search("the")
@@ -123,7 +141,19 @@ final class PlexClientTests: XCTestCase {
         XCTAssertEqual(u.path, part.key)
         XCTAssertFalse(u.absoluteString.contains("transcode"))
         XCTAssertFalse(u.absoluteString.contains("start.m3u8"))
-        XCTAssertTrue(u.absoluteString.contains("X-Plex-Token=SECRET"))
+        XCTAssertFalse(u.absoluteString.contains("SECRET"), "the token is a header, so it is in no address")
+        XCTAssertNil(u.query)
+        XCTAssertEqual(makeClient().playbackHeaders, ["X-Plex-Token": "SECRET"])
+    }
+
+    func testUnreadableAnswersAreShownAsAPlainSentence() async {
+        StubURLProtocol.handler = { _ in (200, Data("not json at all".utf8)) }
+        do { _ = try await makeClient().libraries(); XCTFail("should throw") }
+        catch {
+            let text = error.localizedDescription
+            XCTAssertEqual(text, "The server sent an answer HomeReel could not read.")
+            XCTAssertFalse(text.contains("dataCorrupted") || text.contains("DecodingError") || text.contains("/library"), "no internals in front of the viewer")
+        }
     }
 
     // MARK: Next episode and batched details

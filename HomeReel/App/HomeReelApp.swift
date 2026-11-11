@@ -18,6 +18,7 @@ struct HomeReelApp: App {
                 AppModel.Key.token: "fixture-token",
                 AppModel.Key.server: "http://10.0.0.5:32400",
                 AppModel.Key.serverName: "Fixture NAS",
+                AppModel.Key.serverID: "fixture-server",
             ]
             if let k = LaunchOptions.value("-tvkey") { seeded[AppModel.Key.tvKey] = k }
             if LaunchOptions.value("-tv") == "on" { seeded[AppModel.Key.tvHost] = "192.0.2.50" }   // an address the pretend TV answers on
