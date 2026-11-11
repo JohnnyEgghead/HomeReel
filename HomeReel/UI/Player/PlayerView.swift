@@ -71,14 +71,12 @@ struct PlayerSession: View {
                     else { close(.back) }
                 },
                 onScrubBegan: { model.scrubBegan() },
-                onScrubChanged: { t, w, v in model.scrubChanged(translation: t, width: w, speed: v) },
-                onScrubEnded: { model.scrubCommit() },
-                onScrubCancelled: { model.scrubCancel() }
+                onScrubChanged: { t, w, v in model.scrubChanged(translation: t, width: w, speed: v) }
             )
 
             SubtitleOverlay(feed: model.feed, liftForControls: model.overlayVisible)
 
-            if model.isBuffering || model.phase == .loading || movingOn { ProgressView().scaleEffect(2) }
+            if (model.isBuffering && !model.isScrubbing) || model.phase == .loading || movingOn { ProgressView().scaleEffect(2) }
             if case .failed(let msg) = model.phase { FailureOverlay(message: msg, onClose: { close(.back) }) }
             if model.overlayVisible, model.phase != .loading, !model.panelOpen, !showsEnd { TransportOverlay(model: model) }
             if model.panelOpen { PlayerPanel(model: model) }
@@ -99,6 +97,7 @@ struct PlayerSession: View {
         .onChange(of: model.phase) { _, p in
             guard p == .ended else { return }
             model.closePanel()
+            model.scrubCancel()
             if model.item.type != .episode { close(.back) }     // a movie returns to its page; an episode offers what is next
             else if model.nextLookupFailed { Task { await model.loadNextEpisode() } }   // the first try was at the start
         }
@@ -212,6 +211,8 @@ struct TransportOverlay: View {
                 if let target = model.scrubTarget {
                     Text(Self.clock(target))
                         .font(.system(size: 56, weight: .bold)).monospacedDigit()
+                    Text("Click to go here  ·  Menu to cancel")
+                        .font(.system(size: 26)).foregroundStyle(Theme.secondaryText)
                 }
                 ProgressView(value: model.duration > 0 ? min(1, shown / model.duration) : 0)
                 HStack {
@@ -262,8 +263,6 @@ struct RemoteSurface: UIViewRepresentable {
     var onMenu: () -> Void
     var onScrubBegan: () -> Void
     var onScrubChanged: (_ translation: Double, _ width: Double, _ speed: Double) -> Void
-    var onScrubEnded: () -> Void
-    var onScrubCancelled: () -> Void
 
     func makeUIView(context: Context) -> RemoteView {
         let v = RemoteView()
@@ -358,8 +357,9 @@ struct RemoteSurface: UIViewRepresentable {
                 mode = .undecided
             case .changed:
                 if mode == .undecided {
-                    // Decide the direction once the finger has moved a little: sideways scrubs, down opens the panel.
-                    guard max(abs(t.x), abs(t.y)) > 40 else { return }
+                    // Decide the direction once the finger has moved on purpose: sideways previews, down opens the panel.
+                    // A resting thumb drifts, so this is a good way from the first touch.
+                    guard max(abs(t.x), abs(t.y)) > PlaybackPolicy.swipeStartDistance else { return }
                     if abs(t.x) >= abs(t.y) {
                         mode = .scrubbing
                         scrubOrigin = Double(t.x)
@@ -373,11 +373,8 @@ struct RemoteSurface: UIViewRepresentable {
                     let v = Double(g.velocity(in: self).x)
                     spec.onScrubChanged(Double(t.x) - scrubOrigin, width, abs(v) / max(1, width))
                 }
-            case .ended:
-                if mode == .scrubbing { spec.onScrubEnded() }
-                mode = .undecided
-            case .cancelled, .failed:
-                if mode == .scrubbing { spec.onScrubCancelled() }
+            case .ended, .cancelled, .failed:
+                // Lifting the finger does nothing: the preview stays up until Select confirms it or Menu cancels it.
                 mode = .undecided
             default: break
             }

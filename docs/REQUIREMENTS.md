@@ -24,14 +24,15 @@ A native Apple TV app for a Plex Media Server you run yourself. Movies and TV Sh
 | --- | --- |
 | F-1 | Sign in with a plex.tv code, or with a server address and token. |
 | F-2 | Find a reachable, direct address for the server: HTTPS first, then a plain local address. Never use a relay. |
-| F-3 | Home shows Continue Watching, Recently Added Movies, and Recently Added TV Shows. |
+| F-3 | Home shows Continue Watching, Recently Added Movies, and Recently Added TV Shows, all as posters. |
 | F-4 | Movies and TV Shows show poster grids with sort, an unwatched filter, and an A-Z strip. |
 | F-5 | Detail pages show artwork, description, cast, the file format, Play or Resume, and Mark Watched or Unwatched. |
 | F-6 | Search covers movies and shows. |
-| F-7 | The player scrubs by swipe, skips by edge click, and opens an info panel by swiping down. |
+| F-7 | The player skips by edge click and opens an info panel by swiping down. A swipe previews a new point on the timeline: the video pauses and shows the frame at that point. Select goes there, Menu goes back to where you were, and lifting the finger does nothing. |
 | F-8 | The player offers subtitle and audio menus. The subtitle choice is remembered per show, with a default language in Settings. |
 | F-9 | Position and watched state go back to Plex. A title counts as watched at 90 percent. |
-| F-10 | Ratings show on movies, shows, and episodes. People open a page with a biography, what you own with them, and their credits. |
+| F-10 | Ratings show on movies, shows, and episodes. People open a page with a biography, what you own with them, and their credits, which a role filter narrows. |
+| F-18 | A credit for a title you do not own opens a page with its poster, whole description, scores, cast, and crew from Plex's online database. |
 | F-11 | An Up Next screen appears when an episode ends. |
 | F-12 | Movies and TV Shows offer a Scan Library button. |
 | F-13 | Optional: a Picture tab switches a Sony BRAVIA TV between Dolby Vision modes. |

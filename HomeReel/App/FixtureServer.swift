@@ -47,6 +47,17 @@ final class FixtureURLProtocol: URLProtocol {
         return d
     }
 
+    /// The sample person with a biography of 12 long paragraphs, each starting "Paragraph N".
+    private static func longBiography(_ data: Data) -> Data {
+        guard var obj = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
+              var mc = obj["MediaContainer"] as? [String: Any], var list = mc["Metadata"] as? [[String: Any]], !list.isEmpty else { return data }
+        let sentence = "This sentence is part of a very long fictional biography made for testing the biography page. "
+        list[0]["summary"] = (1...12).map { n in "Paragraph \(n). " + String(repeating: sentence, count: 6) }.joined(separator: "\n")
+        mc["Metadata"] = list
+        obj["MediaContainer"] = mc
+        return (try? JSONSerialization.data(withJSONObject: obj)) ?? data
+    }
+
     private static func json(_ name: String) -> (Int, Data, String) { (200, file(name), "application/json") }
 
     /// A container holding just the given items.
@@ -86,7 +97,12 @@ final class FixtureURLProtocol: URLProtocol {
             if mode == "discovererror" { return (500, Data(), "") }
             if path.hasSuffix("/credits") { return json("person_credits") }
             if path.hasSuffix("/person_known_for") { return json("person_knownfor") }
+            // `longbio`: a biography far taller than the screen, in paragraphs.
+            if mode == "longbio", path.hasPrefix("/library/people/"), !path.contains("/credits"), !path.contains("/person_known_for") {
+                return (200, longBiography(file("person")), "application/json")
+            }
             if path.hasPrefix("/library/people/") { return json("person") }
+            if path.hasPrefix("/library/metadata/") { return mode == "detailerror" ? (500, Data(), "") : json("discover_detail") }
             return (404, Data(), "")
         }
         if path.hasPrefix("/sony/") { return tv(req, path: path) }

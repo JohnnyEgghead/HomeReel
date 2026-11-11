@@ -44,8 +44,23 @@ final class PlayerModel: ObservableObject {
     @Published private(set) var routeText = ""
     @Published private(set) var formatText = ""
     @Published var overlayVisible = true
-    /// Where the swipe is pointing while the viewer scrubs. nil when not scrubbing.
+    /// The point a swipe chose, shown as a preview until the viewer confirms it (Select) or cancels (Menu).
+    /// Lifting the finger does not confirm it. nil when no preview is up.
     @Published private(set) var scrubTarget: Double?
+    /// The video was playing when the preview opened, so cancelling or confirming starts it again.
+    private var scrubResumes = false
+    /// Where the video was when the preview opened. Cancelling goes back here.
+    private var scrubOrigin: Double = 0
+    /// The point the picture has been moved to for the preview, so Select can skip a seek it does not need.
+    private var previewSeekedTo: Double?
+    /// Moves the picture to the previewed point once the swipe has settled.
+    private var previewTask: Task<Void, Never>?
+    /// How long a swipe must rest before the picture follows it.
+    static let previewSettle: Duration = .milliseconds(250)
+    // One seek at a time. A newer request replaces one that has not started, so the last request always wins.
+    private var pendingSeek: Double?
+    private var seekRunning = false
+    private var afterSeek: (() -> Void)?
     private var scrubLastTranslation: Double = 0
     private var scrubPosition: Double = 0
     private var scrubBoostSmoothed: Double = 1
@@ -108,6 +123,10 @@ final class PlayerModel: ObservableObject {
 
     #if DEBUG
     private var simulatedLookupFailures = 0
+
+    /// For tests: pretend playback reached this point, without an engine.
+    func setTimeForTesting(_ seconds: Double, duration total: Double) { time = seconds; duration = total }
+    func setPhaseForTesting(_ p: Phase) { phase = p }
 
     /// Developer check (`-showend 1`): jump straight to the end-of-episode screen without playing anything.
     func showEndForTesting() async {
@@ -205,21 +224,57 @@ final class PlayerModel: ObservableObject {
         showOverlay()
     }
 
+    /// Nothing the remote does means anything until the picture is playing: the engine is not ready to seek or play.
+    private var canControl: Bool { phase != .loading }
+
     func skip(_ seconds: Double) {
+        guard canControl else { return }
+        // With a preview up, an edge click moves the preview. Nothing is sought until the viewer confirms.
+        if isScrubbing { scrubNudge(seconds); return }
         guard let engine else { return }
         let target = min(max(0, time + seconds), max(0, duration - 1))
         time = target
-        Task { await engine.seek(to: target) }
+        requestSeek(target)
         showOverlay()
     }
 
-    // MARK: Swipe scrubbing
+    /// Seeks one at a time, whatever asks. `then` runs once the last requested seek is done.
+    private func requestSeek(_ target: Double, then: (() -> Void)? = nil) {
+        pendingSeek = target
+        if let then { afterSeek = then }
+        guard !seekRunning, let engine else { return }
+        seekRunning = true
+        Task { [weak self] in
+            while let self, let next = self.pendingSeek {
+                self.pendingSeek = nil
+                await engine.seek(to: next)
+            }
+            guard let self else { return }
+            self.seekRunning = false
+            let done = self.afterSeek
+            self.afterSeek = nil
+            done?()
+        }
+    }
+
+    // MARK: Swipe scrubbing: preview, then confirm
 
     var isScrubbing: Bool { scrubTarget != nil }
 
+    /// A swipe starts (or carries on) a preview. The video pauses, and once the swipe rests the picture shows the
+    /// point it chose. Nothing is final until the viewer confirms with `scrubCommit`; `scrubCancel` goes back.
     func scrubBegan() {
-        scrubPosition = time
-        scrubTarget = time
+        guard canControl else { return }
+        if let target = scrubTarget {
+            scrubPosition = target       // a second swipe carries on from the preview
+        } else {
+            scrubResumes = phase == .playing
+            if scrubResumes { engine?.pause() }
+            scrubOrigin = time
+            previewSeekedTo = nil
+            scrubPosition = time
+            scrubTarget = time
+        }
         scrubLastTranslation = 0
         scrubBoostSmoothed = 1
         overlayVisible = true
@@ -234,19 +289,66 @@ final class PlayerModel: ObservableObject {
         scrubBoostSmoothed = scrubBoostSmoothed * 0.85 + PlaybackPolicy.scrubBoost(speed: speed) * 0.15
         scrubPosition = PlaybackPolicy.scrubStep(position: scrubPosition, dx: dx, width: width, boost: scrubBoostSmoothed, duration: duration)
         scrubTarget = scrubPosition.rounded()
+        showPreviewSoon()
     }
 
-    /// Finger lifted: jump to where the swipe pointed.
+    /// Moves the preview by a fixed step (an edge click while previewing).
+    func scrubNudge(_ seconds: Double) {
+        guard isScrubbing else { return }
+        scrubPosition = min(max(0, scrubPosition + seconds), max(0, duration - 1))
+        scrubTarget = scrubPosition.rounded()
+        overlayVisible = true
+        hideTask?.cancel()
+        showPreviewSoon()
+    }
+
+    /// Once the swipe has rested, moves the (paused) picture to the previewed point.
+    private func showPreviewSoon() {
+        previewTask?.cancel()
+        previewTask = Task { [weak self] in
+            try? await Task.sleep(for: Self.previewSettle)
+            guard !Task.isCancelled, let self, let target = self.scrubTarget, target != self.previewSeekedTo else { return }
+            self.previewSeekedTo = target
+            self.requestSeek(target)
+        }
+    }
+
+    /// Select: go to the previewed point.
     func scrubCommit() {
-        guard let target = scrubTarget, let engine else { return }
+        guard let target = scrubTarget, engine != nil else { return }
+        previewTask?.cancel()
         scrubTarget = nil
         time = target
-        Task { await engine.seek(to: target) }
+        let resume = scrubResumes
+        scrubResumes = false
+        let play: (() -> Void)? = resume ? { [weak self] in self?.engine?.play() } : nil
+        if previewSeekedTo == target, !seekRunning, pendingSeek == nil {
+            play?()                      // the picture is already there
+        } else {
+            requestSeek(target, then: play)
+        }
+        previewSeekedTo = nil
         scheduleHide()
     }
 
+    /// Menu: drop the preview and put the picture back where it was.
     func scrubCancel() {
+        guard isScrubbing else { return }
+        previewTask?.cancel()
         scrubTarget = nil
+        time = scrubOrigin
+        let resume = scrubResumes
+        scrubResumes = false
+        let play: (() -> Void)? = resume ? { [weak self] in
+            guard let self, self.phase == .paused else { return }
+            self.engine?.play()
+        } : nil
+        if previewSeekedTo != nil || seekRunning || pendingSeek != nil {
+            requestSeek(scrubOrigin, then: play)
+        } else {
+            play?()
+        }
+        previewSeekedTo = nil
         scheduleHide()
     }
 
@@ -267,6 +369,7 @@ final class PlayerModel: ObservableObject {
     // MARK: Info panel, subtitles, audio
 
     func openPanel(_ tab: PanelTab = .info) {
+        scrubCancel()
         panelTab = tab
         panelOpen = true
         overlayVisible = false
@@ -328,7 +431,11 @@ final class PlayerModel: ObservableObject {
         }.store(in: &bag)
         engine.clock.$currentTime
             .throttle(for: .milliseconds(500), scheduler: DispatchQueue.main, latest: true)
-            .sink { [weak self] t in self?.time = t }.store(in: &bag)
+            .sink { [weak self] t in
+                // While a preview moves the picture, the place that counts is still where you were.
+                guard let self, !self.isScrubbing else { return }
+                self.time = t
+            }.store(in: &bag)
         engine.clock.$sourceTime
             .throttle(for: .milliseconds(100), scheduler: DispatchQueue.main, latest: true)
             .sink { [weak self] t in self?.feed.time = t }.store(in: &bag)

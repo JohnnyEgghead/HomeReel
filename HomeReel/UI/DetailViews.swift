@@ -1,11 +1,12 @@
 import SwiftUI
 
-/// Full-screen art behind a detail page.
+/// Full-screen art behind a detail page. Art from your server is a `path`; art from Plex's online database is a `url`.
 struct Backdrop: View {
     @EnvironmentObject var app: AppModel
-    let path: String?
+    var path: String?
+    var url: URL?
     var body: some View {
-        RemoteImage(request: app.client?.imageRequest(path, width: 1920, height: 1080))
+        RemoteImage(request: url.map { URLRequest(url: $0) } ?? app.client?.imageRequest(path, width: 1920, height: 1080))
             .overlay {
                 // A flat dark layer keeps text readable on bright art; the gradient adds depth on the left.
                 ZStack {

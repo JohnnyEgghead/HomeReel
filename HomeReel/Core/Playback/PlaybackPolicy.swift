@@ -28,6 +28,10 @@ enum PlaybackPolicy {
 
     // MARK: Swipe scrubbing
 
+    /// How far a finger must travel on the touch surface before a swipe counts, in points of the screen. Smaller moves
+    /// are a resting thumb, not a swipe.
+    static let swipeStartDistance = 90.0
+
     /// How far one slow, full-width swipe on the remote's touch surface moves, as a share of the video.
     static let scrubFractionPerFullSwipe = 0.06
     /// Bounds on that distance in seconds: a short clip still moves a little, a long film is capped.

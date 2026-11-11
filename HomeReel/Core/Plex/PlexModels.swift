@@ -77,7 +77,34 @@ struct PlexTag: Decodable, Hashable {
     /// The person's id in Plex's online database (used for biography and full filmography).
     var tagKey: String?
 
-    private enum CodingKeys: String, CodingKey { case tag, role, thumb, filter, tagKey, personID = "id" }
+    fileprivate enum CodingKeys: String, CodingKey { case tag, role, thumb, filter, tagKey, key, personID = "id" }
+}
+
+extension PlexTag {
+    /// Plex's online database gives a person's `id` as text (and has no `tagKey`), and your server gives a number.
+    /// A field in the wrong shape costs only that field, never the person, and never the title that lists them.
+    /// For an online person the text id is also the key of their online page, so it becomes `tagKey`.
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        tag = try c.decode(String.self, forKey: .tag)
+        role = try? c.decodeIfPresent(String.self, forKey: .role)
+        thumb = try? c.decodeIfPresent(String.self, forKey: .thumb)
+        filter = try? c.decodeIfPresent(String.self, forKey: .filter)
+        personID = (try? c.decodeIfPresent(Int.self, forKey: .personID)) ?? nil
+        let textID = (try? c.decodeIfPresent(String.self, forKey: .personID)) ?? nil
+        let link = ((try? c.decodeIfPresent(String.self, forKey: .key)) ?? nil)
+            .flatMap { $0.hasPrefix("/library/people/") ? $0.split(separator: "/").last.map(String.init) : nil }
+        tagKey = ((try? c.decodeIfPresent(String.self, forKey: .tagKey)) ?? nil) ?? textID ?? link
+    }
+
+    /// The same person as listed by Plex's online database. Its `id` and `filter` belong to that database, not to
+    /// your server, so they are dropped: a filter such as "actor=12" would ask your server about the wrong person.
+    var online: PlexTag {
+        var t = self
+        t.personID = nil
+        t.filter = nil
+        return t
+    }
 }
 
 /// One score from the `Rating` list: critic or audience, and which site it came from (in `image`).

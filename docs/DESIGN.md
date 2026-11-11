@@ -47,6 +47,8 @@ Release builds leave out the pretend server, its sample data, the environment va
 | `libraryerror` | Library and Continue Watching requests fail. |
 | `scanerror` | A library scan fails. |
 | `discovererror` | Plex's online database fails. |
+| `detailerror` | The online details of a title fail, but a person's page still loads. |
+| `longbio` | A person's biography is far taller than the screen. |
 | `removeerror` | Remove from Continue Watching fails. |
 | `watcherror` | Watched marks fail. |
 | `rolemiss` | A person's role record finds nothing, so only their online credits match. |

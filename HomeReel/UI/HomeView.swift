@@ -120,7 +120,7 @@ struct HomeView: View {
                     if let notice = model.notice {
                         Text(notice).font(.callout).foregroundStyle(.orange).padding(.horizontal, 80)
                     }
-                    Shelf(title: "Continue Watching", items: model.continueWatching, landscape: true, actions: continueActions(for:))
+                    Shelf(title: "Continue Watching", items: model.continueWatching, actions: continueActions(for:))
                     Shelf(title: "Recently Added Movies", items: model.recentMovies)
                     Shelf(title: "Recently Added TV Shows", items: model.recentShows)
                 }

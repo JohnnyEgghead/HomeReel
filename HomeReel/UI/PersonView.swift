@@ -19,6 +19,12 @@ final class PersonModel: ObservableObject {
     /// Your own copy of a title.
     func local(for title: DiscoverTitle) -> PlexItem? { owned[title.ratingKey] }
 
+    /// The credit groups to show for the chosen role. No role, or a role this person has no work in, shows every group.
+    static func visibleGroups(_ groups: [CreditGroup], role: String?) -> [CreditGroup] {
+        guard let role, groups.contains(where: { $0.title == role }) else { return groups }
+        return groups.filter { $0.title == role }
+    }
+
     static func databaseID(of guid: String?) -> String? {
         guard let guid, let last = guid.split(separator: "/").last else { return nil }
         return String(last)
@@ -91,7 +97,8 @@ struct PersonView: View {
     let tag: PlexTag
     @StateObject private var model = PersonModel()
     @State private var showBio = false
-    @State private var notOwned: DiscoverTitle?
+    /// The role the filmography is narrowed to. nil shows every role.
+    @State private var role: String?
 
     var body: some View {
         ZStack {
@@ -115,10 +122,13 @@ struct PersonView: View {
                     }
                     Shelf(title: "In Your Library", items: model.library)
                     if !model.knownFor.isEmpty {
-                        CreditShelf(title: "Known For", titles: model.knownFor.map { ($0, nil) }, model: model, notOwned: $notOwned)
+                        CreditShelf(title: "Known For", titles: model.knownFor.map { ($0, nil) }, model: model)
                     }
-                    ForEach(model.groups) { g in
-                        CreditList(title: g.title, titles: g.Credit.map { ($0.Metadata, $0.role) }, model: model, notOwned: $notOwned)
+                    if model.groups.count > 1 {
+                        RoleFilter(groups: model.groups, selection: $role)
+                    }
+                    ForEach(PersonModel.visibleGroups(model.groups, role: role)) { g in
+                        CreditList(title: g.title, titles: g.Credit.map { ($0.Metadata, $0.role) }, model: model)
                     }
                     if model.loaded, model.onlineError == nil, !model.libraryUnknown, model.library.isEmpty, model.groups.isEmpty, model.knownFor.isEmpty {
                         Text("No titles found.").font(.title3).foregroundStyle(Theme.secondaryText).padding(.horizontal, 80)
@@ -131,7 +141,6 @@ struct PersonView: View {
         .environment(\.colorScheme, .dark)
         .task(id: tag.tag) { await model.load(tag: tag, app: app) }
         .sheet(isPresented: $showBio) { BiographySheet(name: tag.tag, text: model.profile?.summary ?? "") }
-        .sheet(item: $notOwned) { NotInLibrarySheet(title: $0, unknown: model.libraryUnknown) }
     }
 
     private var header: some View {
@@ -161,7 +170,6 @@ struct CreditShelf: View {
     let title: String
     let titles: [(DiscoverTitle, String?)]
     @ObservedObject var model: PersonModel
-    @Binding var notOwned: DiscoverTitle?
     @State private var expanded = false
     private let firstPage = 30
 
@@ -174,7 +182,7 @@ struct CreditShelf: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHStack(alignment: .top, spacing: 36) {
                         ForEach(Array(shown.enumerated()), id: \.offset) { _, entry in
-                            CreditCard(title: entry.0, role: entry.1, own: model.local(for: entry.0), notOwned: $notOwned)
+                            CreditCard(title: entry.0, role: entry.1, own: model.local(for: entry.0), unknown: model.libraryUnknown)
                         }
                         if !expanded, titles.count > firstPage {
                             Button { expanded = true } label: {
@@ -196,7 +204,6 @@ struct CreditList: View {
     let title: String
     let titles: [(DiscoverTitle, String?)]
     @ObservedObject var model: PersonModel
-    @Binding var notOwned: DiscoverTitle?
     @State private var expanded = false
     private let firstPage = 30
 
@@ -208,7 +215,7 @@ struct CreditList: View {
                 Text("\(title) (\(titles.count))").font(.title3.bold()).padding(.horizontal, 80)
                 LazyVStack(spacing: 12) {
                     ForEach(Array(shown.enumerated()), id: \.offset) { _, entry in
-                        CreditRow(title: entry.0, role: entry.1, own: model.local(for: entry.0), notOwned: $notOwned)
+                        CreditRow(title: entry.0, role: entry.1, own: model.local(for: entry.0), unknown: model.libraryUnknown)
                     }
                     if !expanded, titles.count > firstPage {
                         Button { expanded = true } label: {
@@ -227,13 +234,14 @@ struct CreditRow: View {
     let title: DiscoverTitle
     let role: String?
     let own: PlexItem?
-    @Binding var notOwned: DiscoverTitle?
+    /// Your server could not be read, so a title that looks missing may not be.
+    var unknown = false
 
     var body: some View {
         if let own {
             NavigationLink(value: own) { row }.buttonStyle(.card)
         } else {
-            Button { notOwned = title } label: { row }.buttonStyle(.card)
+            NavigationLink(value: NotInLibrary(title: title, unknown: unknown)) { row }.buttonStyle(.card)
         }
     }
 
@@ -259,13 +267,14 @@ struct CreditCard: View {
     let title: DiscoverTitle
     let role: String?
     let own: PlexItem?
-    @Binding var notOwned: DiscoverTitle?
+    /// Your server could not be read, so a title that looks missing may not be.
+    var unknown = false
 
     var body: some View {
         if let own {
             NavigationLink(value: own) { card }.buttonStyle(FocusScaleStyle()).focusEffectDisabled()
         } else {
-            Button { notOwned = title } label: { card }.buttonStyle(FocusScaleStyle()).focusEffectDisabled()
+            NavigationLink(value: NotInLibrary(title: title, unknown: unknown)) { card }.buttonStyle(FocusScaleStyle()).focusEffectDisabled()
         }
     }
 
@@ -290,40 +299,108 @@ struct CreditCard: View {
     }
 }
 
+/// The full biography. The remote scrolls a screen by moving focus, so the text is cut into paragraph-sized
+/// pieces that can each take focus, and so is the name above them. One big focusable block cannot be scrolled back up:
+/// focus lands on it, the screen scrolls down to it, and nothing above it can take focus.
 struct BiographySheet: View {
     let name: String
     let text: String
+
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                Text(name).font(.largeTitle.bold())
-                Text(text).font(.body).focusable()
+            VStack(alignment: .leading, spacing: 8) {
+                FocusBlock(text: name, font: .largeTitle.bold())
+                ForEach(Array(Self.chunks(of: text).enumerated()), id: \.offset) { _, piece in
+                    FocusBlock(text: piece, font: .body)
+                }
             }
             .padding(80).frame(maxWidth: .infinity, alignment: .leading)
         }
     }
+
+    /// Paragraphs, with a long one cut at sentence ends so no piece is much taller than a few lines.
+    static func chunks(of text: String, limit: Int = 450) -> [String] {
+        var out: [String] = []
+        for line in text.components(separatedBy: .newlines) {
+            let paragraph = line.trimmingCharacters(in: .whitespaces)
+            if paragraph.isEmpty { continue }
+            if paragraph.count <= limit { out.append(paragraph); continue }
+            var current = ""
+            paragraph.enumerateSubstrings(in: paragraph.startIndex..., options: .bySentences) { sentence, _, _, _ in
+                guard let sentence else { return }
+                if !current.isEmpty, current.count + sentence.count > limit {
+                    out.append(current.trimmingCharacters(in: .whitespaces))
+                    current = ""
+                }
+                current += sentence
+            }
+            let rest = current.trimmingCharacters(in: .whitespaces)
+            if !rest.isEmpty { out.append(rest) }
+        }
+        return out
+    }
 }
 
-struct NotInLibrarySheet: View {
-    let title: DiscoverTitle
-    /// Your server could not be read, so "not in your library" would be a guess.
-    var unknown = false
+/// A piece of text that can take focus. It has no highlight: moving focus is only what scrolls the screen.
+private struct FocusBlock: View {
+    let text: String
+    let font: Font
 
     var body: some View {
-        HStack(alignment: .top, spacing: 50) {
-            RemoteImage(url: DiscoverImages.sized(title.thumb, width: 500))
-                .frame(width: 280, height: 420).clipShape(RoundedRectangle(cornerRadius: 12))
-            VStack(alignment: .leading, spacing: 16) {
-                Text(title.title).font(.largeTitle.bold())
-                Text([title.typeLabel, title.year.map(String.init)].compactMap { $0 }.joined(separator: " · "))
-                    .font(.title3).foregroundStyle(Theme.secondaryText)
-                if unknown {
-                    Label("Could not check your library", systemImage: "exclamationmark.triangle").font(.title3)
-                } else {
-                    Label("Not in your library", systemImage: "xmark.circle").font(.title3)
+        Text(text).font(font)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(16)
+            .focusable()
+    }
+}
+
+/// A row of buttons that narrows the filmography to one role (Actor, Director, Writer...). "All" shows every role.
+struct RoleFilter: View {
+    let groups: [CreditGroup]
+    @Binding var selection: String?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("Filter by role").font(.callout).foregroundStyle(Theme.secondaryText).padding(.horizontal, 80)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 20) {
+                    chip("All", count: groups.reduce(0) { $0 + $1.Credit.count }, chosen: selection == nil || !groups.contains { $0.title == selection }) { selection = nil }
+                    ForEach(groups) { g in
+                        chip(g.title, count: g.Credit.count, chosen: selection == g.title) { selection = g.title }
+                    }
                 }
+                .padding(.horizontal, 80).padding(.vertical, 14)
             }
         }
-        .padding(80)
+        .focusSection()
+    }
+
+    private func chip(_ name: String, count: Int, chosen: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text("\(name) (\(count))").font(.system(size: 28, weight: .semibold)).padding(.horizontal, 28).padding(.vertical, 12)
+        }
+        .buttonStyle(RoleChipStyle(chosen: chosen))
+        .accessibilityValue(chosen ? "selected" : "")
+    }
+}
+
+/// The chosen role is filled white; the others are dim. Focus adds a ring, since a fill alone cannot show both.
+struct RoleChipStyle: ButtonStyle {
+    let chosen: Bool
+    func makeBody(configuration: Configuration) -> some View {
+        Chip(label: configuration.label, chosen: chosen)
+    }
+    private struct Chip<L: View>: View {
+        @Environment(\.isFocused) private var focused
+        let label: L
+        let chosen: Bool
+        var body: some View {
+            label
+                .foregroundStyle(chosen ? Color.black : Color.white)
+                .background(Capsule().fill(chosen ? Color.white : Color.white.opacity(0.16)))
+                .overlay { if focused { Capsule().stroke(.white, lineWidth: 6).padding(-6) } }
+                .scaleEffect(focused ? 1.06 : 1)
+                .animation(.easeOut(duration: 0.15), value: focused)
+        }
     }
 }

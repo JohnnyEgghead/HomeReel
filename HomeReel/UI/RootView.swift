@@ -160,6 +160,7 @@ extension View {
         navigationDestination(for: PlexItem.self) { ItemDestination(item: $0) }
             .navigationDestination(for: SeasonEpisode.self) { MediaDetailView(item: $0.item, fromSeasonList: true) }
             .navigationDestination(for: PlexTag.self) { PersonView(tag: $0) }
+            .navigationDestination(for: NotInLibrary.self) { NotInLibraryView(page: $0) }
     }
 }
 

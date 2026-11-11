@@ -11,10 +11,10 @@ Personal project, shared as open source. Works with Plex. Not affiliated with or
 - **Movies and TV Shows:** 6-column poster grids, sort (title, date added, year, rating, and recently aired episode for TV), an unwatched filter, and an A-Z strip that follows the selected poster.
 - **Detail pages:** artwork, description, cast with photos, file format line, Play or Resume, Mark Watched or Unwatched.
 - **Search** across movies and shows.
-- **Player:** direct play of the original file through [AetherEngine](https://github.com/superuser404notfound/AetherEngine). Handles MKV with Dolby Vision, HDR10, Atmos, DTS and TrueHD, and legacy AVI. Swipe the remote to scrub, click the edges to skip 10 seconds, swipe down for the info panel.
+- **Player:** direct play of the original file through [AetherEngine](https://github.com/superuser404notfound/AetherEngine). Handles MKV with Dolby Vision, HDR10, Atmos, DTS and TrueHD, and legacy AVI. Swipe the remote to preview a new point on the timeline, with the frame shown (Select goes there, Menu goes back), click the edges to skip 10 seconds, swipe down for the info panel.
 - **Info panel while playing:** description and cast, subtitle menu (text, picture, and sidecar files), audio menu. Your subtitle choice is remembered per show, with a default language in Settings.
 - **Progress sync:** position and watched state go back to Plex.
-- **Ratings and people:** critic and audience scores (Rotten Tomatoes, TMDB, IMDb) on movies, shows and episodes. Cast and crew open a page with a biography, what you own with them, and their full filmography from Plex's online database.
+- **Ratings and people:** critic and audience scores (Rotten Tomatoes, TMDB, IMDb) on movies, shows and episodes. Cast and crew open a page with a biography, what you own with them, and their full filmography from Plex's online database, with a role filter (Actor, Director, Writer...). A title you do not own opens a page with its description, scores, and cast.
 - **TV episodes:** episode scores in the season list, an "Up Next" screen when an episode ends, and Menu goes to the season's episode list.
 - **Home:** Continue Watching has a press-and-hold menu. Movies offer resume, start over, and mark watched or unwatched. Episodes offer resume or play, open series, open season, and remove. Recently Added TV Shows is one poster per series.
 - **Scan Library** button on Movies and TV Shows.

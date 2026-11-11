@@ -1,0 +1,39 @@
+{
+  "MediaContainer": {
+    "identifier": "tv.plex.provider.discover",
+    "size": 1,
+    "Metadata": [
+      {
+        "guid": "plex://show/51512ea3c8d6cd4c513286c1",
+        "ratingKey": "51512ea3c8d6cd4c513286c1",
+        "type": "show",
+        "title": "Paper Summit",
+        "year": 2025,
+        "contentRating": "TV-MA",
+        "duration": 3300000,
+        "childCount": 2,
+        "tagline": "Every peak has a price.",
+        "summary": "A tired surveyor and a runaway cartographer chart a mountain that is not on any map. Each ridge they cross shows them something the town below would rather keep buried. The full season follows their climb, and what it costs them.",
+        "thumb": "https://image.tmdb.org/t/p/original/6ccb97ebcbe315a983a4d2542d4e60ef.jpg",
+        "art": "https://image.tmdb.org/t/p/original/7fb3cc2c8e4e4f0a8a6f4a41c4b25bd8.jpg",
+        "Media": [{ "bitrate": 6470, "container": "mp4", "height": 1080, "protocol": "hls", "videoResolution": "1080",
+          "Part": [{ "container": "mp4", "id": "64029f088c673f6d15b1358c", "key": "/library/parts/64029f088c673f6d15b1358c-hls.m3u8" }] }],
+        "Genre": [{ "tag": "Drama" }, { "tag": "Mystery" }],
+        "Rating": [
+          { "image": "imdb://image.rating", "value": 8.1, "type": "audience" },
+          { "image": "rottentomatoes://image.rating.ripe", "value": 9.0, "type": "critic" }
+        ],
+        "Role": [
+          { "id": "5d776826161a76001e2d2f1a", "key": "/library/people/5d776826161a76001e2d2f1a", "type": "person", "tag": "Ada Fenwick", "role": "Lucian Brandt", "thumb": "https://metadata-static.plex.tv/a/b/ada.jpg" },
+          { "id": "5d77683e85719b001f3a2b3c", "key": "/library/people/5d77683e85719b001f3a2b3c", "type": "person", "tag": "Mira Voss", "role": "Nell Archer", "thumb": "https://metadata-static.plex.tv/a/b/mira.jpg" }
+        ],
+        "Director": [
+          { "id": "5d77686a7e9a51001f1c0d2e", "key": "/library/people/5d77686a7e9a51001f1c0d2e", "type": "person", "tag": "Tomas Reyes" }
+        ],
+        "Writer": [
+          { "id": "5d7768b3961a76001f2a4e5f", "key": "/library/people/5d7768b3961a76001f2a4e5f", "type": "person", "tag": "Ines Calloway" }
+        ]
+      }
+    ]
+  }
+}

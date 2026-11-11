@@ -167,6 +167,41 @@ final class AppFlowTests: XCTestCase {
         wait(text(app, containing: "Born March 4, 1971"))
     }
 
+    func testLongBiographyCanBeScrolledBackToTheTop() {
+        let app = launch("longbio", ["-open", "8217", "-person", "1"])
+        wait(text(app, containing: "Paragraph 1."), 20)
+        func focused(_ predicate: String) -> XCUIElement {
+            app.descendants(matching: .any).matching(NSPredicate(format: "hasFocus == true AND " + predicate)).firstMatch
+        }
+        // The name is on the page behind the sheet too, and that copy is never on screen, so ask whether any copy is.
+        func nameIsOnScreen() -> Bool {
+            app.descendants(matching: .any).matching(NSPredicate(format: "label == 'Zane Castellan'")).allElementsBoundByIndex
+                .contains { $0.isHittable && $0.frame.minY >= 0 }
+        }
+        for _ in 0..<3 where !focused("label CONTAINS 'Paragraph 1.'").exists { XCUIRemote.shared.press(.down); sleep(1) }
+        XCUIRemote.shared.press(.select)
+        wait(app.staticTexts["Zane Castellan"], 10, "the biography sheet opens, with the name at the top")
+        sleep(1)
+        XCTAssertTrue(nameIsOnScreen(), "the sheet starts with the name on the screen")
+        // Down through the whole biography to the last piece.
+        for _ in 0..<80 {
+            if focused("label CONTAINS 'Paragraph 12.'").exists { break }
+            XCUIRemote.shared.press(.down); usleep(250_000)
+        }
+        // The last paragraph is long, so it is in more than one piece. Keep going to the very last.
+        for _ in 0..<4 { XCUIRemote.shared.press(.down); usleep(250_000) }
+        sleep(1)
+        XCTAssertFalse(nameIsOnScreen(), "scrolled down, the name is off the screen")
+        // Back up: the name must come back into view.
+        for _ in 0..<80 {
+            if focused("label == 'Zane Castellan'").exists { break }
+            XCUIRemote.shared.press(.up); usleep(250_000)
+        }
+        sleep(1)
+        XCTAssertTrue(focused("label == 'Zane Castellan'").exists, "Up reaches the name again")
+        XCTAssertTrue(nameIsOnScreen(), "and the name is back on the screen")
+    }
+
     func testPersonPageShowsLibraryKnownForAndCredits() {
         let app = launch("normal", ["-open", "8217", "-person", "1"])
         wait(text(app, containing: "Fictional biography"), 20)
@@ -246,15 +281,75 @@ final class AppFlowTests: XCTestCase {
     func testPersonWorkIsAList() {
         let app = launch("normal", ["-open", "8217", "-person", "1"])
         wait(text(app, containing: "Actor ("), 20)
-        for _ in 0..<4 { XCUIRemote.shared.press(.down); sleep(1) }     // bio, library, known for, then the first row
+        for _ in 0..<5 { XCUIRemote.shared.press(.down); sleep(1) }     // bio, library, known for, the role filter, then the first row
         // A list row reads as one button: title, type, year, and role.
         wait(app.buttons.matching(NSPredicate(format: "label CONTAINS 'Paper Summit' AND label CONTAINS 'as Lucian Brandt'")).firstMatch)
     }
 
-    func testTitleNotInLibraryOpensItsSheet() {
+    func testTitleNotInLibraryShowsTheFullDescriptionAndCast() {
         let app = launch("normal", ["-open", "8217", "-person", "1"])
         wait(text(app, containing: "Actor ("), 20)
-        for _ in 0..<4 { XCUIRemote.shared.press(.down); sleep(1) }     // down to the first row of Actor
+        for _ in 0..<5 { XCUIRemote.shared.press(.down); sleep(1) }
+        XCUIRemote.shared.press(.select)
+        wait(app.staticTexts["Not in your library"], 10)
+        wait(text(app, containing: "A tired surveyor and a runaway cartographer"), 10, "the description")
+        wait(text(app, containing: "what it costs them."), 10, "the whole description, not a cut")
+        wait(app.staticTexts["Cast"])
+        wait(app.buttons.matching(NSPredicate(format: "label CONTAINS 'Ada Fenwick'")).firstMatch)
+        XCUIRemote.shared.press(.menu)
+        wait(text(app, containing: "Actor ("), 10, "Menu goes back to the person's page")
+    }
+
+    func testCastMemberOfATitleYouDoNotOwnOpensTheirPage() {
+        let app = launch("normal", ["-open", "8217", "-person", "1"])
+        wait(text(app, containing: "Actor ("), 20)
+        for _ in 0..<5 { XCUIRemote.shared.press(.down); sleep(1) }
+        XCUIRemote.shared.press(.select)
+        wait(app.staticTexts["Not in your library"], 10)
+        let ada = app.buttons.matching(NSPredicate(format: "label CONTAINS 'Ada Fenwick'")).firstMatch
+        wait(ada)
+        for _ in 0..<6 where !ada.hasFocus { XCUIRemote.shared.press(.down); sleep(1) }
+        XCTAssertTrue(ada.hasFocus, "could not focus the cast member")
+        XCUIRemote.shared.press(.select)
+        wait(text(app, containing: "Fictional biography"), 20, "the person's online page opens")
+        XCTAssertFalse(text(app, containing: "has no online page").exists)
+    }
+
+    func testTitleNotInLibrarySaysWhenTheDetailsFailedToLoad() {
+        let app = launch("detailerror", ["-open", "8217", "-person", "1"])
+        wait(text(app, containing: "Actor ("), 20)
+        for _ in 0..<5 { XCUIRemote.shared.press(.down); sleep(1) }
+        XCUIRemote.shared.press(.select)
+        wait(app.staticTexts["Not in your library"], 10)
+        wait(text(app, containing: "Could not load the details"), 10)
+        wait(app.buttons["Try Again"])
+    }
+
+    func testRoleFilterNarrowsTheFilmography() {
+        let app = launch("normal", ["-open", "8217", "-person", "1"])
+        wait(text(app, containing: "Actor ("), 20)
+        wait(app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'All ('")).firstMatch)
+        let writer = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Writer ('")).firstMatch
+        wait(writer)
+        let writerLabel = writer.label     // "Writer (N)": the list heading reads the same
+        // Down to the filter row (the focus is never assumed: bio, library, and known for come first). It lands on
+        // whichever chip is nearest the poster above, so then move sideways until Writer has focus.
+        let chips = ["All (", "Actor (", "Writer (", "Appearances (", "Producer ("]
+        func onChip() -> Bool { chips.contains { app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", $0)).firstMatch.hasFocus } }
+        for _ in 0..<8 where !onChip() { XCUIRemote.shared.press(.down); sleep(1) }
+        for _ in 0..<6 where !writer.hasFocus { XCUIRemote.shared.press(.left); sleep(1) }
+        for _ in 0..<6 where !writer.hasFocus { XCUIRemote.shared.press(.right); sleep(1) }
+        XCTAssertTrue(writer.hasFocus, "could not focus the Writer button")
+        XCUIRemote.shared.press(.select)
+        wait(app.staticTexts[writerLabel], 10, "the Writer list stays")
+        XCTAssertFalse(app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH 'Actor ('")).firstMatch.waitForExistence(timeout: 2),
+                       "the other roles go away")
+    }
+
+    func testTitleNotInLibraryOpensItsPage() {
+        let app = launch("normal", ["-open", "8217", "-person", "1"])
+        wait(text(app, containing: "Actor ("), 20)
+        for _ in 0..<5 { XCUIRemote.shared.press(.down); sleep(1) }     // down to the first row of Actor
         XCUIRemote.shared.press(.select)
         wait(app.staticTexts["Not in your library"], 10)
     }

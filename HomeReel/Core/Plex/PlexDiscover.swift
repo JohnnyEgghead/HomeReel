@@ -78,6 +78,40 @@ struct CreditGroup: Decodable, Identifiable, Hashable {
     }
 }
 
+/// A title as Plex's online database describes it. Only what the page shows is read, and each field on its own:
+/// the record also carries streaming details (`Media`, with text part ids) that mean nothing here and must not
+/// cost the page. A field in a shape this does not expect is left out, not fatal.
+private struct OnlineTitle: Decodable {
+    var item: PlexItem
+
+    private enum K: String, CodingKey {
+        case ratingKey, type, guid, title, summary, tagline, year, studio, contentRating, rating, audienceRating
+        case duration, originallyAvailableAt, thumb, art, childCount, audienceRatingImage, ratingImage
+        case Genre, Role, Director, Writer, Producer, Rating
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: K.self)
+        func opt<T: Decodable>(_ key: K) -> T? { (try? c.decodeIfPresent(T.self, forKey: key)) ?? nil }
+        func list<T: Decodable>(_ key: K) -> [T]? {
+            guard let all: [Lossy<T>] = opt(key) else { return nil }
+            return all.compactMap(\.value)
+        }
+        // A title needs at least a key and a name. Everything else is optional.
+        var it = PlexItem(ratingKey: try c.decode(String.self, forKey: .ratingKey),
+                          type: (try? c.decode(PlexItemType.self, forKey: .type)) ?? .other,
+                          title: try c.decode(String.self, forKey: .title))
+        it.guid = opt(.guid); it.summary = opt(.summary); it.tagline = opt(.tagline); it.year = opt(.year)
+        it.studio = opt(.studio); it.contentRating = opt(.contentRating); it.rating = opt(.rating)
+        it.audienceRating = opt(.audienceRating); it.duration = opt(.duration)
+        it.originallyAvailableAt = opt(.originallyAvailableAt); it.thumb = opt(.thumb); it.art = opt(.art)
+        it.childCount = opt(.childCount); it.audienceRatingImage = opt(.audienceRatingImage); it.ratingImage = opt(.ratingImage)
+        it.Genre = list(.Genre); it.Role = list(.Role); it.Director = list(.Director)
+        it.Writer = list(.Writer); it.Producer = list(.Producer); it.Rating = list(.Rating)
+        item = it
+    }
+}
+
 struct PlexDiscover: Sendable {
     let token: String
     let identity: PlexIdentity
@@ -118,6 +152,14 @@ struct PlexDiscover: Sendable {
         let r = try await fetch("library/people/\(tagKey)", as: Meta<PersonProfile>.self)
         guard let p = r.items.first else { throw PlexError.decoding("no such person") }
         return p
+    }
+
+    /// What Plex's online database holds about one title: summary, scores, cast, and crew. For a title you do not own,
+    /// this is the only source. `ratingKey` is the id a credit carries (not a key on your own server).
+    func details(ratingKey: String) async throws -> PlexItem {
+        let r = try await fetch("library/metadata/\(ratingKey)", as: Meta<OnlineTitle>.self)
+        guard let title = r.items.first else { throw PlexError.decoding("no such title") }
+        return title.item
     }
 
     func knownFor(tagKey: String) async throws -> [DiscoverTitle] {
